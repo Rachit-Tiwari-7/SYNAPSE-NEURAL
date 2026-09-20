@@ -166,7 +166,7 @@ export default function InteractiveBodyTwin({
               boxShadow: '0 1px 3px rgba(16, 185, 129, 0.08)'
             }}>
               <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
-              <span>{translateText('Watch Calibrated (HRV 58ms • VO2 Max 44.5)')}</span>
+              <span>{translateText('ABDM Telemetry (HRV 68ms • SpO2 98.5%)')}</span>
             </div>
 
             <div style={{

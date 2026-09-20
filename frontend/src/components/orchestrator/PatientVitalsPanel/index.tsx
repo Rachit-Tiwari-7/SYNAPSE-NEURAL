@@ -595,7 +595,7 @@ export default function PatientVitalsPanel({
         }}>
           <span style={{ fontSize: '10.5px', color: '#0284c7', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '5px' }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#0284c7', boxShadow: '0 0 6px #0284c7' }} />
-            {translateText('Apple Watch & Google Health Synced')}
+            {translateText('ABDM Health Node Verified')}
           </span>
           <span style={{ fontSize: '10px', color: '#0369a1', fontWeight: 700 }}>
             {translateText('Live Lead I ECG')}

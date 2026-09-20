@@ -2,45 +2,119 @@
 
 import React, { useState } from 'react';
 import { 
-  ArrowUpRight, 
-  Sparkles, 
-  CheckCircle2, 
-  AlertTriangle, 
+  ShieldCheck, 
   FileText, 
+  Copy, 
+  Check, 
+  ExternalLink, 
+  Plus, 
+  Download, 
+  User, 
+  Activity, 
+  Calendar, 
+  Sparkles, 
   Clock, 
+  Pill, 
+  Share2, 
+  Building2, 
+  QrCode, 
+  Heart,
   ChevronRight,
-  Plus,
-  Share2,
-  Download,
-  Calendar,
-  Eye,
-  Activity,
-  Zap
+  Bot,
+  AlertCircle,
+  CheckCircle2
 } from 'lucide-react';
-import { DetectedCondition } from '../types';
+import { DetectedCondition, PatientInfo, VitalsData } from '../types';
+import { MockHealthProfile } from '@/data/mockHealthProfiles';
 import { useLanguage } from '@/context/LanguageContext';
 
-interface ClinicalConditionsPanelProps {
+export interface ClinicalConditionsPanelProps {
+  patient?: PatientInfo;
+  activeProfile?: MockHealthProfile;
+  vitals?: VitalsData;
+  isAbhaLinked?: boolean;
   conditions: DetectedCondition[];
   selectedCondition: DetectedCondition | null;
   onSelectCondition: (c: DetectedCondition) => void;
   onOpenExportModal: () => void;
   onNavigateToSwarmTab?: () => void;
+  onNavigateToChatTab?: () => void;
 }
 
 export default function ClinicalConditionsPanel({
+  patient,
+  activeProfile,
+  vitals,
+  isAbhaLinked = true,
   conditions,
   selectedCondition,
   onSelectCondition,
   onOpenExportModal,
-  onNavigateToSwarmTab
+  onNavigateToSwarmTab,
+  onNavigateToChatTab
 }: ClinicalConditionsPanelProps) {
   const { t, translateText } = useLanguage();
-  const [selectedOrganTab, setSelectedOrganTab] = useState<'all' | 'lungs' | 'knee' | 'shoulder'>('all');
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'conditions' | 'records' | 'care'>('conditions');
 
-  const lungsCondition = conditions.find(c => c.organ === 'lungs') || conditions[0];
-  const kneeCondition = conditions.find(c => c.organ === 'knee');
-  const shoulderCondition = conditions.find(c => c.organ === 'shoulder');
+  // Fallbacks if activeProfile or patient not directly passed
+  const citizenName = patient?.name || activeProfile?.patient.name || 'Mausam Kar';
+  const abhaId = patient?.abhaId || activeProfile?.patient.abhaId || '91-7294-8102-5309';
+  const abhaAddress = activeProfile?.patient.abhaAddress || `${citizenName.toLowerCase().replace(/\s+/g, '')}@abdm`;
+  const policyNumber = patient?.policyNumber || activeProfile?.patient.policyNumber || 'PM-JAY-2026-IND-8841';
+  const linkedHip = activeProfile?.patient.linkedHip || 'All India Institute of Medical Sciences (AIIMS) Node';
+  const stateCode = activeProfile?.patient.stateCode || 'DL';
+  const bloodType = patient?.bloodType || activeProfile?.patient.bloodType || 'B+';
+  const age = activeProfile?.patient.age || 24;
+  const gender = patient?.gender || activeProfile?.patient.gender || 'Male';
+  const dob = patient?.dob || activeProfile?.patient.dob || 'April 14, 2002';
+
+  const handleCopy = (text: string, fieldName: string) => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+    }
+    setCopiedField(fieldName);
+    setTimeout(() => setCopiedField(null), 2500);
+  };
+
+  const nextAppointment = activeProfile?.visualAnalytics?.nextAppointment || {
+    doctor: 'Dr. Rajesh K. Varma',
+    specialty: 'Pulmonology & Critical Care',
+    date: 'Friday, 16 Jan, 04:00 PM',
+    mode: 'Teleconsultation',
+    color: '#0284c7'
+  };
+
+  const carePlan = activeProfile?.visualAnalytics?.carePlan || {
+    medicationPercent: 100,
+    medicationStatus: 'Multivitamin & Omega-3 Complete',
+    hydrationPercent: 82,
+    hydrationStatus: '2.4L / 3.0L Target Reached'
+  };
+
+  const recordsList = activeProfile?.patient?.blockchainRecords || [
+    {
+      id: 'REC-ABDM-0921',
+      title: 'Chest Radiograph & Alveolar Diffusion Report',
+      facility: 'AIIMS Pulmonology Department',
+      timestamp: '2026-08-18 11:45 UTC',
+      verified: true
+    },
+    {
+      id: 'REC-ABDM-0418',
+      title: 'Diagnostic Blood Chemistry & Metabolic Panel',
+      facility: 'AIIMS Central Clinical Pathology Lab',
+      timestamp: '2026-08-20 09:30 UTC',
+      verified: true
+    },
+    {
+      id: 'REC-UWIN-8821',
+      title: 'U-WIN Universal Immunization Record',
+      facility: 'Government Community Health Centre (CHC)',
+      timestamp: '2026-07-14 14:15 UTC',
+      verified: true
+    }
+  ];
 
   return (
     <div 
@@ -48,404 +122,660 @@ export default function ClinicalConditionsPanel({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '20px',
-        width: '380px',
+        gap: '16px',
+        width: '400px',
         flexShrink: 0
       }}
     >
-      {/* 1. Lungs & Pulmonary Function Card */}
+      {/* 1. Official ABHA Identity & ABDM Credentials Card */}
       <div 
-        className="orch-card-interactive"
-        onClick={() => lungsCondition && onSelectCondition(lungsCondition)}
         style={{
-          background: '#ffffff',
+          background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
           borderRadius: '20px',
-          border: selectedCondition?.organ === 'lungs' ? '1.5px solid #db2777' : '1px solid #e2e8f0',
-          padding: '20px',
-          boxShadow: selectedCondition?.organ === 'lungs' ? '0 6px 20px rgba(219, 39, 119,0.08)' : '0 4px 14px rgba(0,0,0,0.03)',
-          transition: 'all 0.2s ease',
-          display: 'flex',
-          flexDirection: 'column',
-          cursor: 'pointer'
+          border: '1.5px solid #0284c7',
+          padding: '18px 20px',
+          boxShadow: '0 8px 24px rgba(2, 132, 199, 0.08)',
+          position: 'relative',
+          overflow: 'hidden'
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-          <div>
-            <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#0f172a', margin: 0 }}>
-              {translateText(lungsCondition?.title || 'Pulmonary Aerobic Function')}
-            </h3>
-            <span style={{ fontSize: '11px', color: '#64748b' }}>
-              {translateText(lungsCondition?.lastUpdated || 'Updated: Recently')} • {lungsCondition?.doctor || 'Dr. Rajesh K. Varma'}
-            </span>
+        {/* Subtle decorative top tricolor bar */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '3.5px',
+          background: 'linear-gradient(90deg, #ff9933 0%, #ffffff 50%, #138808 100%)'
+        }} />
+
+        {/* Card Header: ABDM Branding & KYC Badge */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', marginTop: '2px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: '8px',
+              background: '#e0f2fe',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#0284c7'
+            }}>
+              <ShieldCheck size={17} />
+            </div>
+            <div>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                {translateText('Ayushman Bharat ABDM')}
+              </span>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: '#64748b' }}>
+                {translateText('Logged-in Health ID')}
+              </div>
+            </div>
           </div>
+
           <span style={{
-            fontSize: '11px',
-            padding: '3px 9px',
-            borderRadius: '6px',
-            background: lungsCondition?.status === 'Critical' ? '#fef2f2' : '#ecfdf5',
-            color: lungsCondition?.status === 'Critical' ? '#ef4444' : '#059669',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            fontSize: '10.5px',
             fontWeight: 800,
-            border: lungsCondition?.status === 'Critical' ? '1px solid #fecaca' : '1px solid #a7f3d0'
+            color: '#059669',
+            background: '#ecfdf5',
+            border: '1px solid #a7f3d0',
+            padding: '3px 9px',
+            borderRadius: '20px'
           }}>
-            {translateText(lungsCondition?.status || 'Stable')}
+            <CheckCircle2 size={12} />
+            {translateText('ABDM KYC Verified')}
           </span>
         </div>
 
-        {/* Checkup Summary Card */}
+        {/* Citizen Profile Details Banner */}
         <div style={{
-          background: '#f8fafc',
+          background: '#ffffff',
           borderRadius: '14px',
           padding: '14px',
-          border: '1px solid #f1f5f9',
-          marginTop: '6px'
+          border: '1px solid #e2e8f0',
+          marginBottom: '12px',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, color: '#0f172a' }}>
-            <FileText size={14} color="#db2777" />
-            <span>{translateText(lungsCondition?.specialty ? `${lungsCondition.specialty} Evaluation` : 'Pulmonology & Critical Care Evaluation')}</span>
-          </div>
-          <p style={{ fontSize: '11px', color: '#64748b', margin: '6px 0 12px 0', lineHeight: 1.45 }}>
-            {translateText(lungsCondition?.notes || 'Comprehensive respiratory evaluation. Results show stable lung capacity and normal oxygen delivery.')}
-          </p>
-
-          {/* Diagnostic X-Ray & CT Radiography Strip */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
-            {/* PA Chest X-Ray */}
-            <div style={{
-              flex: 1,
-              height: '70px',
-              borderRadius: '10px',
-              overflow: 'hidden',
-              border: '1.5px solid #cbd5e1',
-              position: 'relative',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
-            }}>
-              <img
-                src="/images/chest_xray_scan.jpg"
-                alt="Chest X-Ray PA View"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-              <span style={{
-                position: 'absolute',
-                bottom: '3px',
-                right: '4px',
-                fontSize: '9px',
-                fontWeight: 800,
-                color: '#ffffff',
-                background: 'rgba(15, 23, 42, 0.75)',
-                padding: '1px 5px',
-                borderRadius: '4px'
-              }}>PA</span>
-            </div>
-
-            {/* Lateral Chest X-Ray */}
-            <div style={{
-              flex: 1,
-              height: '70px',
-              borderRadius: '10px',
-              overflow: 'hidden',
-              border: '1.5px solid #cbd5e1',
-              position: 'relative',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
-            }}>
-              <img
-                src="/images/chest_lat_xray.jpg"
-                alt="Lateral Chest X-Ray"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-              <span style={{
-                position: 'absolute',
-                bottom: '3px',
-                right: '4px',
-                fontSize: '9px',
-                fontWeight: 800,
-                color: '#ffffff',
-                background: 'rgba(15, 23, 42, 0.75)',
-                padding: '1px 5px',
-                borderRadius: '4px'
-              }}>CHEST-LAT</span>
-            </div>
-
-            {/* Axial CT Scan Slice */}
-            <div style={{
-              flex: 1,
-              height: '70px',
-              borderRadius: '10px',
-              overflow: 'hidden',
-              border: '1.5px solid #cbd5e1',
-              position: 'relative',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
-            }}>
-              <img
-                src="/images/ct_axial_scan.jpg"
-                alt="Thoracic Axial CT Scan Slice"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-              <span style={{
-                position: 'absolute',
-                bottom: '3px',
-                right: '4px',
-                fontSize: '9px',
-                fontWeight: 800,
-                color: '#ffffff',
-                background: 'rgba(15, 23, 42, 0.75)',
-                padding: '1px 5px',
-                borderRadius: '4px'
-              }}>CT-AXIAL</span>
-            </div>
-          </div>
-
-          {/* Telemetry Metrics */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: '#475569', borderTop: '1px solid #e2e8f0', paddingTop: '10px' }}>
-            <span>FEV1: <strong style={{ color: '#0f172a' }}>{lungsCondition?.metrics?.fev1 || '4.8 L'}</strong></span>
-            <span>{translateText('O2 Level')}: <strong style={{ color: '#059669' }}>{lungsCondition?.metrics?.o2 || '98.5%'}</strong></span>
-            <span>{translateText('Heart Rate')}: <strong style={{ color: '#0f172a' }}>{lungsCondition?.metrics?.heartRate || '74 BPM'}</strong></span>
-          </div>
-        </div>
-
-        {/* Oxygen Trajectory Month Graph Section */}
-        <div style={{ marginTop: '18px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{translateText('OXYGEN LEVEL')}</span>
-              <div style={{ fontSize: '18px', fontWeight: 900, color: '#0f172a' }}>
-                {lungsCondition?.metrics?.o2 || '98.5%'}
+              <h3 style={{ fontSize: '17px', fontWeight: 900, color: '#0f172a', margin: '0 0 3px 0' }}>
+                {citizenName}
+              </h3>
+              <div style={{ fontSize: '11.5px', color: '#64748b', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <span>{translateText('Age')}: <strong>{age}</strong></span>
+                <span>•</span>
+                <span>{translateText('Gender')}: <strong>{gender}</strong></span>
+                <span>•</span>
+                <span>{translateText('Blood')}: <strong style={{ color: '#dc2626' }}>{bloodType}</strong></span>
+                <span>•</span>
+                <span>{translateText('State')}: <strong>{stateCode}</strong></span>
               </div>
             </div>
-            <div style={{ fontSize: '11px', textAlign: 'right' }}>
-              <div><span style={{ color: '#059669', fontWeight: 800 }}>● {translateText('This month:')}</span> <strong style={{ color: '#0f172a' }}>{lungsCondition?.metrics?.trendThisMonth || '98.5%'}</strong></div>
-              <div><span style={{ color: '#db2777', fontWeight: 800 }}>● {translateText('Previous:')}</span> <strong style={{ color: '#64748b' }}>{lungsCondition?.metrics?.trendPrevMonth || '96.8%'}</strong></div>
+
+            <div style={{
+              width: '38px',
+              height: '38px',
+              borderRadius: '10px',
+              background: '#f1f5f9',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#0f172a',
+              fontWeight: 800,
+              fontSize: '13px',
+              border: '1px solid #cbd5e1'
+            }}>
+              <QrCode size={20} color="#0284c7" />
             </div>
           </div>
 
-          {/* SVG Spline Graph Container */}
-          <div style={{ height: '54px', width: '100%', position: 'relative', marginTop: '4px' }}>
-            <svg viewBox="0 0 280 54" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
-              <defs>
-                <linearGradient id="oxygenGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#059669" stopOpacity="0.28" />
-                  <stop offset="100%" stopColor="#059669" stopOpacity="0.0" />
-                </linearGradient>
-              </defs>
-
-              {/* Gradient Area Fill */}
-              <path
-                d="M 10 32 Q 70 38 125 20 T 225 10 T 270 14 L 270 54 L 10 54 Z"
-                fill="url(#oxygenGrad)"
-              />
-
-              {/* Previous Month Baseline (Blue dashed curve) */}
-              <path
-                d="M 10 42 Q 70 32 125 40 T 225 48 T 270 45"
-                fill="none"
-                stroke="#f9a8d4"
-                strokeWidth="2"
-                strokeDasharray="4 3"
-              />
-
-              {/* This Month Active (Green solid curve) */}
-              <path
-                d="M 10 32 Q 70 38 125 20 T 225 10 T 270 14"
-                fill="none"
-                stroke="#059669"
-                strokeWidth="2.8"
-                strokeLinecap="round"
-              />
-
-              {/* Peak indicator dot & label */}
-              <circle cx="225" cy="10" r="4.5" fill="#059669" stroke="#ffffff" strokeWidth="2" />
-              <rect x="205" y="-3" width="40" height="15" rx="5" fill="#db2777" />
-              <text x="225" y="8" fill="#ffffff" fontSize="9.5" fontWeight="bold" textAnchor="middle">{lungsCondition?.metrics?.trendThisMonth || '98.5%'}</text>
-            </svg>
-          </div>
-
-          {/* Clean, Non-Overlapping Dates Row */}
+          {/* 14-Digit ABHA ID & Address Row */}
           <div style={{
+            marginTop: '12px',
+            padding: '10px 12px',
+            borderRadius: '10px',
+            background: '#f8fafc',
+            border: '1px dashed #cbd5e1',
             display: 'flex',
             justifyContent: 'space-between',
-            fontSize: '11px',
-            color: '#475569',
-            fontWeight: 700,
-            marginTop: '8px',
-            marginBottom: '16px',
-            padding: '0 4px'
+            alignItems: 'center'
           }}>
-            <span>{translateText('Sep 2')}</span>
-            <span>{translateText('Sep 9')}</span>
-            <span>{translateText('Sep 16')}</span>
-            <span>{translateText('Sep 23')}</span>
-            <span>{translateText('Sep 30')}</span>
+            <div>
+              <div style={{ fontSize: '9.5px', color: '#64748b', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                {translateText('14-Digit ABHA Number')}
+              </div>
+              <div style={{ fontSize: '14px', fontWeight: 900, color: '#0f172a', fontFamily: 'monospace', letterSpacing: '0.04em', marginTop: '1px' }}>
+                {abhaId}
+              </div>
+              <div style={{ fontSize: '11px', color: '#0284c7', fontWeight: 700, marginTop: '2px' }}>
+                {abhaAddress}
+              </div>
+            </div>
+
+            <button
+              onClick={() => handleCopy(abhaId, 'abha')}
+              title={translateText('Copy ABHA ID')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '6px 10px',
+                borderRadius: '8px',
+                border: '1px solid #cbd5e1',
+                background: copiedField === 'abha' ? '#ecfdf5' : '#ffffff',
+                color: copiedField === 'abha' ? '#059669' : '#334155',
+                fontSize: '11px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              {copiedField === 'abha' ? <Check size={13} /> : <Copy size={13} />}
+              <span>{copiedField === 'abha' ? translateText('Copied') : translateText('Copy')}</span>
+            </button>
           </div>
         </div>
 
-        {/* Quick Report Actions */}
-        <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
+        {/* Insurance Coverage & Empanelled Facility */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '8px',
+          fontSize: '11px'
+        }}>
+          <div style={{
+            background: '#ffffff',
+            borderRadius: '10px',
+            padding: '9px 11px',
+            border: '1px solid #e2e8f0'
+          }}>
+            <span style={{ fontSize: '9.5px', color: '#64748b', fontWeight: 800, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>
+              {translateText('PM-JAY Cover')}
+            </span>
+            <span style={{ fontWeight: 800, color: '#059669' }}>
+              ₹5,00,000 / Year
+            </span>
+            <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '1px' }}>
+              {policyNumber}
+            </div>
+          </div>
+
+          <div style={{
+            background: '#ffffff',
+            borderRadius: '10px',
+            padding: '9px 11px',
+            border: '1px solid #e2e8f0'
+          }}>
+            <span style={{ fontSize: '9.5px', color: '#64748b', fontWeight: 800, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>
+              {translateText('Linked HIP')}
+            </span>
+            <span style={{ fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }} title={linkedHip}>
+              {linkedHip.split('(')[0].trim()}
+            </span>
+            <div style={{ fontSize: '10px', color: '#0284c7', marginTop: '1px' }}>
+              {translateText('Digital Node Verified')}
+            </div>
+          </div>
+        </div>
+
+        {/* Quick ABHA Action Strip */}
+        <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
           <button
             onClick={onOpenExportModal}
             style={{
               flex: 1,
-              padding: '9px 14px',
-              borderRadius: '10px',
+              padding: '8px 12px',
+              borderRadius: '9px',
               border: 'none',
               background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
               color: '#ffffff',
-              fontSize: '12px',
-              fontWeight: 700,
+              fontSize: '11.5px',
+              fontWeight: 800,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '6px',
-              boxShadow: '0 2px 6px rgba(2, 132, 199, 0.25)',
-              transition: 'all 0.15s ease'
+              boxShadow: '0 2px 6px rgba(2, 132, 199, 0.25)'
             }}
           >
-            <Plus size={15} />
-            <span>{translateText('+ Add Record / Export')}</span>
+            <Download size={14} />
+            <span>{translateText('Export ABDM Health Card')}</span>
           </button>
+
+          <button
+            onClick={() => handleCopy(`https://synapseos.health/verify?abha=${abhaId}`, 'share')}
+            title={translateText('Share ABHA with Doctor')}
+            style={{
+              padding: '8px 12px',
+              borderRadius: '9px',
+              border: '1px solid #cbd5e1',
+              background: copiedField === 'share' ? '#ecfdf5' : '#ffffff',
+              color: copiedField === 'share' ? '#059669' : '#475569',
+              fontSize: '11.5px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}
+          >
+            {copiedField === 'share' ? <Check size={14} /> : <Share2 size={14} />}
+            <span>{copiedField === 'share' ? translateText('Link Copied') : translateText('Share')}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 2. Navigation Pills: Active Conditions / Diagnostic Records / Care Plan */}
+      <div style={{
+        display: 'flex',
+        background: '#f1f5f9',
+        padding: '3px',
+        borderRadius: '12px',
+        gap: '3px'
+      }}>
+        <button
+          onClick={() => setActiveTab('conditions')}
+          style={{
+            flex: 1,
+            padding: '7px 0',
+            borderRadius: '9px',
+            border: 'none',
+            background: activeTab === 'conditions' ? '#ffffff' : 'transparent',
+            color: activeTab === 'conditions' ? '#0f172a' : '#64748b',
+            fontSize: '11.5px',
+            fontWeight: activeTab === 'conditions' ? 800 : 600,
+            cursor: 'pointer',
+            boxShadow: activeTab === 'conditions' ? '0 2px 5px rgba(0,0,0,0.06)' : 'none',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          {translateText('Clinical Diagnoses')} ({conditions.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab('records')}
+          style={{
+            flex: 1,
+            padding: '7px 0',
+            borderRadius: '9px',
+            border: 'none',
+            background: activeTab === 'records' ? '#ffffff' : 'transparent',
+            color: activeTab === 'records' ? '#0f172a' : '#64748b',
+            fontSize: '11.5px',
+            fontWeight: activeTab === 'records' ? 800 : 600,
+            cursor: 'pointer',
+            boxShadow: activeTab === 'records' ? '0 2px 5px rgba(0,0,0,0.06)' : 'none',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          {translateText('ABDM Records')} ({recordsList.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab('care')}
+          style={{
+            flex: 1,
+            padding: '7px 0',
+            borderRadius: '9px',
+            border: 'none',
+            background: activeTab === 'care' ? '#ffffff' : 'transparent',
+            color: activeTab === 'care' ? '#0f172a' : '#64748b',
+            fontSize: '11.5px',
+            fontWeight: activeTab === 'care' ? 800 : 600,
+            cursor: 'pointer',
+            boxShadow: activeTab === 'care' ? '0 2px 5px rgba(0,0,0,0.06)' : 'none',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          {translateText('Care & Review')}
+        </button>
+      </div>
+
+      {/* 3. TAB 1: Verified Clinical Conditions List */}
+      {activeTab === 'conditions' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {conditions.map((cond, idx) => {
+            const isSelected = selectedCondition?.id === cond.id || (!selectedCondition && idx === 0);
+            const isStable = cond.status?.toLowerCase() === 'stable';
+            const isCritical = cond.status?.toLowerCase() === 'critical';
+
+            return (
+              <div
+                key={cond.id || idx}
+                onClick={() => onSelectCondition(cond)}
+                style={{
+                  background: '#ffffff',
+                  borderRadius: '16px',
+                  border: isSelected ? '1.5px solid #0284c7' : '1px solid #e2e8f0',
+                  padding: '16px',
+                  boxShadow: isSelected ? '0 6px 18px rgba(2, 132, 199, 0.08)' : '0 2px 6px rgba(0,0,0,0.02)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  position: 'relative'
+                }}
+              >
+                {/* Condition Header & Status Badge */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                  <div style={{ paddingRight: '8px' }}>
+                    <h4 style={{ fontSize: '14.5px', fontWeight: 800, color: '#0f172a', margin: '0 0 2px 0' }}>
+                      {translateText(cond.title)}
+                    </h4>
+                    <span style={{ fontSize: '11px', color: '#64748b' }}>
+                      {cond.doctor || 'Dr. Rajesh K. Varma'} • {translateText(cond.specialty || 'General Medicine')}
+                    </span>
+                  </div>
+
+                  <span style={{
+                    fontSize: '10.5px',
+                    fontWeight: 800,
+                    padding: '2px 8px',
+                    borderRadius: '6px',
+                    background: isCritical ? '#fef2f2' : isStable ? '#ecfdf5' : '#fffbeb',
+                    color: isCritical ? '#ef4444' : isStable ? '#059669' : '#d97706',
+                    border: isCritical ? '1px solid #fecaca' : isStable ? '1px solid #a7f3d0' : '1px solid #fde68a',
+                    flexShrink: 0
+                  }}>
+                    {translateText(cond.status || 'Stable')}
+                  </span>
+                </div>
+
+                {/* Doctor's Clinical Assessment Notes */}
+                <div style={{
+                  background: '#f8fafc',
+                  borderRadius: '10px',
+                  padding: '10px 12px',
+                  border: '1px solid #f1f5f9',
+                  marginBottom: '10px'
+                }}>
+                  <p style={{ fontSize: '11.5px', color: '#475569', margin: 0, lineHeight: 1.45 }}>
+                    {translateText(cond.notes || 'Normal clinical findings. Continued routine monitoring.')}
+                  </p>
+                </div>
+
+                {/* Condition Specific Biomarkers (Clean Clinical Metrics) */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  fontSize: '11px',
+                  color: '#64748b',
+                  borderTop: '1px solid #f1f5f9',
+                  paddingTop: '8px'
+                }}>
+                  {cond.metrics?.o2 && (
+                    <span>{translateText('SpO2')}: <strong style={{ color: '#059669' }}>{cond.metrics.o2}</strong></span>
+                  )}
+                  {cond.metrics?.fev1 && (
+                    <span>{translateText('FEV1')}: <strong style={{ color: '#0f172a' }}>{cond.metrics.fev1}</strong></span>
+                  )}
+                  {cond.metrics?.heartRate && (
+                    <span>{translateText('Heart Rate')}: <strong style={{ color: '#0f172a' }}>{cond.metrics.heartRate}</strong></span>
+                  )}
+                  {cond.angleCurrent && (
+                    <span>{translateText('ROM Range')}: <strong style={{ color: '#0284c7' }}>{cond.angleCurrent}°</strong></span>
+                  )}
+                  {cond.painLevel !== undefined && (
+                    <span>{translateText('Pain Index')}: <strong style={{ color: cond.painLevel > 3 ? '#d97706' : '#059669' }}>{cond.painLevel}/10</strong></span>
+                  )}
+                  <span style={{ fontSize: '10px', color: '#94a3b8' }}>
+                    {cond.lastUpdated ? translateText(cond.lastUpdated) : translateText('ABDM Synced')}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* 4. TAB 2: Verified ABDM Digital Health Records */}
+      {activeTab === 'records' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {recordsList.map((rec: any, i: number) => (
+            <div
+              key={rec.id || i}
+              style={{
+                background: '#ffffff',
+                borderRadius: '14px',
+                border: '1px solid #e2e8f0',
+                padding: '14px',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <FileText size={15} color="#0284c7" />
+                  <span style={{ fontSize: '13px', fontWeight: 800, color: '#0f172a' }}>
+                    {translateText(rec.title || rec.type || 'Diagnostic Clinical Report')}
+                  </span>
+                </div>
+                <span style={{
+                  fontSize: '9.5px',
+                  fontWeight: 800,
+                  color: '#059669',
+                  background: '#ecfdf5',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  border: '1px solid #a7f3d0'
+                }}>
+                  {translateText('FHIR Verified')}
+                </span>
+              </div>
+
+              <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '8px' }}>
+                {translateText(rec.facility || 'AIIMS Department')} • {rec.timestamp}
+              </div>
+
+              <div style={{
+                fontSize: '10px',
+                fontFamily: 'monospace',
+                background: '#f8fafc',
+                padding: '4px 8px',
+                borderRadius: '6px',
+                color: '#64748b',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <span>{translateText('Record ID')}: {rec.id || `REC-ABDM-${i + 1}`}</span>
+                <span style={{ color: '#0284c7', fontWeight: 700 }}>ABDM R4 Bundle</span>
+              </div>
+            </div>
+          ))}
+
           <button
             onClick={onOpenExportModal}
-            title={translateText('Download PDF')}
             style={{
-              width: '38px',
-              height: '38px',
+              width: '100%',
+              padding: '10px',
               borderRadius: '10px',
-              border: '1px solid #e2e8f0',
-              background: '#f8fafc',
-              color: '#475569',
+              border: '1px dashed #0284c7',
+              background: '#f0f9ff',
+              color: '#0284c7',
+              fontSize: '12px',
+              fontWeight: 800,
+              cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease'
+              gap: '6px',
+              marginTop: '4px'
             }}
           >
-            <Download size={15} />
+            <Download size={14} />
+            <span>{translateText('Download Complete ABDM History Bundle')}</span>
           </button>
         </div>
-      </div>
+      )}
 
-      {/* 2. Left Shoulder Joint Mobility */}
-      <div 
-        className="orch-card-interactive"
-        onClick={() => shoulderCondition && onSelectCondition(shoulderCondition)}
-        style={{
-          background: '#ffffff',
-          borderRadius: '20px',
-          border: selectedCondition?.organ === 'shoulder' ? '1.5px solid #f59e0b' : '1px solid #e2e8f0',
-          padding: '18px',
-          boxShadow: selectedCondition?.organ === 'shoulder' ? '0 6px 20px rgba(245,158,11,0.08)' : '0 4px 14px rgba(0,0,0,0.03)',
-          transition: 'all 0.2s ease',
-          cursor: 'pointer'
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-          <div>
-            <h3 style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', margin: '0 0 2px 0' }}>
-              {translateText(shoulderCondition?.title || 'Cervical & Trapezius Desk Ergonomics')}
-            </h3>
-            <span style={{ fontSize: '11px', color: '#64748b' }}>
-              {shoulderCondition?.doctor || 'Dr. Rajesh K. Varma'} • {translateText(shoulderCondition?.specialty || 'Orthopedics')}
-            </span>
-          </div>
-          <span style={{
-            fontSize: '10px',
-            fontWeight: 800,
-            color: (shoulderCondition?.painLevel || 3) > 3 ? '#d97706' : '#059669',
-            background: (shoulderCondition?.painLevel || 3) > 3 ? '#fffbeb' : '#ecfdf5',
-            padding: '2px 8px',
-            borderRadius: '6px',
-            border: (shoulderCondition?.painLevel || 3) > 3 ? '1px solid #fde68a' : '1px solid #a7f3d0'
-          }}>
-            {translateText(shoulderCondition?.status || 'Monitoring')}
-          </span>
-        </div>
-
-        <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', marginBottom: '8px' }}>
-          {translateText(shoulderCondition?.notes || 'Pain Severity Index (4/20) • Mild trapezius stiffness from display work')}
-        </div>
-        <div style={{ display: 'flex', gap: '4px' }}>
-          {Array.from({ length: 20 }).map((_, i) => (
-            <div
-              key={i}
-              style={{
-                flex: 1,
-                height: '20px',
-                borderRadius: '4px',
-                background: i < (shoulderCondition?.painLevel || 3) 
-                  ? 'linear-gradient(180deg, #38bdf8 0%, #0284c7 100%)' 
-                  : '#f1f5f9'
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* 3. Patellar & Knee Biomechanics Card with X-Ray Asset */}
-      <div 
-        className="orch-card-interactive"
-        onClick={() => kneeCondition && onSelectCondition(kneeCondition)}
-        style={{
-          background: '#ffffff',
-          borderRadius: '20px',
-          border: selectedCondition?.organ === 'knee' ? '1.5px solid #0284c7' : '1px solid #e2e8f0',
-          padding: '18px',
-          boxShadow: selectedCondition?.organ === 'knee' ? '0 6px 20px rgba(2,132,199,0.08)' : '0 4px 14px rgba(0,0,0,0.03)',
-          transition: 'all 0.2s ease',
-          cursor: 'pointer'
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-          <div>
-            <h3 style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', margin: '0 0 2px 0' }}>
-              {translateText(kneeCondition?.title || 'Patellar Joint Biomechanics')}
-            </h3>
-            <span style={{ fontSize: '11px', color: '#64748b' }}>
-              {kneeCondition?.doctor || 'Dr. Naresh Trehan'} • {translateText(kneeCondition?.specialty || 'Orthopedics')}
-            </span>
-          </div>
-          <span style={{
-            fontSize: '10px',
-            fontWeight: 800,
-            color: kneeCondition?.status === 'Critical' ? '#ef4444' : '#059669',
-            background: kneeCondition?.status === 'Critical' ? '#fef2f2' : '#ecfdf5',
-            padding: '2px 8px',
-            borderRadius: '6px',
-            border: kneeCondition?.status === 'Critical' ? '1px solid #fecaca' : '1px solid #a7f3d0'
-          }}>
-            {translateText(kneeCondition?.status || 'Stable')}
-          </span>
-        </div>
-
-        <div style={{ display: 'flex', gap: '14px', alignItems: 'center', margin: '8px 0' }}>
-          {/* Orthopedic Knee X-Ray Asset Preview */}
+      {/* 5. TAB 3: Care Plan, Prescriptions & Next Doctor Review */}
+      {activeTab === 'care' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {/* Next Doctor Appointment */}
           <div style={{
-            width: '68px',
-            height: '68px',
-            borderRadius: '12px',
-            overflow: 'hidden',
-            border: '1.5px solid #0284c7',
-            flexShrink: 0,
-            boxShadow: '0 2px 8px rgba(2,132,199,0.15)'
+            background: '#ffffff',
+            borderRadius: '16px',
+            border: '1px solid #e2e8f0',
+            padding: '16px',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
           }}>
-            <img
-              src="/images/knee_xray_scan.jpg"
-              alt="Left Knee Orthopedic X-Ray"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+              <Calendar size={16} color="#0284c7" />
+              <h4 style={{ fontSize: '13.5px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                {translateText('Next Scheduled Review')}
+              </h4>
+            </div>
+
+            <div style={{
+              background: '#f0f9ff',
+              borderRadius: '12px',
+              padding: '12px',
+              border: '1px solid #bae6fd',
+              marginBottom: '10px'
+            }}>
+              <div style={{ fontSize: '13px', fontWeight: 800, color: '#0369a1' }}>
+                {nextAppointment.doctor}
+              </div>
+              <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>
+                {translateText(nextAppointment.specialty || 'General Medicine')} • {translateText(nextAppointment.mode || 'Teleconsultation')}
+              </div>
+              <div style={{ fontSize: '11.5px', fontWeight: 700, color: '#0f172a', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Clock size={12} color="#0284c7" />
+                <span>{nextAppointment.date}</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                if (onNavigateToChatTab) onNavigateToChatTab();
+                else if (typeof window !== 'undefined') {
+                  window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'chat' } }));
+                }
+              }}
+              style={{
+                width: '100%',
+                padding: '9px 12px',
+                borderRadius: '10px',
+                border: 'none',
+                background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                color: '#ffffff',
+                fontSize: '11.5px',
+                fontWeight: 800,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px'
+              }}
+            >
+              <Bot size={14} />
+              <span>{translateText('Prepare Consultation Brief with AI')}</span>
+            </button>
           </div>
 
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>
-              <span>{translateText('Current Range')}: <strong style={{ color: '#0f172a' }}>{kneeCondition?.angleCurrent || 119}°</strong></span>
-              <span>{translateText('Target')}: <strong style={{ color: '#059669' }}>{kneeCondition?.angleNormal || 120}°</strong></span>
+          {/* Prescribed Medications & Jan Aushadhi Savings */}
+          <div style={{
+            background: '#ffffff',
+            borderRadius: '16px',
+            border: '1px solid #e2e8f0',
+            padding: '16px',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Pill size={16} color="#059669" />
+                <h4 style={{ fontSize: '13.5px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                  {translateText('Active Care Plan & Prescriptions')}
+                </h4>
+              </div>
+              <span style={{
+                fontSize: '10px',
+                fontWeight: 800,
+                color: '#059669',
+                background: '#ecfdf5',
+                padding: '2px 7px',
+                borderRadius: '6px',
+                border: '1px solid #a7f3d0'
+              }}>
+                {(carePlan as any)?.medicationPercent || 100}% {translateText('Adherent')}
+              </span>
             </div>
-            <p style={{ fontSize: '11px', color: '#64748b', margin: 0, lineHeight: 1.4 }}>
-              {translateText(kneeCondition?.notes || 'Healthy joint space. Full physiological range of motion.')}
-            </p>
+
+            <div style={{ fontSize: '12px', color: '#334155', fontWeight: 700, marginBottom: '6px' }}>
+              • {(carePlan as any)?.medicationStatus || (carePlan as any)?.medication?.title || 'Multivitamin & Omega-3 Complete (1 tab after food)'}
+            </div>
+            <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '10px' }}>
+              • {translateText('Dolo 650 mg (Paracetamol) - SOS for mild headache/fever after food')}
+            </div>
+
+            {/* Jan Aushadhi generic dispensary notice */}
+            <div style={{
+              background: '#f0fdf4',
+              borderRadius: '10px',
+              padding: '9px 12px',
+              border: '1px solid #bbf7d0',
+              fontSize: '11px',
+              color: '#166534',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              <CheckCircle2 size={14} color="#16a34a" />
+              <span>{translateText('Jan Aushadhi Generic alternatives available at 85% reduced cost.')}</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
+      {/* 6. In-Dashboard AI Swarm Assistance Link */}
+      <div 
+        onClick={() => {
+          if (onNavigateToChatTab) onNavigateToChatTab();
+          else if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'chat' } }));
+          }
+        }}
+        style={{
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+          borderRadius: '16px',
+          padding: '14px 16px',
+          color: '#ffffff',
+          cursor: 'pointer',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          boxShadow: '0 4px 14px rgba(15, 23, 42, 0.15)',
+          transition: 'transform 0.15s ease'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{
+            width: '34px',
+            height: '34px',
+            borderRadius: '10px',
+            background: 'rgba(255, 255, 255, 0.12)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Bot size={18} color="#38bdf8" />
+          </div>
+          <div>
+            <div style={{ fontSize: '13px', fontWeight: 800 }}>
+              {translateText('Query Health Assistant')}
+            </div>
+            <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+              {translateText('ABDM Swarm & OTC Safety Check')}
+            </div>
+          </div>
+        </div>
+
+        <ChevronRight size={18} color="#94a3b8" />
+      </div>
     </div>
   );
 }

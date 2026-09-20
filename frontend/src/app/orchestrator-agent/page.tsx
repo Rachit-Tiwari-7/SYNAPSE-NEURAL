@@ -444,12 +444,18 @@ export default function OrchestratorAgentPage() {
                   onNavigateToSwarmTab={() => setActiveTab('swarm')}
                 />
 
-                {/* Right Column: Conditions, Diagnostic X-Rays & Telemetry */}
+                {/* Right Column: Active ABHA Health Records & Verified Clinical Conditions */}
                 <ClinicalConditionsPanel
+                  patient={patient}
+                  activeProfile={activeProfile}
+                  vitals={vitals}
+                  isAbhaLinked={isAbhaLinked}
                   conditions={conditions}
                   selectedCondition={selectedCondition}
                   onSelectCondition={setSelectedCondition}
                   onOpenExportModal={() => setIsExportModalOpen(true)}
+                  onNavigateToSwarmTab={() => setActiveTab('swarm')}
+                  onNavigateToChatTab={() => setActiveTab('chat')}
                 />
               </div>
             )}
