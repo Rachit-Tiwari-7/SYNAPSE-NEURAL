@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getSigner, isContractReady, getDeployedNetwork } from '@/lib/blockchain/contract';
-import { fetchBlockchainRecords, deleteBlockchainRecord, BlockchainRecord } from '@/lib/supabase';
+import { fetchBlockchainRecords, deleteBlockchainRecord, HealthRecord } from '@/lib/supabase';
 import { PatientInfo } from '../types';
 import { MockHealthProfile, MOCK_HEALTH_PROFILES } from '@/data/mockHealthProfiles';
 
@@ -25,7 +24,7 @@ function parseYearOfBirth(dob?: string, age?: number, fallbackYear: string = '20
 }
 
 export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
-  const [activeTab, setActiveTab] = useState<'abha' | 'passport' | 'vaccination' | 'blockchain' | 'verify'>('abha');
+  const [activeTab, setActiveTab] = useState<'abha' | 'passport' | 'vaccination'>('abha');
   
   // Active Profile ID tracking
   const [currentProfileId, setCurrentProfileId] = useState<string>(
@@ -45,34 +44,22 @@ export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
   // Registry Cache
   const [registry, setRegistry] = useState<any[]>([]);
 
-  // Wallet state
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
-  const [walletMode, setWalletMode] = useState<'burner' | 'metamask'>('burner');
-  const [contractOk, setContractOk] = useState(false);
-  const [networkName, setNetworkName] = useState('sepolia');
-  const [connecting, setConnecting] = useState(false);
-  const [walletError, setWalletError] = useState<string | null>(null);
-
-  // Blockchain Records list
+  // Health Records list
   const [records, setRecords] = useState<any[]>([]);
 
-  // Verification state
-  const [verifyCid, setVerifyCid] = useState('');
-  const [verifyResult, setVerifyResult] = useState<any>(null);
-
-  // Refresh records from Supabase
+  // Refresh records from Supabase / localStorage
   const loadSupabaseRecords = useCallback(async (profileId: string, abhaId?: string, fallbackRecords?: any[]) => {
     try {
       const dbRecords = await fetchBlockchainRecords(profileId, abhaId);
       if (dbRecords && dbRecords.length > 0) {
         // Normalize fields for UI display
-        const normalized = dbRecords.map((r: BlockchainRecord) => ({
+        const normalized = dbRecords.map((r: HealthRecord) => ({
           id: r.id,
           profile_id: r.profile_id,
           patient: r.patient_name,
           abha: r.abha_number,
-          hash: r.tx_hash,
-          cid: r.cid,
+          hash: r.tx_hash || 'Verified-ABDM-Record',
+          cid: r.cid || r.id,
           type: r.record_type,
           timestamp: r.timestamp_raw,
           facility: r.facility,
@@ -82,7 +69,7 @@ export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
         return;
       }
     } catch (err) {
-      console.warn('Error loading records from Supabase:', err);
+      console.warn('Error loading records from database:', err);
     }
 
     if (fallbackRecords) {
@@ -125,65 +112,29 @@ export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
       pm_jay_benefit: '₹5,00,000 / Year Free Hospitalization Coverage (PM-JAY)',
       linked_hip: citizenHip,
       state_code: citizenState,
-      avatar_url: matchedCitizen?.avatarUrl || matchedMock.patient ? `/images/${matchedMock.patient.name.toLowerCase().replace(/\s+/g, '_')}.jpg` : '',
-      device: matchedCitizen?.device || matchedMock.device?.name || 'Wearable HealthKit Synced'
+      avatar_url: matchedCitizen?.avatarUrl || (matchedMock.patient ? `/images/${matchedMock.patient.name.toLowerCase().replace(/\s+/g, '_')}.jpg` : ''),
+      device: matchedCitizen?.device || matchedMock.device?.name || 'Ayushman Bharat Verified'
     });
 
     const citizenFallbackRecords = matchedCitizen?.blockchainRecords || [
       {
-        id: `REC-0x${Math.floor(1000 + Math.random() * 9000)}-${citizenName.slice(0, 2).toUpperCase()}`,
+        id: `REC-${Math.floor(1000 + Math.random() * 9000)}-${citizenName.slice(0, 2).toUpperCase()}`,
         profile_id: profileId,
         patient: citizenName,
         abha: citizenAbha,
-        hash: '8f4e2b81239c09a8e74b321098ef69c1a76d8e209841af09',
-        cid: 'QmZ4tDuvesekSs4qM5ZBKpXiZGun7S2CYtEZRB3DYXkjGx',
-        type: 'Chest X-Ray & Triage Report',
+        type: 'Clinical Health Summary & Triage',
         timestamp: '2026-08-18 11:45 UTC',
         facility: citizenHip,
         verified: true
       }
     ];
 
-    // Load persistent records from Supabase
+    // Load persistent records
     loadSupabaseRecords(profileId, citizenAbha, citizenFallbackRecords);
   }, [registry, props?.patient, loadSupabaseRecords]);
 
-  // Load ABDM Registry JSON & setup wallet listeners on mount
+  // Load ABDM Registry JSON on mount
   useEffect(() => {
-    isContractReady().then(setContractOk).catch(() => setContractOk(false));
-    getDeployedNetwork().then(setNetworkName).catch(() => setNetworkName('sepolia'));
-    connectBurner();
-
-    // Setup MetaMask listeners if available
-    const eth = (typeof window !== 'undefined' && (window as any).ethereum);
-    if (eth && typeof eth.on === 'function') {
-      const handleAccountsChanged = (accounts: string[]) => {
-        if (accounts && accounts.length > 0) {
-          setWalletAddress(accounts[0]);
-          setWalletMode('metamask');
-          setWalletError(null);
-        } else {
-          // Disconnected
-          connectBurner();
-        }
-      };
-
-      const handleChainChanged = () => {
-        isContractReady().then(setContractOk).catch(() => setContractOk(false));
-      };
-
-      eth.on('accountsChanged', handleAccountsChanged);
-      eth.on('chainChanged', handleChainChanged);
-
-      return () => {
-        if (typeof eth.removeListener === 'function') {
-          eth.removeListener('accountsChanged', handleAccountsChanged);
-          eth.removeListener('chainChanged', handleChainChanged);
-        }
-      };
-    }
-
-    // Fetch abha_registry.json
     fetch('/data/mockHealthData/abha_registry.json')
       .then((res) => res.json())
       .then((data) => {
@@ -233,47 +184,6 @@ export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
       localStorage.setItem('synapseos_selected_profile_id', profileId);
     }
   };
-
-  async function connectBurner() {
-    setConnecting(true);
-    setWalletError(null);
-    try {
-      const net = await getDeployedNetwork();
-      setNetworkName(net);
-      const signer = await getSigner('burner');
-      const addr = await signer.getAddress();
-      setWalletAddress(addr);
-      setWalletMode('burner');
-      const ready = await isContractReady();
-      setContractOk(ready);
-    } catch (err: any) {
-      if (networkName !== 'sepolia') {
-        setWalletError('Cannot connect to local Hardhat node. Is it running?');
-      } else {
-        setWalletError('Cannot connect to Sepolia RPC. Check your connection.');
-      }
-    } finally {
-      setConnecting(false);
-    }
-  }
-
-  async function connectMetaMask() {
-    setConnecting(true);
-    setWalletError(null);
-    try {
-      const signer = await getSigner('metamask');
-      const addr = await signer.getAddress();
-      setWalletAddress(addr);
-      setWalletMode('metamask');
-      const ready = await isContractReady();
-      setContractOk(ready);
-    } catch (err: any) {
-      const msg = err.message || 'MetaMask connection failed';
-      setWalletError(msg);
-    } finally {
-      setConnecting(false);
-    }
-  }
 
   const handleGenerateAbha = async () => {
     setLoading(true);
@@ -339,7 +249,7 @@ export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
         body: JSON.stringify({
           patient_name: name,
           abha_id: abhaData?.abha_number || '91-7294-8102-5309',
-          triage_summary: `SynapseOS AI Clinical Triage for ${name}: Vitals stable, verified ABDM record.`
+          triage_summary: `Sanjeevni-OS Clinical Triage for ${name}: Vitals stable, verified ABDM record.`
         })
       });
       if (res.ok) {
@@ -347,7 +257,7 @@ export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `SynapseOS_Health_Passport_${name.replace(/\s+/g, '_')}.pdf`;
+        a.download = `Sanjeevni_Health_Passport_${name.replace(/\s+/g, '_')}.pdf`;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -359,32 +269,10 @@ export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
     }
   };
 
-  const handleVerify = () => {
-    if (!verifyCid) return;
-    const match = records.find(r => r.cid?.toLowerCase().includes(verifyCid.toLowerCase()) || r.hash?.toLowerCase().includes(verifyCid.toLowerCase()));
-    if (match) {
-      setVerifyResult({
-        status: 'VALID',
-        message: `Cryptographic SHA-256 integrity verified for ${name} against Ethereum registry digest.`,
-        record: match
-      });
-    } else {
-      setVerifyResult({
-        status: 'VALID_EXTERNAL',
-        message: 'Valid IPFS hash structure recognized. Hash matches simulated on-chain registry digest.',
-        record: {
-          cid: verifyCid,
-          fileHash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-          timestamp: new Date().toISOString()
-        }
-      });
-    }
-  };
-
   const handleDeleteRecord = useCallback(async (recordId: string) => {
     try {
       await deleteBlockchainRecord(recordId);
-      setRecords((prev) => prev.filter((r) => r.id !== recordId && r.cid !== recordId));
+      setRecords((prev) => prev.filter((r) => r.id !== recordId));
     } catch (err) {
       console.error('Failed to delete record:', err);
     }
@@ -401,14 +289,17 @@ export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
     loading, setLoading,
     downloading, setDownloading,
     records, setRecords,
-    verifyCid, setVerifyCid,
-    verifyResult, setVerifyResult,
     handleGenerateAbha,
     handleDownloadPdf,
-    handleVerify,
     handleDeleteRecord,
-    walletAddress, walletMode, contractOk, networkName, connecting, walletError,
-    connectBurner, connectMetaMask,
+    walletAddress: null,
+    walletMode: 'burner',
+    contractOk: false,
+    networkName: 'abdm',
+    connecting: false,
+    walletError: null,
+    connectBurner: () => {},
+    connectMetaMask: () => {},
     refreshRecords: () => loadSupabaseRecords(currentProfileId, abhaData?.abha_number)
   };
 }

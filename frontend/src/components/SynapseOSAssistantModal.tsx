@@ -103,6 +103,23 @@ export default function SynapseOSAssistantModal() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFullscreen]);
 
+  // Support external triggers for AI Health Chat and Voice Agent
+  React.useEffect(() => {
+    const handleOpen = (e: any) => {
+      setIsOpen(true);
+      if (e.detail?.mode === 'voice') {
+        if (!isVoiceMode && !callActive) {
+          toggleVoiceCall();
+        }
+      }
+      if (e.detail?.fullscreen) {
+        setIsFullscreen(true);
+      }
+    };
+    window.addEventListener('synapseos-open-assistant', handleOpen);
+    return () => window.removeEventListener('synapseos-open-assistant', handleOpen);
+  }, [setIsOpen, toggleVoiceCall, isVoiceMode, callActive]);
+
   // Hide assistant trigger on 3D Model / Vibrant page so it does not interfere
   if (pathname === '/vibrant' || pathname?.startsWith('/vibrant')) {
     return null;

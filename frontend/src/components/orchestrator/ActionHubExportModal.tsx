@@ -6,28 +6,17 @@ import {
   FileDown, 
   FileCode, 
   CheckCircle2, 
-  AlertOctagon, 
-  ExternalLink,
   ShieldCheck,
-  Send,
-  Activity,
   Download,
   Copy,
   Check,
   Radio,
   Siren,
-  PhoneCall,
-  MapPin,
   RefreshCw,
-  Eye,
-  FileText,
   User,
   Fingerprint,
   Calendar,
-  Droplet,
-  Sparkles,
-  AlertTriangle,
-  FileSpreadsheet
+  Droplet
 } from 'lucide-react';
 import { PatientInfo } from './types';
 import { useLanguage } from '@/context/LanguageContext';
@@ -55,13 +44,9 @@ export default function ActionHubExportModal({
   const [fhirData, setFhirData] = useState<any>(null);
   const [fhirCopied, setFhirCopied] = useState(false);
 
-  const [exportingDossier, setExportingDossier] = useState(false);
-  const [dossierData, setDossierData] = useState<any>(null);
-  const [dossierSuccess, setDossierSuccess] = useState(false);
-
   const [sosStatus, setSosStatus] = useState<any>(null);
   const [isSosLoading, setIsSosLoading] = useState(false);
-  const [activePreviewTab, setActivePreviewTab] = useState<'none' | 'fhir' | 'dossier'>('none');
+  const [activePreviewTab, setActivePreviewTab] = useState<'none' | 'fhir'>('none');
 
   // Direct Wheel Event Handler ensuring smooth cursor wheel scrolling irrespective of Lenis or smooth scroll hooks
   useEffect(() => {
@@ -166,11 +151,10 @@ Primary Physician: Dr. Rajesh K. Varma, MD (AIIMS Pulmonology & Critical Care)
 1. Multivitamin & Omega-3 Complete — 1 Tab Daily (PM-JAY Scheme)
 2. Vitamin D3 60,000 IU — 1 Cap Weekly x 4 Weeks
 
-5. TAMPER-EVIDENT CRYPTOGRAPHIC BLOCKCHAIN STAMP
+5. AYUSHMAN BHARAT DIGITAL MISSION (ABDM) VERIFIED RECORD
 ------------------------------------------------------------------------
-Registry ID:      SANJ-REC-${Date.now().toString(16).toUpperCase()}
-SHA-256 Digest:   8f4e2b81239c09a8e74b321098ef69c1a76d8e209841af09
-IPFS CID Anchor:  QmZ4tDuvesekSs4qM5ZBKpXiZGun7S2CYtEZRB3DYXkjGx
+Registry ID:      ABDM-REC-${Date.now().toString(16).toUpperCase()}
+Digital Seal:     GOVT-OF-INDIA-ABDM-SECURE-HEALTH-RECORDS-GATEWAY
 Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8102-5309'}
 ========================================================================`;
       
@@ -263,66 +247,7 @@ Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8
     }
   };
 
-  // 3. Export 30-Day Wearables Telemetry Dossier
-  const handleExportDossier = async () => {
-    setExportingDossier(true);
-    setDossierSuccess(false);
-    try {
-      const pName = patient.name || 'Mausam Kar';
-      const pId = patient.abhaId || 'PAT-91-7294';
-      const res = await fetch(`${API_BASE}/api/wearables/dossier?patient_id=${encodeURIComponent(pId)}&patient_name=${encodeURIComponent(pName)}`);
-      
-      let data: any;
-      if (res.ok) {
-        data = await res.json();
-      } else {
-        data = {
-          patient_name: pName,
-          patient_id: pId,
-          dossier_period: "Past 30 Days (Real-Time Archive)",
-          device_sources: ["Apple Watch Ultra 2", "Google Health Connect", "Fitbit Sense 2"],
-          fhir_standard: "HL7 FHIR R4",
-          metrics_summary: {
-            avg_resting_heart_rate_bpm: 64,
-            avg_spo2_percent: 98.6,
-            avg_hrv_ms: 68,
-            avg_sleep_hours: "7h 48m",
-            avg_daily_steps: 10480,
-            total_ecg_recordings: 30,
-            cardiac_sinus_rhythm_ratio: "100% Normal"
-          },
-          telemetry_stream: Array.from({ length: 30 }, (_, i) => ({
-            date: `2026-08-${String(i + 1).padStart(2, '0')}`,
-            resting_hr: 62 + (i % 5),
-            spo2: Number((98.2 + (i % 3) * 0.4).toFixed(1)),
-            steps: 9800 + (i * 120),
-            sleep_hours: `${7 + (i % 2)}h ${20 + (i % 35)}m`,
-            sleep_score: 85 + (i % 8),
-            ecg_status: "Normal Sinus Rhythm (Lead I)"
-          }))
-        };
-      }
-
-      setDossierData(data);
-      setActivePreviewTab('dossier');
-      setDossierSuccess(true);
-      setTimeout(() => setDossierSuccess(false), 5000);
-
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `SynapseOS_Wearables_30Day_Dossier_${pName.replace(/\s+/g, '_')}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    } catch (e) {
-      console.error('Dossier export error:', e);
-    } finally {
-      setExportingDossier(false);
-    }
-  };
-
-  // 4. 1-Click Emergency SOS Dispatch
+  // 3. 1-Click Emergency SOS Dispatch
   const handleTriggerSOS = async () => {
     setIsSosLoading(true);
     try {
@@ -694,14 +619,14 @@ Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8
           )}
         </div>
 
-        {/* 2. Actions Grid (3 Polished Cards) */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+        {/* 2. Actions Grid (2 Polished Cards) */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
           
           {/* Card 1: Clinical PDF */}
           <div style={{
             border: pdfSuccess ? '1.5px solid #a7f3d0' : '1px solid #e2e8f0',
             borderRadius: '18px',
-            padding: '14px',
+            padding: '16px',
             background: pdfSuccess ? '#ecfdf5' : '#ffffff',
             display: 'flex',
             flexDirection: 'column',
@@ -712,32 +637,32 @@ Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8
           }}>
             <div>
               <div style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '9px',
+                width: '36px',
+                height: '36px',
+                borderRadius: '10px',
                 background: '#fdf2f8',
                 border: '1px solid #fbcfe8',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#db2777',
-                marginBottom: '8px'
+                marginBottom: '10px'
               }}>
-                <FileDown size={17} />
+                <FileDown size={19} />
               </div>
 
-              <div style={{ fontSize: '13px', fontWeight: 800, color: '#0f172a', marginBottom: '3px' }}>
+              <div style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', marginBottom: '3px' }}>
                 {t('card_pdf_title', 'Clinical PDF')}
               </div>
-              <p style={{ fontSize: '10.5px', color: '#64748b', margin: '0 0 12px 0', lineHeight: 1.35 }}>
-                {t('card_pdf_desc', 'Official summary with blockchain hash & QR code.')}
+              <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 14px 0', lineHeight: 1.4 }}>
+                {t('card_pdf_desc', 'Official clinical summary with ABDM digital seal & QR code.')}
               </p>
             </div>
 
             <div>
               {pdfSuccess && (
-                <div style={{ fontSize: '10.5px', color: '#059669', fontWeight: 700, marginBottom: '5px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <CheckCircle2 size={12} /> {translateText('PDF Downloaded!')}
+                <div style={{ fontSize: '11px', color: '#059669', fontWeight: 700, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <CheckCircle2 size={13} /> {translateText('PDF Downloaded!')}
                 </div>
               )}
               <button
@@ -745,23 +670,23 @@ Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8
                 disabled={downloadingPdf}
                 style={{
                   width: '100%',
-                  padding: '8px 10px',
-                  borderRadius: '9px',
+                  padding: '10px 14px',
+                  borderRadius: '10px',
                   border: 'none',
                   background: 'linear-gradient(135deg, #db2777 0%, #be185d 100%)',
                   color: '#ffffff',
-                  fontSize: '11px',
+                  fontSize: '12px',
                   fontWeight: 800,
                   cursor: downloadingPdf ? 'not-allowed' : 'pointer',
                   boxShadow: '0 3px 10px rgba(219, 39, 119, 0.25)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '5px',
+                  gap: '6px',
                   transition: 'all 0.15s ease'
                 }}
               >
-                {downloadingPdf ? <RefreshCw size={12} className="animate-spin" /> : <Download size={12} />}
+                {downloadingPdf ? <RefreshCw size={13} className="animate-spin" /> : <Download size={13} />}
                 {downloadingPdf ? translateText('Compiling...') : t('btn_download_pdf', 'Download PDF')}
               </button>
             </div>
@@ -771,7 +696,7 @@ Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8
           <div style={{
             border: activePreviewTab === 'fhir' ? '1.5px solid #a7f3d0' : '1px solid #e2e8f0',
             borderRadius: '18px',
-            padding: '14px',
+            padding: '16px',
             background: activePreviewTab === 'fhir' ? '#f0fdf4' : '#ffffff',
             display: 'flex',
             flexDirection: 'column',
@@ -781,24 +706,24 @@ Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8
           }}>
             <div>
               <div style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '9px',
+                width: '36px',
+                height: '36px',
+                borderRadius: '10px',
                 background: '#ecfdf5',
                 border: '1px solid #a7f3d0',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#059669',
-                marginBottom: '8px'
+                marginBottom: '10px'
               }}>
-                <FileCode size={17} />
+                <FileCode size={19} />
               </div>
 
-              <div style={{ fontSize: '13px', fontWeight: 800, color: '#0f172a', marginBottom: '3px' }}>
+              <div style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', marginBottom: '3px' }}>
                 {t('card_fhir_title', 'HL7 FHIR R4')}
               </div>
-              <p style={{ fontSize: '10.5px', color: '#64748b', margin: '0 0 12px 0', lineHeight: 1.35 }}>
+              <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 14px 0', lineHeight: 1.4 }}>
                 {t('card_fhir_desc', 'JSON bundle for hospital EHR & ABHA locker.')}
               </p>
             </div>
@@ -809,101 +734,32 @@ Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8
                 disabled={exportingFhir}
                 style={{
                   width: '100%',
-                  padding: '8px 10px',
-                  borderRadius: '9px',
+                  padding: '10px 14px',
+                  borderRadius: '10px',
                   border: 'none',
                   background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
                   color: '#ffffff',
-                  fontSize: '11px',
+                  fontSize: '12px',
                   fontWeight: 800,
                   cursor: exportingFhir ? 'not-allowed' : 'pointer',
                   boxShadow: '0 3px 10px rgba(5, 150, 105, 0.25)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '5px',
+                  gap: '6px',
                   transition: 'all 0.15s ease'
                 }}
               >
-                {exportingFhir ? <RefreshCw size={12} className="animate-spin" /> : <FileCode size={12} />}
+                {exportingFhir ? <RefreshCw size={13} className="animate-spin" /> : <FileCode size={13} />}
                 {exportingFhir ? translateText('Generating...') : t('btn_generate_fhir', 'Generate Bundle')}
-              </button>
-            </div>
-          </div>
-
-          {/* Card 3: Wearables Dossier */}
-          <div style={{
-            border: dossierSuccess || activePreviewTab === 'dossier' ? '1.5px solid #fbcfe8' : '1px solid #e2e8f0',
-            borderRadius: '18px',
-            padding: '14px',
-            background: dossierSuccess || activePreviewTab === 'dossier' ? '#fdf2f8' : '#ffffff',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
-            transition: 'all 0.2s ease'
-          }}>
-            <div>
-              <div style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '9px',
-                background: '#fdf2f8',
-                border: '1px solid #fbcfe8',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#831843',
-                marginBottom: '8px'
-              }}>
-                <Activity size={17} />
-              </div>
-
-              <div style={{ fontSize: '13px', fontWeight: 800, color: '#831843', marginBottom: '3px' }}>
-                {t('card_dossier_title', 'Wearables Dossier')}
-              </div>
-              <p style={{ fontSize: '10.5px', color: '#9d174d', margin: '0 0 12px 0', lineHeight: 1.35 }}>
-                {t('card_dossier_desc', 'Apple Watch & Pixel Watch 30-day vitals archive.')}
-              </p>
-            </div>
-
-            <div>
-              {dossierSuccess && (
-                <div style={{ fontSize: '10.5px', color: '#831843', fontWeight: 700, marginBottom: '5px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <CheckCircle2 size={12} /> {translateText('Dossier Exported!')}
-                </div>
-              )}
-              <button
-                onClick={handleExportDossier}
-                disabled={exportingDossier}
-                style={{
-                  width: '100%',
-                  padding: '8px 10px',
-                  borderRadius: '9px',
-                  border: 'none',
-                  background: 'linear-gradient(135deg, #831843 0%, #701a75 100%)',
-                  color: '#ffffff',
-                  fontSize: '11px',
-                  fontWeight: 800,
-                  cursor: exportingDossier ? 'not-allowed' : 'pointer',
-                  boxShadow: '0 3px 10px rgba(131, 24, 67, 0.25)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '5px',
-                  transition: 'all 0.15s ease'
-                }}
-              >
-                {exportingDossier ? <RefreshCw size={12} className="animate-spin" /> : <Activity size={12} />}
-                {exportingDossier ? translateText('Exporting...') : t('btn_export_dossier', 'Export Dossier')}
               </button>
             </div>
           </div>
 
         </div>
 
-        {/* 3. Interactive Data Payload Viewer (FHIR / Dossier Drawer) */}
-        {activePreviewTab !== 'none' && (
+        {/* 3. Interactive Data Payload Viewer (FHIR Drawer) */}
+        {activePreviewTab === 'fhir' && fhirData && (
           <div 
             data-lenis-prevent="true"
             data-lenis-prevent-wheel="true"
@@ -930,21 +786,21 @@ Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8
                   width: '7px',
                   height: '7px',
                   borderRadius: '50%',
-                  background: activePreviewTab === 'fhir' ? '#34d399' : '#f472b6'
+                  background: '#34d399'
                 }} />
                 <span style={{
                   fontSize: '11px',
                   fontWeight: 700,
-                  color: activePreviewTab === 'fhir' ? '#34d399' : '#f472b6',
+                  color: '#34d399',
                   fontFamily: 'monospace'
                 }}>
-                  {activePreviewTab === 'fhir' ? 'HL7 FHIR R4 Interoperability Bundle' : '30-Day Wearables Telemetry Stream'}
+                  HL7 FHIR R4 Interoperability Bundle
                 </span>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <button
-                  onClick={() => copyToClipboard(JSON.stringify(activePreviewTab === 'fhir' ? fhirData : dossierData, null, 2))}
+                  onClick={() => copyToClipboard(JSON.stringify(fhirData, null, 2))}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -1003,7 +859,7 @@ Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8
                 background: '#090d16'
               }}
             >
-              {JSON.stringify(activePreviewTab === 'fhir' ? fhirData : dossierData, null, 2)}
+              {JSON.stringify(fhirData, null, 2)}
             </pre>
           </div>
         )}

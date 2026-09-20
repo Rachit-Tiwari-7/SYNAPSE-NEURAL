@@ -9,21 +9,18 @@ import PatientVitalsPanel from '@/components/orchestrator/PatientVitalsPanel';
 import InteractiveBodyTwin from '@/components/orchestrator/InteractiveBodyTwin';
 import ClinicalConditionsPanel from '@/components/orchestrator/ClinicalConditionsPanel';
 import SwarmIntelligencePanel from '@/components/orchestrator/SwarmIntelligencePanel';
-import VisualAnalyticsPanel from '@/components/orchestrator/VisualAnalyticsPanel';
-import WHODiseaseSurveillancePanel from '@/components/orchestrator/WHODiseaseSurveillancePanel';
-import MedicalScanPanel from '@/components/orchestrator/MedicalScanPanel';
-import BlockchainRecordsPanel from '@/components/orchestrator/BlockchainRecordsPanel';
-import HealthSyncPanel from '@/components/orchestrator/HealthSyncPanel';
+import AbhaRecordsPanel from '@/components/orchestrator/BlockchainRecordsPanel';
 import RuralHealthPanel from '@/components/orchestrator/RuralHealthPanel';
 import SecuritySessionsPanel from '@/components/orchestrator/SecuritySessionsPanel';
 import ActionHubExportModal from '@/components/orchestrator/ActionHubExportModal';
 import WhatsAppChatbotPanel from '@/components/orchestrator/WhatsAppChatbotPanel';
+import AiHealthChatPanel from '@/components/orchestrator/AiHealthChatPanel';
 
 import { PatientInfo, VitalsData, DetectedCondition } from '@/components/orchestrator/types';
 import { MOCK_HEALTH_PROFILES, MockHealthProfile } from '@/data/mockHealthProfiles';
 
 export default function OrchestratorAgentPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'swarm' | 'analytics' | 'hospital' | 'scan' | 'records' | 'sync' | 'rural' | 'security' | 'whatsapp'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'chat' | 'swarm' | 'records' | 'rural' | 'security' | 'whatsapp'>('overview');
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -56,7 +53,7 @@ export default function OrchestratorAgentPage() {
 
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab');
-      if (tab && ['overview', 'swarm', 'analytics', 'hospital', 'scan', 'records', 'sync', 'rural', 'security', 'whatsapp'].includes(tab)) {
+      if (tab && ['overview', 'chat', 'swarm', 'records', 'rural', 'security', 'whatsapp'].includes(tab)) {
         setActiveTab(tab as any);
       }
     }
@@ -457,6 +454,11 @@ export default function OrchestratorAgentPage() {
               </div>
             )}
 
+            {/* TAB: Rural AI Health Chat Panel (BioBERT Swarm & Indian Clinical Guidance) */}
+            {activeTab === 'chat' && (
+              <AiHealthChatPanel patient={patient} />
+            )}
+
             {/* TAB: Rural & Semi-Urban AI Healthcare Hub (WhatsApp + 2G SMS + Health Literacy) */}
             {activeTab === 'rural' && (
               <RuralHealthPanel />
@@ -467,7 +469,17 @@ export default function OrchestratorAgentPage() {
               <WhatsAppChatbotPanel patient={patient} />
             )}
 
-            {/* TAB 2: Multi-Agent Swarm Intelligence & DAG Execution Console */}
+            {/* TAB: ABHA National Health ID & Digital Records */}
+            {activeTab === 'records' && (
+              <AbhaRecordsPanel
+                patient={patient}
+                activeProfile={activeProfile}
+                selectedProfileId={selectedProfileId}
+                onSelectProfile={handleSelectProfile}
+              />
+            )}
+
+            {/* TAB: Multi-Agent Swarm Intelligence & Clinical Triage */}
             {activeTab === 'swarm' && (
               <SwarmIntelligencePanel
                 patient={patient}
@@ -475,50 +487,7 @@ export default function OrchestratorAgentPage() {
               />
             )}
 
-            {/* TAB 3: Visual Analytics (Heart Rate, Sleep, Stress, Steps) */}
-            {activeTab === 'analytics' && (
-              <VisualAnalyticsPanel
-                patient={patient}
-                vitals={vitals}
-                activeProfile={activeProfile}
-                selectedProfileId={selectedProfileId}
-                onSelectProfile={handleSelectProfile}
-                onOpenExportModal={() => setIsExportModalOpen(true)}
-              />
-            )}
-
-            {/* TAB 4: WHO Global Disease Surveillance & Outbreak Radar */}
-            {activeTab === 'hospital' && (
-              <WHODiseaseSurveillancePanel />
-            )}
-
-            {/* TAB 5: Medical Scan AI (YOLOv8 Diagnostic Segmentation) */}
-            {activeTab === 'scan' && (
-              <MedicalScanPanel />
-            )}
-
-            {/* TAB 6: ABHA National Health ID & Blockchain Records */}
-            {activeTab === 'records' && (
-              <BlockchainRecordsPanel
-                patient={patient}
-                activeProfile={activeProfile}
-                selectedProfileId={selectedProfileId}
-                onSelectProfile={handleSelectProfile}
-              />
-            )}
-
-            {/* TAB 7: Wearable HealthKit & Google Fit Real-Time Sync */}
-            {activeTab === 'sync' && (
-              <HealthSyncPanel
-                activeProfile={activeProfile}
-                selectedProfileId={selectedProfileId}
-                onSelectProfile={handleSelectProfile}
-                patient={patient}
-                vitals={vitals}
-              />
-            )}
-
-            {/* TAB 8: 2FA & Multi-Device Sessions */}
+            {/* TAB: 2FA & Multi-Device Security Sessions */}
             {activeTab === 'security' && (
               <SecuritySessionsPanel />
             )}

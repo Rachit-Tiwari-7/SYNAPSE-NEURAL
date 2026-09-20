@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const protectedPrefixes = [
-  '/orchestrator-agent',
-  '/vibrant',
   '/security',
   '/sessions',
-  '/projects',
 ];
 
 // Routes that should never be blocked regardless of session state

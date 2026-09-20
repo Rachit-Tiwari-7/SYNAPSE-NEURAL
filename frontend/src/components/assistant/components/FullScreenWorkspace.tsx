@@ -10,7 +10,6 @@ import {
   WorkspaceHeader, 
   InboxPanel, 
   ChatCanvas, 
-  DossierPanel, 
   WorkspaceStateProps 
 } from '../workspace';
 import SettingsDrawer from './SettingsDrawer';
@@ -231,13 +230,6 @@ export default function FullScreenWorkspace({
           onOpenSettings={() => setShowSettingsModal(true)}
           onToggleFullscreen={onToggleFullscreen}
           onClose={onClose}
-        />
-
-        {/* Right Column: Patient Dossier & Sub-Agents (320px) */}
-        <DossierPanel
-          currentProfile={currentProfile}
-          onTriggerAgentQuery={onSend}
-          selectedLanguage={selectedLanguage}
         />
       </div>
 

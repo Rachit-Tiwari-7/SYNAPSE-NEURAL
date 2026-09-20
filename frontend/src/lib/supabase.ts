@@ -9,21 +9,23 @@ export const supabase: SupabaseClient | null =
     ? createClient(supabaseUrl, supabaseAnonKey)
     : null;
 
-export interface BlockchainRecord {
+export interface HealthRecord {
   id: string;
   profile_id: string;
   patient_name: string;
   abha_number: string;
-  tx_hash: string;
-  cid: string;
   record_type: string;
   timestamp_raw: string;
   facility: string;
   verified: boolean;
+  cid?: string;
+  tx_hash?: string;
   created_at?: string;
 }
 
-const LOCAL_STORAGE_RECORDS_KEY = 'synapseos_blockchain_records_cache';
+export type BlockchainRecord = HealthRecord;
+
+const LOCAL_STORAGE_RECORDS_KEY = 'synapseos_health_records_cache';
 
 /**
  * Helper to get cached records from localStorage (for offline/demo fallback)

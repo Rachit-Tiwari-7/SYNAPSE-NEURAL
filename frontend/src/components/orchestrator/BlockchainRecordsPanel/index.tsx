@@ -1,15 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Fingerprint, FileCheck2, Link as LinkIcon, ShieldCheck, Download, CheckCircle2, Wallet, AlertCircle, Zap, ChevronDown } from 'lucide-react';
+import { Fingerprint, FileCheck2, ShieldCheck, Download, Zap, ChevronDown } from 'lucide-react';
 import { useBlockchainRecords, UseBlockchainRecordsProps } from './useBlockchainRecords';
 import AbhaGenerator from './AbhaGenerator';
-import RecordsList from './RecordsList';
 import VaccinationTracker from './VaccinationTracker';
 import { MOCK_HEALTH_PROFILES } from '@/data/mockHealthProfiles';
 import { useLanguage } from '@/context/LanguageContext';
 
-export default function BlockchainRecordsPanel({
+export default function AbhaRecordsPanel({
   patient,
   activeProfile,
   selectedProfileId,
@@ -101,7 +100,7 @@ export default function BlockchainRecordsPanel({
             }}
           >
             <Zap size={13} color="#db2777" />
-            <span>{t('select_citizen_btn', 'Select Citizen (My Condition)')}</span>
+            <span>{t('select_citizen_btn', 'Select Citizen Profile')}</span>
             <ChevronDown size={13} color="#64748b" />
           </button>
 
@@ -173,109 +172,28 @@ export default function BlockchainRecordsPanel({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h1 style={{ fontSize: '24px', fontWeight: 800, margin: 0, color: '#0f172a', letterSpacing: '-0.02em' }}>
-            {t('records_title', 'Health Records & Blockchain Passport')}
+            {t('records_title', 'ABHA National Health ID & Digital Records')}
           </h1>
           <p style={{ color: '#64748b', fontSize: '13.5px', margin: '4px 0 0 0' }}>
-            {t('records_subtitle', 'ABDM Integration • Cryptographic Verification • Decentralized Registry')}
+            {t('records_subtitle', 'Ayushman Bharat Digital Mission (ABDM) • PM-JAY Coverage • U-WIN Immunization')}
           </p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          {state.walletError && (
-            <span style={{ 
-              fontSize: '11px', 
-              color: '#e11d48', 
-              fontWeight: 600, 
-              background: '#fff1f2', 
-              padding: '4px 10px', 
-              borderRadius: '8px', 
-              border: '1px solid #fecdd3',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
-            }}>
-              <AlertCircle size={12} />
-              {state.walletError}
-            </span>
-          )}
-          
-          <button
-            onClick={state.connectBurner}
-            disabled={state.connecting}
-            title="Use built-in local simulation burner wallet"
-            style={{
-              padding: '6px 14px',
-              borderRadius: '9999px',
-              background: state.walletMode === 'burner' && state.walletAddress ? '#f1f5f9' : '#ffffff',
-              border: state.walletMode === 'burner' && state.walletAddress ? '1.5px solid #64748b' : '1px solid #cbd5e1',
-              color: state.walletMode === 'burner' && state.walletAddress ? '#0f172a' : '#64748b',
-              fontSize: '11px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            <Wallet size={12} />
-            Burner {state.walletMode === 'burner' && state.walletAddress ? '✓' : ''}
-          </button>
-          
-          <button
-            onClick={state.connectMetaMask}
-            disabled={state.connecting}
-            title="Connect your browser MetaMask wallet"
-            style={{
-              padding: '6px 14px',
-              borderRadius: '9999px',
-              background: state.walletMode === 'metamask' && state.walletAddress ? '#fff7ed' : '#ffffff',
-              border: state.walletMode === 'metamask' && state.walletAddress ? '1.5px solid #f97316' : '1px solid #cbd5e1',
-              color: state.walletMode === 'metamask' && state.walletAddress ? '#ea580c' : '#f5841f',
-              fontSize: '11px',
-              fontWeight: 800,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              boxShadow: state.walletMode === 'metamask' && state.walletAddress ? '0 0 10px rgba(249, 115, 22, 0.2)' : 'none',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            🦊 MetaMask {state.walletMode === 'metamask' && state.walletAddress ? '✓' : ''}
-          </button>
-
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{ 
             padding: '6px 14px', 
             borderRadius: '9999px', 
-            background: state.contractOk ? '#ecfdf5' : '#eff6ff', 
-            border: `1px solid ${state.contractOk ? '#a7f3d0' : '#bfdbfe'}`, 
-            color: state.contractOk ? '#059669' : '#2563eb', 
+            background: '#ecfdf5', 
+            border: '1px solid #a7f3d0', 
+            color: '#059669', 
             fontSize: '11px', 
             fontWeight: 800,
             display: 'flex',
             alignItems: 'center',
             gap: '6px'
           }}>
-            {state.contractOk ? <CheckCircle2 size={12} /> : <Zap size={12} />}
-            {state.networkName === 'sepolia' 
-              ? (state.contractOk ? translateText('Sepolia Testnet Active') : translateText('Sepolia RPC Ready')) 
-              : (state.contractOk ? translateText('Hardhat Ready') : translateText('Node Offline'))}
+            <ShieldCheck size={14} />
+            {translateText('ABDM National Health Sandbox Active')}
           </span>
-          
-          {state.walletAddress && (
-            <span style={{ 
-              fontSize: '11px', 
-              color: '#334155', 
-              fontWeight: 700, 
-              fontFamily: 'monospace',
-              background: '#f8fafc',
-              padding: '4px 8px',
-              borderRadius: '6px',
-              border: '1px solid #e2e8f0'
-            }}>
-              {state.walletAddress.slice(0, 6)}...{state.walletAddress.slice(-4)}
-            </span>
-          )}
         </div>
       </div>
 
@@ -292,10 +210,8 @@ export default function BlockchainRecordsPanel({
       }}>
         {[
           { id: 'abha', labelKey: 'tab_national_abha', defaultLabel: 'National ABHA ID', icon: Fingerprint },
-          { id: 'vaccination', labelKey: 'tab_vaccination_uwin', defaultLabel: translateText('💉 Immunization & U-WIN'), icon: ShieldCheck },
-          { id: 'passport', labelKey: 'tab_qr_passport', defaultLabel: 'QR Health Passport', icon: FileCheck2 },
-          { id: 'blockchain', labelKey: 'tab_onchain_records', defaultLabel: 'On-Chain Records', icon: LinkIcon },
-          { id: 'verify', labelKey: 'tab_verify_integrity', defaultLabel: 'Verify Integrity', icon: ShieldCheck }
+          { id: 'vaccination', labelKey: 'tab_vaccination_uwin', defaultLabel: '💉 Immunization & U-WIN', icon: ShieldCheck },
+          { id: 'passport', labelKey: 'tab_qr_passport', defaultLabel: 'Health Summary Passport', icon: FileCheck2 }
         ].map(item => {
           const label = t(item.labelKey, translateText(item.defaultLabel));
           return (
@@ -336,10 +252,10 @@ export default function BlockchainRecordsPanel({
         {state.activeTab === 'passport' && (
           <div>
             <h2 style={{ fontSize: '20px', marginBottom: '8px', color: '#0f172a', fontWeight: 800 }}>
-              {t('tab_qr_passport', 'Verifiable Digital Health Passport')}
+              {t('tab_qr_passport', 'Official Digital Health Passport')}
             </h2>
             <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px', lineHeight: 1.5 }}>
-              {translateText(`Compiles clinical triage results, vital trends, active prescriptions, and cryptographic QR signature for ${state.name} into a single downloadable PDF.`)}
+              {translateText(`Compiles clinical triage results, vital trends, active prescriptions, and ABDM QR verification for ${state.name} into a single verifiable PDF.`)}
             </p>
 
             <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '24px', marginBottom: '24px' }}>
@@ -352,7 +268,7 @@ export default function BlockchainRecordsPanel({
                 <li>{t('passport_included_3', '✓ Clinical triage urgency level & AI Council consensus')}</li>
                 <li>{t('passport_included_4', '✓ Physiological vital benchmarks (Blood Pressure, Heart Rate, SpO2, Fasting Glucose)')}</li>
                 <li>{t('passport_included_5', '✓ Active medication schedule & dosage safety check')}</li>
-                <li>{t('passport_included_6', '✓ Tamper-Evident QR Code Stamp linking to IPFS & Ethereum contract')}</li>
+                <li>{t('passport_included_6', '✓ Verifiable QR Code Stamp linking to official ABDM health locker')}</li>
               </ul>
             </div>
 
@@ -379,8 +295,6 @@ export default function BlockchainRecordsPanel({
             </button>
           </div>
         )}
-
-        {(state.activeTab === 'blockchain' || state.activeTab === 'verify') && <RecordsList state={state} />}
         
       </div>
     </div>

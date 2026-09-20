@@ -2,33 +2,31 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  Search, 
   Download, 
-  Bell, 
   Sparkles, 
-  BarChart3, 
-  Activity, 
+  Layers, 
+  Smartphone, 
+  ChevronDown, 
+  ChevronLeft, 
+  ChevronRight, 
+  Check, 
+  ShieldCheck, 
+  MessageCircle, 
+  LogOut,
   Building2,
-  Layers,
-  Globe,
-  Watch,
-  Smartphone,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  Check,
-  ShieldCheck,
-  MessageCircle,
-  LogOut
+  Mic,
+  Bot
 } from 'lucide-react';
 import { PatientInfo } from './types';
 import LanguageSelector from '@/components/ui/LanguageSelector';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 
+export type OrchestratorTab = 'overview' | 'chat' | 'swarm' | 'records' | 'rural' | 'security' | 'whatsapp';
+
 interface TopNavProps {
-  activeTab: 'overview' | 'swarm' | 'analytics' | 'hospital' | 'scan' | 'records' | 'sync' | 'rural' | 'security' | 'whatsapp';
-  onTabChange: (tab: 'overview' | 'swarm' | 'analytics' | 'hospital' | 'scan' | 'records' | 'sync' | 'rural' | 'security' | 'whatsapp') => void;
+  activeTab: OrchestratorTab;
+  onTabChange: (tab: OrchestratorTab) => void;
   patient: PatientInfo;
   onOpenExportModal: () => void;
   searchQuery?: string;
@@ -39,9 +37,7 @@ export default function OrchestratorTopNav({
   activeTab,
   onTabChange,
   patient,
-  onOpenExportModal,
-  searchQuery = '',
-  onSearchChange
+  onOpenExportModal
 }: TopNavProps) {
   const { t } = useLanguage();
   const { logout, user } = useAuth();
@@ -52,21 +48,14 @@ export default function OrchestratorTopNav({
   const trackRef = useRef<HTMLDivElement>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
 
-  const WhoIcon = ({ size }: { size?: number | string }) => (
-    <img src="/who.svg" alt="WHO Logo" style={{ width: size || 13, height: size || 13, objectFit: 'contain' }} />
-  );
-
-  const tabs = [
-    { id: 'overview', label: t('tab_overview', 'My Condition'), icon: Layers },
-    { id: 'swarm', label: t('tab_swarm', 'Swarm Intelligence'), icon: Sparkles },
-    { id: 'whatsapp', label: t('tab_whatsapp', 'WhatsApp Bot'), icon: MessageCircle },
-    { id: 'rural', label: t('tab_rural_health', 'Rural AI Healthcare'), icon: Smartphone },
-    { id: 'analytics', label: t('tab_analytics', 'Visual Analytics'), icon: BarChart3 },
-    { id: 'hospital', label: t('tab_hospital', 'WHO Surveillance & Map'), icon: WhoIcon },
-    { id: 'scan', label: t('tab_scan', 'Prescription OCR & Vision'), icon: Search },
-    { id: 'records', label: t('tab_records', 'ABHA & Records'), icon: Building2 },
-    { id: 'sync', label: t('tab_health_sync', 'Google & Apple Health'), icon: Watch },
-    { id: 'security', label: t('tab_security', '2FA & Sessions'), icon: ShieldCheck }
+  const tabs: { id: OrchestratorTab; label: string; icon: React.ComponentType<{ size?: number | string; color?: string }> }[] = [
+    { id: 'overview', label: t('tab_overview', 'Home / Dashboard'), icon: Layers },
+    { id: 'chat', label: t('tab_chat', 'AI Health Chat'), icon: Bot },
+    { id: 'whatsapp', label: t('tab_whatsapp', 'WhatsApp AI Bot'), icon: MessageCircle },
+    { id: 'rural', label: t('tab_rural_health', 'Rural Health Hub'), icon: Smartphone },
+    { id: 'records', label: t('tab_records', 'ABHA ID & Records'), icon: Building2 },
+    { id: 'swarm', label: t('tab_swarm', 'Clinical Triage Swarm'), icon: Sparkles },
+    { id: 'security', label: t('tab_security', 'Security & 2FA'), icon: ShieldCheck }
   ];
 
   const currentTab = tabs.find(t => t.id === activeTab);
@@ -103,6 +92,16 @@ export default function OrchestratorTopNav({
     }
   };
 
+  const handleTriggerChat = () => {
+    onTabChange('chat');
+  };
+
+  const handleTriggerVoice = () => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'voice' } }));
+    }
+  };
+
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
@@ -133,7 +132,7 @@ export default function OrchestratorTopNav({
       fontFamily: 'inherit'
     }}>
 
-      {/* Left: Active Clinical Breadcrumb */}
+      {/* Left: Active Breadcrumb */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -143,12 +142,16 @@ export default function OrchestratorTopNav({
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
           <span style={{ 
-            color: '#64748b', 
-            fontWeight: 600,
-            fontSize: '12px',
-            letterSpacing: '-0.01em'
+            color: '#059669', 
+            fontWeight: 800,
+            fontSize: '12.5px',
+            letterSpacing: '-0.01em',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px'
           }}>
-            Hospital OS
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
+            Rural AI Healthcare
           </span>
           <ChevronRight size={13} color="#94a3b8" />
           <span style={{ 
@@ -158,71 +161,64 @@ export default function OrchestratorTopNav({
             background: '#f0f9ff',
             padding: '3px 8px',
             borderRadius: '6px',
-            border: '1px solid #bae6fd',
-            whiteSpace: 'nowrap'
+            border: '1px solid #e0f2fe'
           }}>
             {activeTabLabel}
           </span>
         </div>
       </div>
 
-      {/* Center: Segmented Workspace Tabs Track */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        background: '#f1f5f9',
-        padding: '3px 4px',
-        borderRadius: '10px',
-        border: '1px solid #e2e8f0',
-        gap: '2px',
-        flex: '1 1 auto',
-        minWidth: 0,
-        maxWidth: '720px',
-        position: 'relative'
-      }}>
-        {/* Left Scroll Button */}
+      {/* Center: Interactive Tabs */}
+      <div 
+        className="orch-tabs-wrapper"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          flex: 1,
+          maxWidth: '620px',
+          margin: '0 12px',
+          position: 'relative'
+        }}
+      >
         {canScrollLeft && (
           <button
             onClick={() => scrollBy(-140)}
-            title="Scroll left"
             style={{
-              width: '22px',
-              height: '22px',
-              borderRadius: '6px',
+              position: 'absolute',
+              left: '-14px',
+              zIndex: 10,
+              width: '24px',
+              height: '24px',
+              borderRadius: '50%',
               background: '#ffffff',
-              border: '1px solid #cbd5e1',
-              color: '#334155',
+              border: '1px solid #e2e8f0',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              flexShrink: 0,
-              boxShadow: '0 1px 2px rgba(15, 23, 42, 0.04)'
+              boxShadow: '0 2px 4px rgba(0,0,0,0.08)'
             }}
           >
-            <ChevronLeft size={12} />
+            <ChevronLeft size={14} color="#64748b" />
           </button>
         )}
 
-        {/* Scrollable Pills Track */}
-        <div
+        <div 
           ref={trackRef}
           onScroll={checkScroll}
-          onWheel={(e) => {
-            if (trackRef.current && e.deltaY) {
-              e.stopPropagation();
-              trackRef.current.scrollLeft += e.deltaY * 0.8;
-            }
-          }}
+          className="orch-tabs-scroll-track"
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '2px',
+            gap: '4px',
+            background: '#f1f5f9',
+            padding: '4px',
+            borderRadius: '10px',
             overflowX: 'auto',
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
-            flex: '1 1 auto',
-            minWidth: 0
+            whiteSpace: 'nowrap',
+            width: '100%'
           }}
         >
           {tabs.map((tab) => {
@@ -231,186 +227,138 @@ export default function OrchestratorTopNav({
             return (
               <button
                 key={tab.id}
-                onClick={() => onTabChange(tab.id as any)}
-                className="orch-nav-pill"
+                onClick={() => onTabChange(tab.id)}
                 style={{
-                  display: 'flex',
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '5px',
-                  padding: '5px 10px',
+                  gap: '6px',
+                  padding: '5px 12px',
                   borderRadius: '7px',
                   border: 'none',
-                  fontSize: '11px',
-                  whiteSpace: 'nowrap',
-                  fontWeight: isActive ? 700 : 500,
                   background: isActive ? '#ffffff' : 'transparent',
-                  color: isActive ? '#0284c7' : '#64748b',
+                  color: isActive ? '#0f172a' : '#64748b',
+                  fontSize: '11.5px',
+                  fontWeight: isActive ? 700 : 500,
                   cursor: 'pointer',
                   boxShadow: isActive ? '0 1px 3px rgba(15, 23, 42, 0.08)' : 'none',
-                  transition: 'all 0.15s ease',
+                  transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
                   flexShrink: 0
                 }}
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.color = '#0f172a';
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.7)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.color = '#64748b';
-                    e.currentTarget.style.background = 'transparent';
-                  }
-                }}
               >
-                <Icon size={12} color={isActive ? '#0284c7' : '#94a3b8'} />
+                <Icon size={13} color={isActive ? '#059669' : '#64748b'} />
                 <span>{tab.label}</span>
               </button>
             );
           })}
         </div>
 
-        {/* Right Scroll Button */}
         {canScrollRight && (
           <button
             onClick={() => scrollBy(140)}
-            title="Scroll right"
             style={{
-              width: '22px',
-              height: '22px',
-              borderRadius: '6px',
+              position: 'absolute',
+              right: '-14px',
+              zIndex: 10,
+              width: '24px',
+              height: '24px',
+              borderRadius: '50%',
               background: '#ffffff',
-              border: '1px solid #cbd5e1',
-              color: '#334155',
+              border: '1px solid #e2e8f0',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              flexShrink: 0,
-              boxShadow: '0 1px 2px rgba(15, 23, 42, 0.04)'
+              boxShadow: '0 2px 4px rgba(0,0,0,0.08)'
             }}
           >
-            <ChevronRight size={12} />
+            <ChevronRight size={14} color="#64748b" />
           </button>
         )}
-
-        {/* Arrow Dropdown Menu Button */}
-        <div ref={moreMenuRef} style={{ position: 'relative', flexShrink: 0 }}>
-          <button
-            onClick={() => setIsMoreOpen(!isMoreOpen)}
-            title="View all sections"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '22px',
-              height: '22px',
-              borderRadius: '6px',
-              background: isMoreOpen ? '#ffffff' : 'transparent',
-              border: isMoreOpen ? '1px solid #cbd5e1' : '1px solid transparent',
-              color: '#64748b',
-              cursor: 'pointer',
-              boxShadow: isMoreOpen ? '0 1px 2px rgba(15, 23, 42, 0.06)' : 'none',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            <ChevronDown 
-              size={12} 
-              style={{ 
-                transform: isMoreOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.2s ease'
-              }} 
-            />
-          </button>
-
-          {/* Floating Dropdown Menu */}
-          {isMoreOpen && (
-            <div style={{
-              position: 'absolute',
-              top: 'calc(100% + 8px)',
-              right: 0,
-              width: '220px',
-              background: '#ffffff',
-              borderRadius: '12px',
-              border: '1px solid #e2e8f0',
-              boxShadow: '0 10px 25px rgba(15, 23, 42, 0.1)',
-              zIndex: 9999,
-              padding: '6px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '2px'
-            }}>
-              <div style={{
-                padding: '6px 8px',
-                fontSize: '9.5px',
-                fontWeight: 700,
-                color: '#94a3b8',
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-                borderBottom: '1px solid #f1f5f9'
-              }}>
-                Workspaces Navigation
-              </div>
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <div
-                    key={tab.id}
-                    onClick={() => {
-                      onTabChange(tab.id as any);
-                      setIsMoreOpen(false);
-                    }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '7px 9px',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      background: isActive ? '#f0f9ff' : 'transparent',
-                      color: isActive ? '#0284c7' : '#0f172a',
-                      fontSize: '11.5px',
-                      fontWeight: isActive ? 700 : 500,
-                      transition: 'all 0.1s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isActive) e.currentTarget.style.background = '#f8fafc';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive) e.currentTarget.style.background = 'transparent';
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Icon size={13} color={isActive ? '#0284c7' : '#64748b'} />
-                      <span>{tab.label}</span>
-                    </div>
-                    {isActive && <Check size={13} color="#0284c7" />}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
       </div>
 
-      {/* Right Controls & Patient Avatar */}
+      {/* Right Controls & Quick Action Buttons */}
       <div style={{ 
         display: 'flex', 
         alignItems: 'center', 
-        gap: '10px', 
+        gap: '8px', 
         flexShrink: 0,
-        marginLeft: '16px'
+        marginLeft: '12px'
       }}>
+        {/* Quick Voice Consultation Button */}
+        <button
+          onClick={handleTriggerVoice}
+          title="Start Live Voice Consultation (Vapi)"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '5px 12px',
+            height: '32px',
+            background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
+            border: '1px solid #a7f3d0',
+            borderRadius: '8px',
+            fontSize: '11.5px',
+            fontWeight: 700,
+            color: '#047857',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+            boxShadow: '0 1px 2px rgba(5, 150, 105, 0.08)',
+            transition: 'all 0.15s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#a7f3d0';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)';
+          }}
+        >
+          <Mic size={13} color="#059669" />
+          <span>Talk to AI</span>
+        </button>
+
+        {/* Quick AI Health Chat Button */}
+        <button
+          onClick={handleTriggerChat}
+          title="Open AI Healthcare Chatbot"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '5px 12px',
+            height: '32px',
+            background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+            border: '1px solid #bfdbfe',
+            borderRadius: '8px',
+            fontSize: '11.5px',
+            fontWeight: 700,
+            color: '#1d4ed8',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+            boxShadow: '0 1px 2px rgba(37, 99, 235, 0.08)',
+            transition: 'all 0.15s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#bfdbfe';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)';
+          }}
+        >
+          <Bot size={13} color="#2563eb" />
+          <span>Chat with AI</span>
+        </button>
+
         {/* Language Selector */}
         <div style={{ flexShrink: 0 }}>
           <LanguageSelector variant="nav" />
         </div>
 
-        {/* Quick Export Hub Trigger */}
+        {/* Export Hub Trigger */}
         <button
           onClick={onOpenExportModal}
-          title="Export HL7 FHIR Bundle / Download Clinical PDF"
+          title="Export Health Passport PDF / HL7 FHIR Bundle"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -429,174 +377,35 @@ export default function OrchestratorTopNav({
             boxShadow: '0 1px 2px rgba(15, 23, 42, 0.03)',
             transition: 'all 0.15s ease'
           }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#f8fafc';
-            e.currentTarget.style.borderColor = '#cbd5e1';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#ffffff';
-            e.currentTarget.style.borderColor = '#e2e8f0';
-          }}
         >
           <Download size={13} color="#0284c7" />
-          <span style={{ whiteSpace: 'nowrap' }}>{t('btn_export_hub', 'Export Hub')}</span>
+          <span>{t('btn_export_hub', 'Export')}</span>
         </button>
 
-        {/* Notification Bell */}
-        <div 
-          title="Clinical Alerts & Notifications"
-          style={{
-            width: '32px',
-            minWidth: '32px',
-            height: '32px',
-            minHeight: '32px',
-            borderRadius: '8px',
-            background: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#64748b',
-            cursor: 'pointer',
-            position: 'relative',
-            flexShrink: 0,
-            boxSizing: 'border-box',
-            transition: 'all 0.15s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#f1f5f9';
-            e.currentTarget.style.borderColor = '#cbd5e1';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#f8fafc';
-            e.currentTarget.style.borderColor = '#e2e8f0';
-          }}
-        >
-          <Bell size={14} />
-          <span style={{
-            position: 'absolute',
-            top: '6px',
-            right: '6px',
-            width: '6px',
-            height: '6px',
-            borderRadius: '50%',
-            background: '#dc2626'
-          }} />
-        </div>
-
-        {/* Patient Profile / Doctor Badge */}
+        {/* Patient Profile Chip */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
-          paddingLeft: '10px',
-          borderLeft: '1px solid #e2e8f0',
-          flexShrink: 0
+          padding: '4px 10px',
+          borderRadius: '8px',
+          background: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          height: '32px'
         }}>
           {patient.avatarUrl ? (
-            <img
-              src={patient.avatarUrl}
-              alt={patient.name}
-              style={{
-                width: '30px',
-                height: '30px',
-                borderRadius: '8px',
-                objectFit: 'cover',
-                border: '1px solid #e2e8f0',
-                flexShrink: 0
-              }}
+            <img 
+              src={patient.avatarUrl} 
+              alt={patient.name} 
+              style={{ width: '22px', height: '22px', borderRadius: '50%', objectFit: 'cover' }} 
             />
           ) : (
-            <div
-              style={{
-                width: '30px',
-                height: '30px',
-                borderRadius: '8px',
-                background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
-                color: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '11px',
-                fontWeight: 700,
-                border: '1px solid #bae6fd',
-                flexShrink: 0
-              }}
-            >
-              {patient.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'AB'}
+            <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: '#059669', color: '#fff', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>
+              {patient.name.charAt(0)}
             </div>
           )}
-          <div style={{ whiteSpace: 'nowrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11.5px', fontWeight: 700, color: '#0f172a', lineHeight: 1.2 }}>
-              <span>{user?.name || patient.name}</span>
-              {(user?.isAdmin || user?.role === 'admin' || user?.email?.includes('admin')) ? (
-                <span style={{
-                  background: '#fee2e2',
-                  color: '#b91c1c',
-                  fontSize: '8.5px',
-                  fontWeight: 800,
-                  padding: '1px 4px',
-                  borderRadius: '3px',
-                  border: '1px solid #fca5a5',
-                  letterSpacing: '0.03em',
-                }}>
-                  ADMIN
-                </span>
-              ) : (
-                <span style={{
-                  background: '#ecfdf5',
-                  color: '#059669',
-                  fontSize: '8.5px',
-                  fontWeight: 800,
-                  padding: '1px 4px',
-                  borderRadius: '3px',
-                  border: '1px solid #a7f3d0',
-                  letterSpacing: '0.03em',
-                }}>
-                  ABDM
-                </span>
-              )}
-            </div>
-            <div style={{ fontSize: '9.5px', color: '#64748b', lineHeight: 1.2, marginTop: '1px' }}>
-              ABHA: <span style={{ fontWeight: 600, color: '#0284c7', fontVariantNumeric: 'tabular-nums' }}>{patient.abhaId}</span>
-            </div>
-          </div>
+          <span style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}>{patient.name}</span>
         </div>
-
-        {/* Sleek Logout Action Button */}
-        <button
-          onClick={handleLogout}
-          disabled={isLoggingOut}
-          title="Sign Out of Synapse OS"
-          style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '8px',
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            color: '#dc2626',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: isLoggingOut ? 'not-allowed' : 'pointer',
-            flexShrink: 0,
-            transition: 'all 0.15s ease'
-          }}
-          onMouseEnter={(e) => {
-            if (!isLoggingOut) {
-              e.currentTarget.style.background = '#fee2e2';
-              e.currentTarget.style.borderColor = '#f87171';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!isLoggingOut) {
-              e.currentTarget.style.background = '#fef2f2';
-              e.currentTarget.style.borderColor = '#fecaca';
-            }
-          }}
-        >
-          <LogOut size={13} color="#dc2626" />
-        </button>
       </div>
     </header>
   );

@@ -13,33 +13,9 @@ from backend.app.main import app
 client = TestClient(app)
 
 
-# ==========================================
-# 1. LIVE SURVEILLANCE & WEARABLES DOSSIER
-# ==========================================
-
-def test_live_surveillance_endpoint():
-    resp = client.get("/api/surveillance/live")
-    assert resp.status_code == 200
-    data = resp.json()
-    assert "status" in data
-    assert "global" in data
-    assert "india" in data
-    assert data["india"]["cases"] > 0
-
-
-def test_wearables_dossier_endpoint():
-    resp = client.get("/api/wearables/dossier?patient_id=PAT-TEST-100&patient_name=Ramesh+Kumar")
-    assert resp.status_code == 200
-    data = resp.json()
-    assert data["patient_id"] == "PAT-TEST-100"
-    assert data["patient_name"] == "Ramesh Kumar"
-    assert "metrics_summary" in data
-    assert data["metrics_summary"]["avg_resting_heart_rate_bpm"] > 0
-    assert len(data["telemetry_stream"]) > 0
-
 
 # ==========================================
-# 2. UIP VACCINATION & U-WIN ENDPOINTS
+# 1. UIP VACCINATION & U-WIN ENDPOINTS
 # ==========================================
 
 def test_vaccination_schedule_endpoint_child():

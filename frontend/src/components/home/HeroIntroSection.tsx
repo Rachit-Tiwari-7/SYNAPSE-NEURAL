@@ -1,10 +1,20 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 
 export function HeroIntroSection() {
   const { t } = useLanguage();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        window.location.href = '/orchestrator-agent';
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <div className="mod-scroll__intro bg-white">
@@ -317,21 +327,77 @@ export function HeroIntroSection() {
         <div className="mod-scroll__intro__content">
           <div className="mod-scroll__intro__wrap-titles">
             <div className="mod-scroll__intro__title f-izmir t-titulo-xxl line lh-less is_home">
-              {t('hero_title_1', 'Global Health')}
+              {t('hero_title_1', 'Rural AI Healthcare')}
             </div>
             <div className="mod-scroll__intro__title f-izmir t-titulo-xxl line lh-less is_home">
-              {t('hero_title_2', 'Driven by AI Agents')}
+              {t('hero_title_2', 'Driven by Multi-Agent Swarm')}
             </div>
           </div>
           <div className="mod-scroll__intro__text">
             <p>
-              {t('hero_desc', 'SynapseOS is an open-source health platform powered by a swarm of specialized AI agents, bridging the gap between everyday tracking and complex medical triage with absolute privacy and blockchain verification.')}
+              {t('hero_desc', 'Sanjeevni / SynapseOS is an AI-first rural healthcare platform powered by clinical triage swarms, ABDM ABHA health records, 2G SMS gateways, and Indian OTC guidance.')}
             </p>
+          </div>
+
+          {/* Prominent Direct Launch CTA */}
+          <div style={{ marginTop: '24px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', zIndex: 100, position: 'relative' }}>
+            <a
+              href="/orchestrator-agent"
+              data-no-swup="true"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '14px 30px',
+                background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+                color: '#ffffff',
+                borderRadius: '30px',
+                fontSize: '15px',
+                fontWeight: 800,
+                textDecoration: 'none',
+                boxShadow: '0 6px 25px rgba(5, 150, 105, 0.4)',
+                cursor: 'pointer',
+                letterSpacing: '-0.01em',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <span>ENTER RURAL HEALTHCARE</span>
+              <span style={{ fontSize: '18px' }}>→</span>
+            </a>
+
+            <a
+              href="/orchestrator-agent?tab=chat"
+              data-no-swup="true"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '14px 24px',
+                background: '#ffffff',
+                color: '#0f172a',
+                border: '1.5px solid #cbd5e1',
+                borderRadius: '30px',
+                fontSize: '14.5px',
+                fontWeight: 700,
+                textDecoration: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <span>AI Health Chat</span>
+            </a>
           </div>
         </div>
 
-        <div className="mod-scroll__intro__logo logo c-black">
-          <div className="logo__normal link" data-url="/">
+        {/* Center Intro Logo — Clickable to Enter App */}
+        <div 
+          className="mod-scroll__intro__logo logo c-black"
+          title="Click to Enter Rural AI Healthcare"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            if (typeof window !== 'undefined') window.location.href = '/orchestrator-agent';
+          }}
+        >
+          <div className="logo__normal link" data-url="/orchestrator-agent">
             Synapse
           </div>
           <div className="logo__group">
@@ -339,6 +405,53 @@ export function HeroIntroSection() {
             <div className="logo__boring">
               S<div className="reg">®</div>
             </div>
+          </div>
+
+          {/* Clear unblockable CTA pill right under the logo */}
+          <div 
+            style={{
+              position: 'absolute',
+              bottom: '15%',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 99999,
+              pointerEvents: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            <a
+              href="/orchestrator-agent"
+              data-no-swup="true"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (typeof window !== 'undefined') window.location.href = '/orchestrator-agent';
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '14px 32px',
+                background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+                color: '#ffffff',
+                borderRadius: '30px',
+                fontSize: '15px',
+                fontWeight: 800,
+                textDecoration: 'none',
+                boxShadow: '0 8px 30px rgba(5, 150, 105, 0.45)',
+                cursor: 'pointer',
+                letterSpacing: '-0.01em',
+                transition: 'transform 0.15s ease'
+              }}
+            >
+              <span>ENTER RURAL AI HEALTHCARE</span>
+              <span style={{ fontSize: '18px' }}>→</span>
+            </a>
+            <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>
+              Click anywhere or press Enter to launch
+            </span>
           </div>
         </div>
       </div>

@@ -5,15 +5,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   Home, 
-  Layers, 
-  Activity, 
-  Scan, 
+  Bot,
+  Mic,
   FileText, 
   AlertOctagon, 
   Zap, 
-  Globe,
   ShieldCheck,
-  Watch,
   Smartphone,
   MessageCircle,
   LogOut,
@@ -23,24 +20,28 @@ import {
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 
+export type OrchestratorTab = 'overview' | 'chat' | 'swarm' | 'records' | 'rural' | 'security' | 'whatsapp';
+
 interface OrchestratorSidebarProps {
   onOpenSOS?: () => void;
   activeTab?: string;
-  onTabChange?: (tab: 'overview' | 'swarm' | 'analytics' | 'hospital' | 'scan' | 'records' | 'sync' | 'rural' | 'security' | 'whatsapp') => void;
+  onTabChange?: (tab: OrchestratorTab) => void;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
 }
 
+interface NavItem {
+  labelKey: string;
+  fallback: string;
+  tab?: OrchestratorTab;
+  action?: 'voice';
+  icon: React.ComponentType<{ size?: number | string; strokeWidth?: number; color?: string; className?: string }>;
+  isTab?: boolean;
+}
+
 interface NavCategory {
   title: string;
-  items: {
-    labelKey: string;
-    fallback: string;
-    tab?: 'overview' | 'swarm' | 'analytics' | 'hospital' | 'scan' | 'records' | 'sync' | 'rural' | 'security' | 'whatsapp';
-    href?: string;
-    icon: React.ComponentType<{ size?: number | string; strokeWidth?: number; color?: string; className?: string }>;
-    isTab?: boolean;
-  }[];
+  items: NavItem[];
 }
 
 export default function OrchestratorSidebar({ 
@@ -56,31 +57,34 @@ export default function OrchestratorSidebar({
 
   const navigationSections: NavCategory[] = [
     {
-      title: 'Clinical Core',
+      title: 'Main',
       items: [
-        { labelKey: 'tab_overview', fallback: 'My Condition & Twin', tab: 'overview', icon: Layers, isTab: true },
-        { labelKey: 'tab_swarm', fallback: 'Swarm Intelligence', tab: 'swarm', icon: Zap, isTab: true },
+        { labelKey: 'tab_overview', fallback: 'Home / Dashboard', tab: 'overview', icon: Home, isTab: true },
+        { labelKey: 'tab_chat', fallback: 'AI Health Chat', tab: 'chat', icon: Bot, isTab: true },
         { labelKey: 'tab_whatsapp', fallback: 'WhatsApp AI Bot', tab: 'whatsapp', icon: MessageCircle, isTab: true },
-        { labelKey: 'tab_rural_health', fallback: 'Rural AI Healthcare', tab: 'rural', icon: Smartphone, isTab: true }
+        { labelKey: 'tab_rural_health', fallback: 'Rural Health Hub', tab: 'rural', icon: Smartphone, isTab: true },
+        { labelKey: 'tab_records', fallback: 'ABHA ID & Records', tab: 'records', icon: FileText, isTab: true }
       ]
     },
     {
-      title: 'Diagnostics & Analytics',
+      title: 'Support & Swarm',
       items: [
-        { labelKey: 'tab_scan', fallback: 'Prescription OCR & Vision', tab: 'scan', icon: Scan, isTab: true },
-        { labelKey: 'tab_analytics', fallback: 'Visual Analytics', tab: 'analytics', icon: Activity, isTab: true },
-        { labelKey: 'tab_hospital', fallback: 'WHO Surveillance', tab: 'hospital', icon: Globe, isTab: true }
-      ]
-    },
-    {
-      title: 'Records & Security',
-      items: [
-        { labelKey: 'tab_records', fallback: 'ABHA Health Records', tab: 'records', icon: FileText, isTab: true },
-        { labelKey: 'tab_health_sync', fallback: 'Health Device Sync', tab: 'sync', icon: Watch, isTab: true },
-        { labelKey: 'tab_security', fallback: '2FA & Active Sessions', tab: 'security', icon: ShieldCheck, isTab: true }
+        { labelKey: 'tab_swarm', fallback: 'Clinical Triage Swarm', tab: 'swarm', icon: Zap, isTab: true },
+        { labelKey: 'tab_security', fallback: 'Security & 2FA', tab: 'security', icon: ShieldCheck, isTab: true },
+        { labelKey: 'tab_voice', fallback: 'Voice Consultation', action: 'voice', icon: Mic, isTab: false }
       ]
     }
   ];
+
+  const handleItemClick = (item: NavItem) => {
+    if (item.action === 'voice') {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'voice' } }));
+      }
+    } else if (item.tab) {
+      onTabChange?.(item.tab);
+    }
+  };
 
   return (
     <aside 
@@ -93,7 +97,7 @@ export default function OrchestratorSidebar({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        padding: isExpanded ? '16px 12px' : '16px 0',
+        padding: isExpanded ? '16px 12px 36px 12px' : '16px 0 36px 0',
         position: 'fixed',
         left: 0,
         top: 0,
@@ -101,7 +105,9 @@ export default function OrchestratorSidebar({
         boxShadow: '2px 0 12px rgba(15, 23, 42, 0.04)',
         transition: 'width 0.25s cubic-bezier(0.16, 1, 0.3, 1), padding 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
         overflowX: 'hidden',
-        overflowY: 'auto'
+        overflowY: 'auto',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+        boxSizing: 'border-box'
       }}
     >
       {/* Top Header & Hospital Branding */}
@@ -116,7 +122,7 @@ export default function OrchestratorSidebar({
           {/* Hospital Logo & Brand Link */}
           <Link 
             href="/" 
-            title="Synapse Hospital OS — Home"
+            title="Rural AI Healthcare"
             style={{ 
               textDecoration: 'none',
               display: 'flex',
@@ -141,7 +147,7 @@ export default function OrchestratorSidebar({
             }}>
               <img 
                 src="/AIIMS_New_Delhi.png" 
-                alt="AIIMS New Delhi Emblem" 
+                alt="Rural AI Healthcare Emblem" 
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
               />
             </div>
@@ -155,16 +161,16 @@ export default function OrchestratorSidebar({
                   letterSpacing: '-0.02em',
                   whiteSpace: 'nowrap'
                 }}>
-                  Synapse Hospital OS
+                  Rural AI Healthcare
                 </span>
                 <span style={{ 
                   fontSize: '9.5px', 
                   fontWeight: 700, 
-                  color: '#0284c7', 
+                  color: '#059669', 
                   textTransform: 'uppercase',
                   letterSpacing: '0.04em'
                 }}>
-                  Clinical Core v4.2
+                  Sanjeevni AI Swarm
                 </span>
               </div>
             )}
@@ -174,7 +180,7 @@ export default function OrchestratorSidebar({
           {isExpanded && onToggleExpand && (
             <button
               onClick={onToggleExpand}
-              title="Collapse Sidebar (76px)"
+              title="Collapse Sidebar"
               style={{
                 width: '28px',
                 height: '28px',
@@ -208,7 +214,7 @@ export default function OrchestratorSidebar({
           <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
             <button
               onClick={onToggleExpand}
-              title="Expand Sidebar (250px)"
+              title="Expand Sidebar"
               style={{
                 width: '32px',
                 height: '28px',
@@ -223,9 +229,9 @@ export default function OrchestratorSidebar({
                 transition: 'all 0.15s ease'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#e0f2fe';
-                e.currentTarget.style.color = '#0284c7';
-                e.currentTarget.style.borderColor = '#bae6fd';
+                e.currentTarget.style.background = '#ecfdf5';
+                e.currentTarget.style.color = '#059669';
+                e.currentTarget.style.borderColor = '#a7f3d0';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = '#f8fafc';
@@ -238,7 +244,7 @@ export default function OrchestratorSidebar({
           </div>
         )}
 
-        {/* Categorized Clinical Navigation Sections */}
+        {/* Categorized Rural AI Navigation Sections */}
         <nav style={{ 
           display: 'flex', 
           flexDirection: 'column', 
@@ -278,45 +284,45 @@ export default function OrchestratorSidebar({
                 {section.items.map((item, idx) => {
                   const Icon = item.icon;
                   const isTabActive = item.isTab && activeTab === item.tab;
-                  const isRouteActive = !item.isTab && pathname === item.href;
-                  const isActive = isTabActive || isRouteActive;
+                  const isActive = isTabActive;
                   const titleLabel = t(item.labelKey, item.fallback);
 
                   return (
                     <div 
                       key={idx} 
-                      className="orch-nav-item"
                       style={{ 
-                        position: 'relative', 
-                        width: isExpanded ? '100%' : 'auto',
+                        width: '100%',
                         display: 'flex',
-                        justifyContent: isExpanded ? 'stretch' : 'center'
+                        justifyContent: 'center',
+                        padding: isExpanded ? '0' : '0 4px'
                       }}
                     >
                       <button
-                        onClick={() => item.tab && onTabChange?.(item.tab)}
-                        title={isExpanded ? '' : titleLabel}
+                        onClick={() => handleItemClick(item)}
+                        title={titleLabel}
+                        aria-label={titleLabel}
                         style={{
                           width: isExpanded ? '100%' : '44px',
                           height: isExpanded ? '38px' : '44px',
                           padding: isExpanded ? '0 12px' : '0',
                           borderRadius: '10px',
-                          border: isActive ? '1px solid #bae6fd' : '1px solid transparent',
+                          border: isActive ? '1px solid #a7f3d0' : '1px solid transparent',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: isExpanded ? 'flex-start' : 'center',
                           gap: isExpanded ? '10px' : '0',
-                          background: isActive ? '#e0f2fe' : 'transparent',
-                          color: isActive ? '#0284c7' : '#334155',
+                          background: isActive ? '#ecfdf5' : 'transparent',
+                          color: isActive ? '#059669' : '#334155',
                           cursor: 'pointer',
                           transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
-                          boxShadow: isActive ? '0 1px 3px rgba(2, 132, 199, 0.08)' : 'none',
-                          textAlign: 'left'
+                          boxShadow: isActive ? '0 1px 3px rgba(5, 150, 105, 0.08)' : 'none',
+                          textAlign: 'left',
+                          fontFamily: 'inherit'
                         }}
                         onMouseEnter={(e) => {
                           if (!isActive) {
                             e.currentTarget.style.background = '#f8fafc';
-                            e.currentTarget.style.color = '#0284c7';
+                            e.currentTarget.style.color = '#059669';
                           }
                         }}
                         onMouseLeave={(e) => {
@@ -329,7 +335,7 @@ export default function OrchestratorSidebar({
                         <Icon 
                           size={18} 
                           strokeWidth={isActive ? 2.3 : 1.7} 
-                          color={isActive ? '#0284c7' : 'currentColor'} 
+                          color={isActive ? '#059669' : 'currentColor'} 
                           className="flex-shrink-0"
                         />
                         
@@ -351,117 +357,44 @@ export default function OrchestratorSidebar({
                             width: '6px',
                             height: '6px',
                             borderRadius: '50%',
-                            background: '#0284c7',
+                            background: '#059669',
                             flexShrink: 0
                           }} />
                         )}
                       </button>
-
-                      {/* Floating Tooltip for Collapsed State */}
-                      {!isExpanded && (
-                        <div className="orch-sidebar-tooltip">
-                          {titleLabel}
-                        </div>
-                      )}
                     </div>
                   );
                 })}
               </div>
             </div>
           ))}
-
-          {/* Synapse Home Link */}
-          <div style={{ marginTop: '4px', width: '100%', display: 'flex', justifyContent: isExpanded ? 'stretch' : 'center' }}>
-            <div 
-              className="orch-nav-item"
-              style={{ 
-                position: 'relative', 
-                width: isExpanded ? '100%' : 'auto',
-                display: 'flex',
-                justifyContent: isExpanded ? 'stretch' : 'center'
-              }}
-            >
-              <Link
-                href="/"
-                title={isExpanded ? '' : t('brand_title', 'SynapseOS Home')}
-                data-no-swup="true"
-                style={{
-                  width: isExpanded ? '100%' : '44px',
-                  height: isExpanded ? '38px' : '44px',
-                  padding: isExpanded ? '0 12px' : '0',
-                  borderRadius: '10px',
-                  border: pathname === '/' ? '1px solid #bae6fd' : '1px solid transparent',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: isExpanded ? 'flex-start' : 'center',
-                  gap: isExpanded ? '10px' : '0',
-                  background: pathname === '/' ? '#e0f2fe' : 'transparent',
-                  color: pathname === '/' ? '#0284c7' : '#64748b',
-                  textDecoration: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)'
-                }}
-                onMouseEnter={(e) => {
-                  if (pathname !== '/') {
-                    e.currentTarget.style.background = '#f8fafc';
-                    e.currentTarget.style.color = '#0284c7';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (pathname !== '/') {
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.color = '#64748b';
-                  }
-                }}
-              >
-                <Home size={18} strokeWidth={1.8} className="flex-shrink-0" />
-                {isExpanded && (
-                  <span style={{
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis'
-                  }}>
-                    {t('brand_title', 'SynapseOS Home')}
-                  </span>
-                )}
-              </Link>
-
-              {!isExpanded && (
-                <div className="orch-sidebar-tooltip">
-                  {t('brand_title', 'SynapseOS Home')}
-                </div>
-              )}
-            </div>
-          </div>
         </nav>
       </div>
 
-      {/* Bottom Emergency SOS & Hospital Actions */}
+      {/* Bottom Footer Actions */}
       <div style={{ 
         display: 'flex', 
         flexDirection: 'column', 
         gap: '8px', 
-        alignItems: isExpanded ? 'stretch' : 'center', 
         width: '100%',
-        paddingTop: '10px',
+        alignItems: isExpanded ? 'stretch' : 'center',
+        paddingTop: '12px',
         borderTop: '1px solid #f1f5f9'
       }}>
         {/* Emergency SOS Button */}
         {onOpenSOS && (
           <div 
-            className="orch-nav-item"
             style={{ 
-              position: 'relative', 
-              width: isExpanded ? '100%' : 'auto',
+              width: '100%',
               display: 'flex',
-              justifyContent: isExpanded ? 'stretch' : 'center'
+              justifyContent: 'center',
+              padding: isExpanded ? '0' : '0 4px'
             }}
           >
             <button
               onClick={onOpenSOS}
-              title={isExpanded ? '' : t('btn_emergency_sos', 'Emergency SOS (112)')}
+              title={t('btn_emergency_sos', 'Emergency SOS (108)')}
+              aria-label={t('btn_emergency_sos', 'Emergency SOS (108)')}
               style={{
                 width: isExpanded ? '100%' : '44px',
                 height: isExpanded ? '38px' : '44px',
@@ -478,7 +411,8 @@ export default function OrchestratorSidebar({
                 boxShadow: '0 3px 10px rgba(220, 38, 38, 0.25)',
                 transition: 'all 0.15s ease',
                 fontWeight: 700,
-                fontSize: '12px'
+                fontSize: '12px',
+                fontFamily: 'inherit'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = '#b91c1c';
@@ -490,35 +424,29 @@ export default function OrchestratorSidebar({
               <AlertOctagon size={18} className="flex-shrink-0" />
               {isExpanded && (
                 <span style={{ whiteSpace: 'nowrap' }}>
-                  {t('btn_emergency_sos', 'Emergency SOS (112)')}
+                  {t('btn_emergency_sos', 'Emergency SOS (108)')}
                 </span>
               )}
             </button>
-
-            {!isExpanded && (
-              <div className="orch-sidebar-tooltip" style={{ background: '#dc2626' }}>
-                {t('btn_emergency_sos', 'Emergency SOS (112)')}
-              </div>
-            )}
           </div>
         )}
 
         {/* Sign Out Action Button */}
         <div 
-          className="orch-nav-item"
           style={{ 
-            position: 'relative', 
-            width: isExpanded ? '100%' : 'auto',
+            width: '100%',
             display: 'flex',
-            justifyContent: isExpanded ? 'stretch' : 'center'
+            justifyContent: 'center',
+            padding: isExpanded ? '0' : '0 4px'
           }}
         >
           <button
             onClick={() => logout()}
-            title={isExpanded ? '' : 'Sign Out of Synapse OS'}
+            title="Sign Out"
+            aria-label="Sign Out"
             style={{
-              width: isExpanded ? '100%' : '40px',
-              height: isExpanded ? '34px' : '40px',
+              width: isExpanded ? '100%' : '44px',
+              height: isExpanded ? '36px' : '40px',
               padding: isExpanded ? '0 12px' : '0',
               borderRadius: '9px',
               background: '#fef2f2',
@@ -531,7 +459,8 @@ export default function OrchestratorSidebar({
               cursor: 'pointer',
               transition: 'all 0.15s ease',
               fontSize: '11.5px',
-              fontWeight: 600
+              fontWeight: 600,
+              fontFamily: 'inherit'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = '#fee2e2';
@@ -549,12 +478,6 @@ export default function OrchestratorSidebar({
               </span>
             )}
           </button>
-
-          {!isExpanded && (
-            <div className="orch-sidebar-tooltip">
-              Sign Out
-            </div>
-          )}
         </div>
       </div>
     </aside>

@@ -647,13 +647,13 @@ export default function PatientVitalsPanel({
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
             <div style={{ fontSize: '10px', color: '#64748b', fontWeight: 700 }}>{translateText('BLOOD PRESSURE')}</div>
-            <div style={{ fontSize: '13px', fontWeight: 800, color: '#0f172a', marginTop: '2px', fontVariantNumeric: 'tabular-nums' }}>
+            <div suppressHydrationWarning style={{ fontSize: '13px', fontWeight: 800, color: '#0f172a', marginTop: '2px', fontVariantNumeric: 'tabular-nums' }}>
               {isAbhaLinked ? `${vitals.systolicBp}/${vitals.diastolicBp}` : '---/---'} <span style={{ fontSize: '10px', fontWeight: 600, color: '#64748b' }}>mmHg</span>
             </div>
           </div>
           <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
             <div style={{ fontSize: '10px', color: '#64748b', fontWeight: 700 }}>{translateText('O2 SATURATION')}</div>
-            <div style={{ fontSize: '13px', fontWeight: 800, color: '#059669', marginTop: '2px', fontVariantNumeric: 'tabular-nums' }}>
+            <div suppressHydrationWarning style={{ fontSize: '13px', fontWeight: 800, color: '#059669', marginTop: '2px', fontVariantNumeric: 'tabular-nums' }}>
               {isAbhaLinked ? `${vitals.oxygenSaturation}%` : '---%'} <span style={{ fontSize: '10px', fontWeight: 600, color: '#64748b' }}>{isAbhaLinked ? translateText('Normal') : translateText('Pending')}</span>
             </div>
           </div>

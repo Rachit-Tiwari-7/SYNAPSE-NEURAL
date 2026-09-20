@@ -45,10 +45,8 @@ class Settings(BaseModel):
     TWILIO_AUTH_TOKEN: str = os.getenv("TWILIO_AUTH_TOKEN", "")
     TWILIO_PHONE_NUMBER: str = os.getenv("TWILIO_PHONE_NUMBER", "")
 
-    # Blockchain / IPFS (Pinata) settings
+    # IPFS (Pinata) settings
     PINATA_JWT: str = os.getenv("PINATA_JWT", "")
     PINATA_GATEWAY_URL: str = os.getenv("PINATA_GATEWAY_URL", "https://gateway.pinata.cloud/ipfs")
-    BLOCKCHAIN_RPC_URL: str = os.getenv("BLOCKCHAIN_RPC_URL", "http://127.0.0.1:8545")
-    CONTRACT_ADDRESS: str = os.getenv("CONTRACT_ADDRESS", "")
 
 settings = Settings()

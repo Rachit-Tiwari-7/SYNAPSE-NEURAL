@@ -603,57 +603,6 @@ export default function ChatCanvas({
                   {personaConfig.description}
                 </p>
               </div>
-
-              {/* Persona-Specific Dynamic Action Prompts */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '8px',
-                width: '100%',
-                maxWidth: '740px',
-                marginTop: '6px'
-              }}>
-                {personaConfig.prompts.map((action, idx) => {
-                  const Icon = action.icon;
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => onSend(action.query)}
-                      style={{
-                        padding: '10px 12px',
-                        borderRadius: '10px',
-                        background: '#f8fafc',
-                        border: '1.2px solid #e2e8f0',
-                        textAlign: 'left',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '3px',
-                        transition: 'all 0.15s ease',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = action.color;
-                        e.currentTarget.style.background = '#ffffff';
-                        e.currentTarget.style.transform = 'translateY(-1px)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = '#e2e8f0';
-                        e.currentTarget.style.background = '#f8fafc';
-                        e.currentTarget.style.transform = 'translateY(0)';
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '10px', fontWeight: 800, color: action.color, textTransform: 'uppercase' }}>
-                        <Icon size={12} />
-                        <span>{action.category}</span>
-                      </div>
-                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}>
-                        {action.title}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
             </div>
           ) : (
             <ChatStream

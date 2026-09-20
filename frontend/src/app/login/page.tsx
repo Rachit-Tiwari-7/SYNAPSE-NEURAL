@@ -197,8 +197,7 @@ function LoginContent() {
               className="w-full p-5 rounded-md text-gray-900"
               style={{ opacity: 1, visibility: 'visible', color: '#111827' }}
             >
-              {/* Back to website — visible on white bg above the heading */}
-              <div style={{ marginBottom: '20px' }}>
+              <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
                 <Link
                   href="/"
                   style={{
@@ -229,6 +228,26 @@ function LoginContent() {
                   <span style={{ fontSize: '15px' }}>&larr;</span>
                   Back to website
                 </Link>
+
+                <a
+                  href="/orchestrator-agent"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    color: '#ffffff',
+                    background: '#059669',
+                    textDecoration: 'none',
+                    padding: '6px 16px',
+                    borderRadius: '9999px',
+                    boxShadow: '0 2px 8px rgba(5, 150, 105, 0.25)'
+                  }}
+                >
+                  <span>Skip Login & Enter App</span>
+                  <span>→</span>
+                </a>
               </div>
 
               <h1 

@@ -13,12 +13,13 @@ const SCRIPT_URLS = [
   '/wp-content/themes/normalisboring25/js/gsap/MorphSVGPlugin.min.js',
   'https://unpkg.com/lenis@1.3.1/dist/lenis.min.js',
   '/wp-content/themes/normalisboring25/js/root.js',
-  '/wp-content/themes/normalisboring25/js/preloader.js',
   '/wp-content/themes/normalisboring25/js/rollovers.js',
   '/wp-content/themes/normalisboring25/js/animations.js',
   '/wp-content/themes/normalisboring25/js/clicks.js',
   '/wp-content/themes/normalisboring25/js/scroll.js',
   '/wp-content/themes/normalisboring25/js/main.js',
+  // Must come after main.js: it is the only caller of the global init()
+  '/wp-content/themes/normalisboring25/js/preloader.js',
   '/wp-content/themes/normalisboring25/js/ocr-carousel.js',
   '/wp-content/themes/normalisboring25/js/agentic-diagram.js'
 ];
