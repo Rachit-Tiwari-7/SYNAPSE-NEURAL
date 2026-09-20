@@ -1,0 +1,95 @@
+# ==============================================================================
+# Git Ignore Rules — Synapse-OS
+# ==============================================================================
+
+# Dependencies
+node_modules/
+*/node_modules/
+.pnp
+.pnp.js
+
+# Testing & Caches
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.cover
+.cache/
+
+# Python
+__pycache__/
+*/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Next.js / Frontend Production Builds & Cache
+.next/
+*/.next/
+out/
+.vercel
+next-env.d.ts
+*.tsbuildinfo
+
+# Local Runtime Data & State
+.data/
+*/.data/
+
+# Environment Variables & Secrets
+.env
+.env*.local
+*.env
+backend/.env
+frontend/.env.local
+whatsapp_service/.env
+!*.env.example
+!whatsapp_service/.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Operating System & Editor Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

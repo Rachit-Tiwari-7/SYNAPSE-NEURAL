@@ -1,0 +1,301 @@
+/* SynapseOS — Modern Hospital-Grade Clinical Operating System CSS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+#smooth-wrapper, #smooth-content {
+  position: static !important;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  pointer-events: auto !important;
+}
+
+:root {
+  /* Hospital Clinical Color Palette */
+  --orch-bg: #f8fafc;
+  --orch-surface: #ffffff;
+  --orch-surface-subtle: #f1f5f9;
+  --orch-border: #e2e8f0;
+  --orch-border-subtle: #f1f5f9;
+  
+  /* Primary Typography */
+  --orch-navy: #0f172a;
+  --orch-slate: #334155;
+  --orch-text-primary: #0f172a;
+  --orch-text-secondary: #475569;
+  --orch-text-muted: #64748b;
+  
+  /* Medical Accents */
+  --orch-cyan: #0284c7;
+  --orch-blue: #2563eb;
+  --orch-primary: #0284c7;
+  --orch-primary-light: #f0f9ff;
+  --orch-primary-border: #bae6fd;
+  
+  /* Clinical Verified / Status */
+  --orch-emerald: #059669;
+  --orch-teal: #0d9488;
+  --orch-success: #059669;
+  --orch-success-light: #ecfdf5;
+  --orch-success-border: #a7f3d0;
+  
+  /* Warnings / Alerts */
+  --orch-warning: #d97706;
+  --orch-warning-light: #fffbeb;
+  --orch-warning-border: #fde68a;
+  
+  /* Emergency / Hospital SOS */
+  --orch-danger: #dc2626;
+  --orch-danger-light: #fef2f2;
+  --orch-danger-border: #fecaca;
+  
+  /* High-Trust Hospital Elevations */
+  --orch-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --orch-shadow-card: 0 2px 8px -2px rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
+  --orch-shadow-hover: 0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.03);
+  --orch-shadow-elevation: 0 12px 32px -4px rgba(15, 23, 42, 0.08);
+  
+  --orch-radius-sm: 8px;
+  --orch-radius-md: 12px;
+  --orch-radius-lg: 16px;
+  --orch-radius-xl: 22px;
+}
+
+.orch-root {
+  font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  color: var(--orch-text-primary) !important;
+  background-color: var(--orch-bg) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 100vw !important;
+  height: 100vh !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 100 !important;
+  display: flex !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.orch-root,
+.orch-root *,
+.orch-root button,
+.orch-root input,
+.orch-root select,
+.orch-root textarea,
+.orch-root h1,
+.orch-root h2,
+.orch-root h3,
+.orch-root h4,
+.orch-root h5,
+.orch-root h6,
+.orch-root p,
+.orch-root span {
+  box-sizing: border-box;
+  font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* Tabular Numerals for Telemetry & Vitals */
+.orch-tabular-nums,
+.tabular-nums {
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: "tnum" 1 !important;
+}
+
+/* Hospital Custom Scrollbars */
+.orch-root ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.orch-root ::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.7);
+  border-radius: 9999px;
+}
+
+.orch-root ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.orch-root ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.orch-root * {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 rgba(241, 245, 249, 0.7);
+}
+
+/* Main Workspace Drag & Scroll Container */
+.orch-main-workspace {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  scroll-behavior: auto;
+  user-select: auto;
+  cursor: default;
+}
+
+.orch-main-workspace.is-dragging {
+  cursor: grabbing !important;
+  user-select: none !important;
+}
+
+/* Hotspot pulse animations */
+@keyframes pulse-hotspot {
+  0% {
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(2, 132, 199, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0);
+  }
+}
+
+@keyframes pulse-danger {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(220, 38, 38, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+
+@keyframes pulse-warning {
+  0% {
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(217, 119, 6, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0);
+  }
+}
+
+@keyframes ecg-flow {
+  0% {
+    stroke-dashoffset: 600;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.hotspot-pulse-primary {
+  animation: pulse-hotspot 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.hotspot-pulse-danger {
+  animation: pulse-danger 1.8s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.hotspot-pulse-warning {
+  animation: pulse-warning 2.2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.ecg-anim-line {
+  stroke-dasharray: 600;
+  animation: ecg-flow 3s linear infinite;
+}
+
+/* Card hover transitions */
+.orch-card-interactive {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.orch-card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--orch-shadow-hover);
+  border-color: var(--orch-primary-border);
+}
+
+/* Tab Pills */
+.orch-nav-pill {
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.orch-nav-pill:hover:not(.active) {
+  background-color: #f1f5f9;
+  color: var(--orch-text-primary);
+}
+
+/* Tooltip for Collapsed Sidebar Items */
+.orch-sidebar-tooltip {
+  position: absolute;
+  left: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: #0f172a;
+  color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.orch-nav-item:hover .orch-sidebar-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Responsive Grid layouts */
+@media (max-width: 1400px) {
+  .orch-main-grid {
+    flex-wrap: wrap !important;
+    overflow-y: auto !important;
+  }
+  .orch-col-side {
+    width: 320px !important;
+    min-width: 300px !important;
+  }
+  .orch-col-center {
+    min-width: 380px !important;
+    height: 600px !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .orch-root {
+    flex-direction: column !important;
+    height: auto !important;
+    overflow-y: auto !important;
+  }
+  .orch-sidebar-fixed {
+    width: 100% !important;
+    height: 60px !important;
+    flex-direction: row !important;
+    padding: 0 16px !important;
+    position: relative !important;
+  }
+  .orch-viewport {
+    margin-left: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+  .orch-main-grid {
+    flex-direction: column !important;
+    padding: 16px !important;
+  }
+  .orch-col-side,
+  .orch-col-center {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+}

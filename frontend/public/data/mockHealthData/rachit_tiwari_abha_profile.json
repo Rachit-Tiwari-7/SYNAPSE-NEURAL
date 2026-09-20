@@ -1,0 +1,234 @@
+{
+  "id": "rachit_tiwari_verified_abha",
+  "name": "Rachit Tiwari",
+  "age": 23,
+  "gender": "Male",
+  "dob": "June 18, 2003",
+  "yearOfBirth": 2003,
+  "bloodType": "O+",
+  "abhaId": "91-8842-1920-7463",
+  "abhaAddress": "rachittiwari@abdm",
+  "policyNumber": "PM-JAY-2026-IND-9924",
+  "planType": "Ayushman Bharat PM-JAY (ABDM Verified)",
+  "stateCode": "UP",
+  "linkedHip": "King George's Medical University (KGMU) & AIIMS Node",
+  "residence": "Lucknow / New Delhi, India",
+  "avatarUrl": "/images/rachit_tiwari.jpg",
+  "device": "Pixel Watch 3 & Google Health Connect Synced",
+  "status": "ABDM_VERIFIED_ACTIVE",
+  "kycVerified": true,
+  "pmjayCoverage": "₹5,00,000 Annual Family Floating Cover",
+  "vitals": {
+    "heartRate": 70,
+    "avgHeartRate": 62,
+    "maxHeartRate": 124,
+    "systolicBp": 116,
+    "diastolicBp": 74,
+    "oxygenSaturation": 99.0,
+    "respirationRate": 15,
+    "hrv": 72,
+    "vo2Max": 51.4,
+    "leadIEcg": "Normal Sinus Rhythm (NSR) • QTc 402ms • High Autonomic Tone"
+  },
+  "conditions": [
+    {
+      "id": "cond-lungs",
+      "title": "High-Endurance VO2 Max Pulmonary Reserve",
+      "doctor": "Dr. Rajesh K. Varma",
+      "specialty": "Sports Pulmonology",
+      "organ": "lungs",
+      "status": "Stable",
+      "notes": "O2 Saturation: 99.0%, FEV1: 5.2L. Peak athletic respiratory capacity and rapid ventilatory recovery.",
+      "lastUpdated": "Nov 02, 2025 at 10:45 AM",
+      "metrics": {
+        "fev1": "5.2 L",
+        "o2": "99.0%",
+        "heartRate": "70 BPM",
+        "trendThisMonth": "99.2%",
+        "trendPrevMonth": "98.0%"
+      }
+    },
+    {
+      "id": "cond-shoulder",
+      "title": "Thoracic & Deltoid Athletic Mobility",
+      "doctor": "Dr. Rajesh K. Varma",
+      "specialty": "Sports Medicine",
+      "organ": "shoulder",
+      "painLevel": 2,
+      "status": "Stable",
+      "notes": "Optimal rotator cuff function. Minimal athletic muscular tension."
+    },
+    {
+      "id": "cond-knee",
+      "title": "Lower Kinetic Chain & Patellar Dynamics",
+      "doctor": "Dr. Naresh Trehan",
+      "specialty": "Sports Orthopedics",
+      "organ": "knee",
+      "angleCurrent": 120,
+      "angleNormal": 120,
+      "status": "Stable",
+      "notes": "Optimal quadriceps force transfer. 120° full physiological range without crepitus."
+    }
+  ],
+  "visualAnalytics": {
+    "healthScore": 95,
+    "avgBpm": 70,
+    "bpmStatus": "Optimal Resting Heart Rate (Rest: 62 bpm)",
+    "heartRatePath": "M 0 95 Q 25 75, 50 80 T 100 60 T 150 85 T 200 40 T 250 75 T 300 65 T 350 82 T 400 55",
+    "sleepHours": "8h 05m",
+    "sleepStatus": "91% Restorative Deep Sleep (Optimal)",
+    "sleepBars": [
+      70,
+      82,
+      88,
+      95,
+      91,
+      98,
+      93
+    ],
+    "stressScore": "15 / 100",
+    "stressStatus": "High Heart Rate Variability (Vagal Dominance)",
+    "stressPath": "M 0 125 Q 30 115, 60 118 T 120 108 T 180 122 T 240 105 T 300 118 T 350 112",
+    "stressPoints": [
+      {
+        "cx": 40,
+        "cy": 115,
+        "isHigh": false
+      },
+      {
+        "cx": 110,
+        "cy": 108,
+        "isHigh": false
+      },
+      {
+        "cx": 190,
+        "cy": 122,
+        "isHigh": false
+      },
+      {
+        "cx": 270,
+        "cy": 105,
+        "isHigh": false
+      },
+      {
+        "cx": 340,
+        "cy": 112,
+        "isHigh": false
+      }
+    ],
+    "avgSteps": "12,450",
+    "stepsStatus": "+24% Active Daily Movement vs Target",
+    "stepsBars": [
+      {
+        "height": 80,
+        "active": false
+      },
+      {
+        "height": 90,
+        "active": false
+      },
+      {
+        "height": 95,
+        "active": false
+      },
+      {
+        "height": 85,
+        "active": false
+      },
+      {
+        "height": 100,
+        "active": true
+      },
+      {
+        "height": 88,
+        "active": false
+      },
+      {
+        "height": 92,
+        "active": false
+      }
+    ],
+    "aiInsights": {
+      "positive": {
+        "title": "Cardio-Respiratory Endurance",
+        "description": "VO2 Max at 51.4 mL/kg/min and 72ms HRV reflect outstanding athletic autonomic balance."
+      },
+      "takeAction": {
+        "title": "Electrolyte Replenishment",
+        "description": "Daily step target exceeded (12.4k). Maintain magnesium and hydration intake."
+      },
+      "monitor": {
+        "title": "Ergonomic Lumbar Alignment",
+        "description": "Maintain lumbar support during coding/screen sessions."
+      }
+    },
+    "carePlan": {
+      "medicationPercent": 100,
+      "medicationStatus": "Electrolytes & Vitamin D3 Complete",
+      "hydrationPercent": 90,
+      "hydrationStatus": "2.7L / 3.0L Target Reached"
+    },
+    "nextAppointment": {
+      "doctor": "Dr. Amitava Roy",
+      "initials": "AR",
+      "specialty": "Sports Medicine & Rehab",
+      "date": "Wednesday, 21 Jan, 03:30 PM",
+      "type": "Thoracic & Deltoid Mobility",
+      "mode": "In-Clinic",
+      "color": "#7c3aed"
+    },
+    "upcomingAppointments": [
+      {
+        "doctor": "Dr. Amitava Roy",
+        "initials": "AR",
+        "specialty": "Sports Medicine & Rehab",
+        "date": "Wednesday, 21 Jan, 03:30 PM",
+        "type": "Thoracic & Deltoid Mobility",
+        "mode": "In-Clinic",
+        "color": "#7c3aed"
+      },
+      {
+        "doctor": "Dr. Sunita Kapoor",
+        "initials": "SK",
+        "specialty": "Diagnostic Cardiology",
+        "date": "Saturday, 24 Jan, 11:15 AM",
+        "type": "Resting HRV & Rhythm Check",
+        "mode": "Hospital Review",
+        "color": "#ef4444"
+      },
+      {
+        "doctor": "Dr. Rohit Sen",
+        "initials": "RS",
+        "specialty": "Primary Health Care",
+        "date": "Tuesday, 27 Jan, 02:00 PM",
+        "type": "Comprehensive ABDM Checkup",
+        "mode": "Teleconsultation",
+        "color": "#059669"
+      }
+    ]
+  },
+  "blockchainRecords": [
+    {
+      "id": "REC-0x9924-RT",
+      "patient": "Rachit Tiwari",
+      "abha": "91-8842-1920-7463",
+      "hash": "7a3e9c1f8d4b2e6a5c0f9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b",
+      "cid": "QmRachitPulmonaryAthleticVo2MaxReserveReport2026",
+      "type": "Athletic VO2 Max & High-Endurance Pulmonary Spirometry",
+      "timestamp": "2026-08-19 14:15 UTC",
+      "facility": "Sports Medicine & Pulmonology Centre",
+      "verified": true
+    },
+    {
+      "id": "REC-0x9925-RT",
+      "patient": "Rachit Tiwari",
+      "abha": "91-8842-1920-7463",
+      "hash": "4b2e6a5c0f9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b7a3e9c1f8d",
+      "cid": "QmRachitOrthopedicLowerKineticChainScan2026",
+      "type": "Lower Kinetic Chain & Patellar Joint Cartilage Diagnostic",
+      "timestamp": "2026-08-21 16:40 UTC",
+      "facility": "KGMU Sports Orthopedics Unit",
+      "verified": true
+    }
+  ]
+}

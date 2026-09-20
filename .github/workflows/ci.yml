@@ -1,0 +1,233 @@
+name: CI / Automated Screening & Quality Assurance
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  # ----------------------------------------------------------------------------
+  # 1. Python Syntax Compilation & Static Analysis
+  # ----------------------------------------------------------------------------
+  python-syntax-and-lint:
+    name: Python Syntax & Static Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Linting Tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+
+      - name: Verify Python Bytecode Compilation
+        run: |
+          python -m compileall backend whatsapp_service
+
+      - name: Lint Codebase for Critical Errors
+        run: |
+          # Fails if syntax errors (E9), undefined names (F82), or undefined exports (F63, F7) exist
+          flake8 backend whatsapp_service --count --select=E9,F63,F7,F82 --show-source --statistics
+
+  # ----------------------------------------------------------------------------
+  # 2. Clinical Life-Safety Invariants Regression Gate
+  # ----------------------------------------------------------------------------
+  clinical-life-safety-tests:
+    name: Life-Safety & Protocol Invariants
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: python-syntax-and-lint
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Backend Test Requirements
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          if [ -f backend/requirements.txt ]; then
+            pip install -r backend/requirements.txt
+          fi
+          pip install pytest pytest-asyncio httpx
+
+      - name: Run Dedicated Clinical Life-Safety Verification
+        env:
+          GEMINI_API_KEY: ""
+          GROQ_API_KEY: ""
+          OPENROUTER_API_KEY: ""
+          PINATA_JWT: ""
+          TWILIO_ACCOUNT_SID: ""
+          TWILIO_AUTH_TOKEN: ""
+        run: |
+          pytest backend/tests/test_pediatric_and_clinical_safety.py \
+                 backend/tests/test_whatsapp_service.py \
+                 -k "safety or pediatric or emergency or bypass" \
+                 -v --tb=short
+
+  # ----------------------------------------------------------------------------
+  # 3. Full Backend Multi-Agent Swarm Test Suite & Code Coverage
+  # ----------------------------------------------------------------------------
+  backend-full-test-suite:
+    name: Full Backend Swarm Test Suite (190+ Tests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: python-syntax-and-lint
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Core Backend Dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          if [ -f backend/requirements.txt ]; then
+            pip install -r backend/requirements.txt
+          fi
+          pip install pytest pytest-asyncio pytest-cov httpx pydantic
+
+      - name: Execute Full Pytest Suite with Coverage
+        env:
+          GEMINI_API_KEY: ""
+          GROQ_API_KEY: ""
+          OPENROUTER_API_KEY: ""
+          PINATA_JWT: ""
+          TWILIO_ACCOUNT_SID: ""
+          TWILIO_AUTH_TOKEN: ""
+        run: |
+          pytest backend/tests --cov=backend/app --cov-report=xml --cov-report=term-missing
+
+      - name: Upload Test Coverage Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-coverage-report
+          path: coverage.xml
+          retention-days: 14
+
+  # ----------------------------------------------------------------------------
+  # 4. Frontend Typecheck, Error Boundary & Production Build Audit
+  # ----------------------------------------------------------------------------
+  frontend-build-audit:
+    name: Frontend Audit & Zero-Red-Screen Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Verify Zero-Red-Screen Error Boundaries Exist
+        run: |
+          test -f frontend/src/app/error.tsx || (echo "Missing error.tsx" && exit 1)
+          test -f frontend/src/app/global-error.tsx || (echo "Missing global-error.tsx" && exit 1)
+          test -f frontend/src/app/not-found.tsx || (echo "Missing not-found.tsx" && exit 1)
+          test -f frontend/src/components/ui/ErrorBoundary.tsx || (echo "Missing ErrorBoundary.tsx" && exit 1)
+          echo "All 4 zero-red-screen defensive error boundaries verified."
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm ci --ignore-scripts --legacy-peer-deps || npm install --legacy-peer-deps
+
+      - name: Production Next.js Build Audit
+        working-directory: ./frontend
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+          NODE_ENV: production
+        run: npm run build
+
+  # ----------------------------------------------------------------------------
+  # 5. Docker Orchestration & Container Image Build Verification
+  # ----------------------------------------------------------------------------
+  docker-orchestration-audit:
+    name: Docker Build & Compose Orchestration Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [python-syntax-and-lint]
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Validate Docker Compose Configurations
+        run: |
+          cp .env.example .env
+          docker compose config
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml config
+          rm .env
+
+      - name: Build Backend Container Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: false
+          tags: synapseos-backend:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ----------------------------------------------------------------------------
+  # 6. Kubernetes Manifest Validation
+  # ----------------------------------------------------------------------------
+  k8s-manifest-audit:
+    name: Kubernetes Manifest Schema Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Validate Kubernetes Manifest YAML Syntax
+        run: |
+          python3 -c "
+          import yaml, glob, sys
+          files = glob.glob('k8s/*.yaml') + glob.glob('k8s/*.yml')
+          if not files:
+              print('No k8s manifests found'); sys.exit(1)
+          for f in sorted(files):
+              with open(f, 'r') as fp:
+                  docs = list(yaml.safe_load_all(fp))
+                  for doc in docs:
+                      if doc:
+                          assert 'apiVersion' in doc, f'{f} missing apiVersion'
+                          assert 'kind' in doc, f'{f} missing kind'
+                          assert 'metadata' in doc, f'{f} missing metadata'
+              print(f'  [PASS] {f}')
+          "

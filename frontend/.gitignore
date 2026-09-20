@@ -1,0 +1,13 @@
+# Next.js / Frontend dependencies & builds
+node_modules/
+/.next/
+/out/
+.vercel
+next-env.d.ts
+
+# Local Runtime Data & State
+.data/
+
+# Environment files
+.env*.local
+.env

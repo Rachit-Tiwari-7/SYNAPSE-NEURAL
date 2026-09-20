@@ -1,0 +1,1193 @@
+/* SynapseOS AI Assistant Styles */
+
+@keyframes orbBreathe {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 25px rgba(52, 211, 153, 0.45)) drop-shadow(0 0 50px rgba(16, 185, 129, 0.2));
+  }
+  50% {
+    transform: scale(1.04);
+    filter: drop-shadow(0 0 35px rgba(52, 211, 153, 0.65)) drop-shadow(0 0 70px rgba(16, 185, 129, 0.35));
+  }
+}
+
+@keyframes orbRotateRing {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes orbWavePulse {
+  0% { transform: scale(0.85); opacity: 0.8; }
+  50% { transform: scale(1.18); opacity: 0.25; }
+  100% { transform: scale(0.85); opacity: 0.8; }
+}
+
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes typingDot {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+.synapseos-root,
+.synapseos-root *,
+.synapseos-modal-window,
+.synapseos-modal-window *,
+.synapseos-header,
+.synapseos-header *,
+.synapseos-persona-bar,
+.synapseos-persona-bar *,
+.synapseos-fullscreen-inbox,
+.synapseos-fullscreen-inbox *,
+.synapseos-fullscreen-dossier,
+.synapseos-fullscreen-dossier *,
+.synapseos-chat-stream,
+.synapseos-chat-stream * {
+  box-sizing: border-box !important;
+  margin: 0;
+  padding: 0;
+  font-family: "Times New Roman", Times, "Noto Serif", serif !important;
+}
+
+/* Aesthetic Thin Scrollbar - Light Blue Toned */
+.synapseos-custom-scroll {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(56, 189, 248, 0.45) transparent !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.synapseos-custom-scroll::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+.synapseos-custom-scroll::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.synapseos-custom-scroll::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.38) !important;
+  border-radius: 9999px !important;
+  border: 1px solid rgba(186, 230, 253, 0.35) !important;
+}
+
+.synapseos-custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(2, 132, 199, 0.65) !important;
+}
+
+/* Modal window and Fullscreen pane scrollbars */
+.synapseos-modal-window ::-webkit-scrollbar,
+.synapseos-fullscreen-chat-pane ::-webkit-scrollbar,
+.synapseos-root ::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+.synapseos-modal-window ::-webkit-scrollbar-track,
+.synapseos-fullscreen-chat-pane ::-webkit-scrollbar-track,
+.synapseos-root ::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.synapseos-modal-window ::-webkit-scrollbar-thumb,
+.synapseos-fullscreen-chat-pane ::-webkit-scrollbar-thumb,
+.synapseos-root ::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.38) !important;
+  border-radius: 9999px !important;
+  border: 1px solid rgba(186, 230, 253, 0.35) !important;
+}
+
+.synapseos-modal-window ::-webkit-scrollbar-thumb:hover,
+.synapseos-fullscreen-chat-pane ::-webkit-scrollbar-thumb:hover,
+.synapseos-root ::-webkit-scrollbar-thumb:hover {
+  background: rgba(2, 132, 199, 0.65) !important;
+}
+
+/* Floating Trigger Button */
+.synapseos-trigger-pill {
+  position: fixed !important;
+  bottom: 26px !important;
+  right: 26px !important;
+  z-index: 2147483647 !important;
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  border: 1.5px solid #10b981 !important;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.35), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  outline: none !important;
+}
+
+.synapseos-trigger-pill:hover {
+  transform: scale(1.08) !important;
+  box-shadow: 0 14px 40px rgba(16, 185, 129, 0.45) !important;
+}
+
+.synapseos-trigger-pill:active {
+  transform: scale(0.94) !important;
+}
+
+/* Hide on mobile screens */
+@media (max-width: 768px) {
+  .synapseos-trigger-pill {
+    display: none !important;
+  }
+}
+
+/* Main Modal Window - 100% Opaque & Solid Layering */
+.synapseos-modal-window {
+  position: fixed !important;
+  bottom: 96px !important;
+  right: 26px !important;
+  z-index: 2147483646 !important;
+  width: 430px !important;
+  max-width: calc(100vw - 32px) !important;
+  height: 670px !important;
+  max-height: calc(100vh - 120px) !important;
+  border-radius: 32px !important;
+  border: 1px solid rgba(16, 185, 129, 0.22) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.18), 0 8px 24px rgba(16, 185, 129, 0.12), 0 0 0 1px rgba(16, 185, 129, 0.12) !important;
+  background-color: #ffffff !important;
+  background: linear-gradient(180deg, #ecfdf5 0%, #f8fafc 12%, #ffffff 32%, #ffffff 100%) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  color: #0f172a !important;
+  animation: modalSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1), inset 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Fullscreen Mode Styling */
+.synapseos-modal-window.synapseos-modal-fullscreen {
+  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  z-index: 2147483647 !important;
+  background: linear-gradient(180deg, #f0fdf4 0%, #f8fafc 15%, #ffffff 38%, #ffffff 100%) !important;
+  animation: none !important;
+}
+
+/* Modal Inner Container */
+.synapseos-modal-inner {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
+  width: 100% !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-modal-inner {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  height: 100% !important;
+  padding: 0 !important;
+  flex-direction: row !important;
+}
+
+.synapseos-fullscreen-chat-pane {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  position: relative !important;
+  background: #ffffff !important;
+}
+
+/* Header */
+.synapseos-header {
+  display: flex !important;
+  align-items: center !important;
+  padding: 12px 18px !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.12) !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+}
+
+.synapseos-header-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-header {
+  padding: 14px 24px !important;
+  border-bottom: 1.5px solid #bae6fd !important;
+  background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #fdf2f8 100%) !important;
+  backdrop-filter: blur(16px) !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-header-inner {
+  max-width: 100% !important;
+  margin: 0 !important;
+}
+
+.synapseos-header-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.synapseos-header-logo {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: #0f172a !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+}
+
+.synapseos-header-logo-ring {
+  position: absolute !important;
+  inset: 2px !important;
+  border-radius: 50% !important;
+  border: 2px solid #34d399 !important;
+  border-top-color: transparent !important;
+  animation: orbRotateRing 5s linear infinite !important;
+}
+
+.synapseos-header-logo-dot {
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 50% !important;
+  background: #34d399 !important;
+}
+
+.synapseos-icon-btn {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: #f8fafc !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #334155 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+}
+
+.synapseos-icon-btn:hover {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+
+.synapseos-icon-btn.active {
+  background: #ecfdf5 !important;
+  color: #059669 !important;
+  border-color: #10b981 !important;
+}
+
+/* Persona Switcher Bar */
+.synapseos-persona-bar {
+  display: flex !important;
+  justify-content: center !important;
+  padding: 8px 14px !important;
+  background: rgba(248, 250, 252, 0.8) !important;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.08) !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+}
+
+.synapseos-persona-inner {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  width: 100% !important;
+  max-width: 440px !important;
+  background: #f1f5f9 !important;
+  padding: 4px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(0, 0, 0, 0.04) !important;
+}
+
+.synapseos-persona-btn {
+  flex: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  padding: 5px 8px !important;
+  border-radius: 999px !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  color: #64748b !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  white-space: nowrap !important;
+}
+
+.synapseos-persona-btn.active {
+  background: #ffffff !important;
+  color: #065f46 !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.12), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.synapseos-persona-icon {
+  font-size: 13px !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-persona-bar {
+  background: transparent !important;
+  border-bottom: none !important;
+  margin-top: 14px !important;
+  padding: 0 !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-persona-inner {
+  max-width: 520px !important;
+  padding: 5px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-persona-btn {
+  padding: 7px 14px !important;
+  font-size: 13px !important;
+}
+
+/* Hyper-Realistic 3D Fluid Holographic Orb */
+@keyframes orbLevitate {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.02);
+  }
+}
+
+@keyframes liquidPlasmaMorph1 {
+  0%, 100% {
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+    transform: rotate(0deg) scale(0.95);
+  }
+  33% {
+    border-radius: 58% 42% 38% 62% / 60% 30% 70% 40%;
+    transform: rotate(120deg) scale(1.04);
+  }
+  66% {
+    border-radius: 35% 65% 50% 50% / 40% 55% 45% 60%;
+    transform: rotate(240deg) scale(0.98);
+  }
+}
+
+@keyframes liquidPlasmaMorph2 {
+  0%, 100% {
+    border-radius: 50% 50% 30% 70% / 50% 60% 40% 50%;
+    transform: rotate(360deg) scale(1.02);
+  }
+  50% {
+    border-radius: 65% 35% 55% 45% / 45% 45% 55% 55%;
+    transform: rotate(180deg) scale(0.94);
+  }
+}
+
+@keyframes haloPulseRays {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.85;
+  }
+}
+
+@keyframes orbitalRingSpin {
+  0% {
+    transform: rotateX(72deg) rotateY(18deg) rotateZ(0deg);
+  }
+  100% {
+    transform: rotateX(72deg) rotateY(18deg) rotateZ(360deg);
+  }
+}
+
+.synapseos-orb-container {
+  position: relative !important;
+  margin: 12px auto 10px !important;
+  width: 140px !important;
+  height: 140px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  perspective: 800px !important;
+  animation: orbLevitate 4.2s ease-in-out infinite !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-orb-container {
+  width: 170px !important;
+  height: 170px !important;
+  margin: 20px auto 14px !important;
+}
+
+/* Multi-layered Soft Ambient Halos */
+.synapseos-orb-ambient-glow {
+  position: absolute !important;
+  width: 200px !important;
+  height: 200px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.45) 0%, rgba(16, 185, 129, 0.22) 40%, rgba(5, 150, 105, 0.08) 65%, transparent 80%) !important;
+  filter: blur(20px) !important;
+  animation: haloPulseRays 5s ease-in-out infinite !important;
+  pointer-events: none !important;
+}
+
+.synapseos-orb-ambient-glow-inner {
+  position: absolute !important;
+  width: 155px !important;
+  height: 155px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, rgba(110, 231, 183, 0.7) 0%, rgba(52, 211, 153, 0.3) 55%, transparent 75%) !important;
+  filter: blur(12px) !important;
+  pointer-events: none !important;
+}
+
+/* 3D Glass Sphere Vessel */
+.synapseos-orb-3d-sphere {
+  position: relative !important;
+  width: 120px !important;
+  height: 120px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle at 35% 26%, #ffffff 0%, #a7f3d0 14%, #34d399 35%, #059669 68%, #022c22 96%) !important;
+  box-shadow: 
+    0 18px 45px rgba(5, 150, 105, 0.42),
+    0 4px 14px rgba(0, 0, 0, 0.12),
+    inset 0 -24px 38px rgba(2, 44, 34, 0.85),
+    inset 0 12px 24px rgba(255, 255, 255, 0.98),
+    inset 0 0 28px rgba(52, 211, 153, 0.75) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-orb-3d-sphere {
+  width: 145px !important;
+  height: 145px !important;
+}
+
+.synapseos-orb-container:hover .synapseos-orb-3d-sphere {
+  transform: scale(1.06) !important;
+  box-shadow: 
+    0 22px 55px rgba(5, 150, 105, 0.55),
+    0 6px 18px rgba(0, 0, 0, 0.16),
+    inset 0 -26px 42px rgba(2, 44, 34, 0.9),
+    inset 0 14px 28px rgba(255, 255, 255, 1),
+    inset 0 0 32px rgba(52, 211, 153, 0.85) !important;
+}
+
+/* Internal Dynamic Morphing Plasma Cores */
+.synapseos-orb-plasma-core-1 {
+  position: absolute !important;
+  width: 100px !important;
+  height: 100px !important;
+  background: radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.95) 0%, rgba(167, 243, 208, 0.8) 30%, rgba(52, 211, 153, 0.6) 60%, transparent 80%) !important;
+  filter: blur(6px) !important;
+  animation: liquidPlasmaMorph1 6s ease-in-out infinite alternate !important;
+  mix-blend-mode: overlay !important;
+  pointer-events: none !important;
+}
+
+.synapseos-orb-plasma-core-2 {
+  position: absolute !important;
+  width: 85px !important;
+  height: 85px !important;
+  background: radial-gradient(circle at 60% 60%, rgba(209, 250, 229, 0.8) 0%, rgba(5, 150, 105, 0.7) 45%, rgba(6, 78, 59, 0.5) 80%, transparent 95%) !important;
+  filter: blur(4px) !important;
+  animation: liquidPlasmaMorph2 7.5s ease-in-out infinite alternate !important;
+  mix-blend-mode: screen !important;
+  pointer-events: none !important;
+}
+
+/* 3D Glass Light Glare / Specular Reflection */
+.synapseos-orb-specular-glare {
+  position: absolute !important;
+  top: 10% !important;
+  left: 16% !important;
+  width: 48px !important;
+  height: 26px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.5) 45%, rgba(255, 255, 255, 0) 80%) !important;
+  transform: rotate(-36deg) !important;
+  filter: blur(0.6px) !important;
+  pointer-events: none !important;
+}
+
+/* Secondary Micro Pinpoint Specular Glint */
+.synapseos-orb-pinpoint-glint {
+  position: absolute !important;
+  top: 22% !important;
+  left: 30% !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 10px 2px #ffffff, 0 0 18px 4px rgba(167, 243, 208, 0.8) !important;
+  pointer-events: none !important;
+}
+
+/* Subsurface Rim Reflection */
+.synapseos-orb-rim-reflection {
+  position: absolute !important;
+  bottom: 8% !important;
+  right: 14% !important;
+  width: 42px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(ellipse at center, rgba(167, 243, 208, 0.75) 0%, rgba(52, 211, 153, 0.2) 60%, transparent 85%) !important;
+  transform: rotate(32deg) !important;
+  filter: blur(1.5px) !important;
+  pointer-events: none !important;
+}
+
+/* Orbiting Iridescent Glass Ring */
+.synapseos-orb-orbital-ring {
+  position: absolute !important;
+  width: 156px !important;
+  height: 156px !important;
+  border-radius: 50% !important;
+  border: 1.5px solid rgba(167, 243, 208, 0.45) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+  border-bottom: 1.5px solid rgba(52, 211, 153, 0.15) !important;
+  animation: orbitalRingSpin 9s linear infinite !important;
+  pointer-events: none !important;
+  filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.5)) !important;
+}
+
+/* Welcome Screen Layout */
+.synapseos-orb-welcome {
+  flex: 1 1 0% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  margin: auto 0 !important;
+  padding: 10px 14px 16px !important;
+  width: 100% !important;
+  max-width: 860px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.synapseos-welcome-heading-wrap {
+  margin-top: 6px !important;
+  margin-bottom: 16px !important;
+}
+
+.synapseos-welcome-title {
+  font-size: 23px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.5px !important;
+  line-height: 1.25 !important;
+}
+
+.synapseos-welcome-subtitle {
+  font-size: 13px !important;
+  color: #64748b !important;
+  margin-top: 5px !important;
+  max-width: 520px !important;
+  line-height: 1.4 !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-welcome-title {
+  font-size: 30px !important;
+  letter-spacing: -0.8px !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-welcome-subtitle {
+  font-size: 14.5px !important;
+  margin-top: 8px !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-welcome-heading-wrap {
+  margin-top: 10px !important;
+  margin-bottom: 24px !important;
+}
+
+/* Action Cards Grid */
+.synapseos-welcome-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+  width: 100% !important;
+  max-width: 360px !important;
+  margin: 0 auto !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-welcome-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 12px !important;
+  max-width: 680px !important;
+}
+
+.synapseos-prompt-card {
+  display: flex !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+  gap: 10px !important;
+  padding: 10px 14px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(16, 185, 129, 0.16) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02) !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.synapseos-prompt-card:hover {
+  border-color: #10b981 !important;
+  background: #f0fdf4 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.12) !important;
+}
+
+.synapseos-prompt-icon {
+  font-size: 17px !important;
+  flex-shrink: 0 !important;
+  margin-top: 1px !important;
+}
+
+.synapseos-prompt-text {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.synapseos-prompt-title {
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  line-height: 1.3 !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-prompt-title {
+  font-size: 13.5px !important;
+}
+
+.synapseos-prompt-desc {
+  font-size: 11px !important;
+  color: #64748b !important;
+  margin-top: 2px !important;
+  line-height: 1.3 !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-prompt-desc {
+  font-size: 12px !important;
+}
+
+/* Chat Stream & Bubbles */
+.synapseos-modal-fullscreen .synapseos-custom-scroll {
+  padding: 24px 20px !important;
+  max-width: 860px !important;
+  margin: 0 auto !important;
+  width: 100% !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-msg-assistant {
+  max-width: 82% !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-msg-user {
+  max-width: 72% !important;
+}
+
+/* Input Container & Bar */
+.synapseos-input-container {
+  padding: 10px 14px 14px !important;
+  background: #ffffff !important;
+  border-top: 1px solid rgba(16, 185, 129, 0.1) !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-input-container {
+  max-width: 860px !important;
+  margin: 0 auto 20px !important;
+  background: transparent !important;
+  border-top: none !important;
+  padding: 0 !important;
+}
+
+.synapseos-input-bar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: #ffffff !important;
+  border-radius: 999px !important;
+  border: 1.5px solid rgba(16, 185, 129, 0.22) !important;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  padding: 6px 8px 6px 16px !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.synapseos-input-bar:focus-within {
+  border-color: #10b981 !important;
+  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.16), 0 0 0 2px rgba(16, 185, 129, 0.12) !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-input-bar {
+  height: 56px !important;
+  padding: 8px 12px 8px 22px !important;
+  box-shadow: 0 10px 32px rgba(16, 185, 129, 0.14), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+}
+
+.synapseos-input-elem {
+  flex: 1 !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  font-size: 14px !important;
+  color: #0f172a !important;
+  padding: 6px 0 !important;
+}
+
+.synapseos-modal-fullscreen .synapseos-input-elem {
+  font-size: 15px !important;
+}
+
+.synapseos-input-elem::placeholder {
+  color: #94a3b8 !important;
+}
+
+.synapseos-mic-action {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background: #ecfdf5 !important;
+  color: #059669 !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  flex-shrink: 0 !important;
+}
+
+.synapseos-mic-action:hover {
+  background: #d1fae5 !important;
+  transform: scale(1.05) !important;
+}
+
+.synapseos-mic-action.listening {
+  background: #10b981 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.3) !important;
+}
+
+.synapseos-send-action {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: #059669 !important;
+  color: #ffffff !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  flex-shrink: 0 !important;
+}
+
+.synapseos-send-action:hover {
+  background: #047857 !important;
+  transform: scale(1.05) !important;
+}
+
+/* ==========================================================================
+   LIVE AI VOICE MODE (ChatGPT / Apple Intelligence Style)
+   ========================================================================== */
+
+@keyframes voiceSpectrumBar {
+  0%, 100% { height: 6px; }
+  50% { height: 28px; }
+}
+
+@keyframes voiceOrbPulseSpeaking {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 35px rgba(52, 211, 153, 0.7)) drop-shadow(0 0 80px rgba(16, 185, 129, 0.4));
+  }
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 55px rgba(52, 211, 153, 0.95)) drop-shadow(0 0 110px rgba(16, 185, 129, 0.65));
+  }
+}
+
+@keyframes voiceOrbPulseListening {
+  0%, 100% {
+    transform: scale(0.98);
+    filter: drop-shadow(0 0 25px rgba(52, 211, 153, 0.5)) drop-shadow(0 0 50px rgba(16, 185, 129, 0.25));
+  }
+  50% {
+    transform: scale(1.04);
+    filter: drop-shadow(0 0 40px rgba(52, 211, 153, 0.75)) drop-shadow(0 0 80px rgba(16, 185, 129, 0.45));
+  }
+}
+
+@keyframes acousticWaveRing {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   VOICE MODE OVERLAY  — Minimal Professional Redesign
+   ═══════════════════════════════════════════════════════ */
+
+/* Root panel */
+.snj-voice-root {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 50 !important;
+  background: #ffffff !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 18px 20px 22px !important;
+  animation: modalSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+/* ── Top bar ─────────────────────────────────────────── */
+.snj-voice-topbar {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+}
+
+.snj-voice-brand {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.snj-voice-logo {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 7px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+}
+
+.snj-voice-brand-name {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.2px !important;
+}
+
+.snj-voice-brand-sub {
+  font-size: 10px !important;
+  color: #94a3b8 !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.1px !important;
+}
+
+.snj-voice-status-pill {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 4px 10px !important;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 20px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.snj-voice-status-dot {
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+  animation: snj-pulse-dot 2s ease-in-out infinite !important;
+}
+
+@keyframes snj-pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.8); }
+}
+
+.snj-voice-close-btn {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #64748b !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  transition: all 0.2s !important;
+}
+
+.snj-voice-close-btn:hover {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+  border-color: #fca5a5 !important;
+}
+
+/* ── Orb area ─────────────────────────────────────────── */
+.snj-voice-orb-wrap {
+  position: relative !important;
+  width: 160px !important;
+  height: 160px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+/* Ripple rings — centered on orb */
+.snj-voice-ring {
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: 50% !important;
+  border: 1.5px solid rgba(16, 185, 129, 0.35) !important;
+  animation: snj-ring-expand 2.1s cubic-bezier(0.16, 1, 0.3, 1) infinite !important;
+  pointer-events: none !important;
+}
+
+@keyframes snj-ring-expand {
+  0%   { transform: scale(0.85); opacity: 0.8; }
+  100% { transform: scale(1.9);  opacity: 0;   }
+}
+
+/* Main orb button */
+.snj-voice-orb {
+  position: relative !important;
+  z-index: 2 !important;
+  width: 110px !important;
+  height: 110px !important;
+  border-radius: 50% !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s !important;
+  /* Default idle state */
+  background: linear-gradient(145deg, #e2e8f0 0%, #cbd5e1 100%) !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.10), inset 0 1px 1px rgba(255,255,255,0.7) !important;
+  color: #64748b !important;
+}
+
+/* State colours */
+.snj-voice-orb--listening {
+  background: linear-gradient(145deg, #34d399 0%, #10b981 60%, #059669 100%) !important;
+  box-shadow: 0 12px 36px rgba(16,185,129,0.40), inset 0 1px 2px rgba(255,255,255,0.25) !important;
+  color: #ffffff !important;
+  animation: snj-orb-breathe-listen 2.4s ease-in-out infinite !important;
+}
+
+.snj-voice-orb--speaking {
+  background: linear-gradient(145deg, #6ee7b7 0%, #10b981 50%, #047857 100%) !important;
+  box-shadow: 0 14px 42px rgba(16,185,129,0.50), inset 0 1px 2px rgba(255,255,255,0.2) !important;
+  color: #ffffff !important;
+  animation: snj-orb-breathe-speak 1.6s ease-in-out infinite !important;
+}
+
+.snj-voice-orb--thinking {
+  background: linear-gradient(145deg, #7dd3fc 0%, #0284c7 60%, #0369a1 100%) !important;
+  box-shadow: 0 12px 36px rgba(2,132,199,0.40), inset 0 1px 2px rgba(255,255,255,0.2) !important;
+  color: #ffffff !important;
+  animation: snj-orb-spin-slow 4s linear infinite !important;
+}
+
+.snj-voice-orb--connecting {
+  background: linear-gradient(145deg, #fde68a 0%, #f59e0b 60%, #d97706 100%) !important;
+  box-shadow: 0 10px 30px rgba(245,158,11,0.35) !important;
+  color: #ffffff !important;
+  animation: snj-orb-pulse-slow 2s ease-in-out infinite !important;
+}
+
+.snj-voice-orb--muted {
+  background: linear-gradient(145deg, #fca5a5 0%, #ef4444 60%, #dc2626 100%) !important;
+  box-shadow: 0 10px 28px rgba(239,68,68,0.30) !important;
+  color: #ffffff !important;
+}
+
+.snj-voice-orb:hover  { transform: scale(1.05) !important; }
+.snj-voice-orb:active { transform: scale(0.96) !important; }
+
+@keyframes snj-orb-breathe-listen {
+  0%,100% { transform: scale(1);    }
+  50%     { transform: scale(1.06); }
+}
+@keyframes snj-orb-breathe-speak {
+  0%,100% { transform: scale(1);    }
+  50%     { transform: scale(1.10); }
+}
+@keyframes snj-orb-spin-slow {
+  from { filter: hue-rotate(0deg);   }
+  to   { filter: hue-rotate(30deg);  }
+}
+@keyframes snj-orb-pulse-slow {
+  0%,100% { opacity: 1;   }
+  50%     { opacity: 0.7; }
+}
+
+/* ── Wave visualizer ─────────────────────────────────── */
+.snj-voice-wave-wrap {
+  width: 100% !important;
+  height: 60px !important;
+  border-radius: 12px !important;
+  background: #f8fafc !important;
+  border: 1px solid #f1f5f9 !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── Subtitle / transcript ───────────────────────────── */
+.snj-voice-subtitle {
+  width: 100% !important;
+  min-height: 52px !important;
+  max-height: 72px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  padding: 10px 14px !important;
+  border-radius: 12px !important;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  color: #334155 !important;
+  line-height: 1.5 !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.snj-voice-subtitle--listening  { border-color: rgba(16,185,129,0.25) !important; color: #0f172a !important; }
+.snj-voice-subtitle--speaking   { border-color: rgba(5,150,105,0.25) !important;  color: #064e3b !important; }
+.snj-voice-subtitle--thinking   { border-color: rgba(2,132,199,0.2) !important;   color: #0c4a6e !important; }
+.snj-voice-subtitle--muted      { border-color: rgba(239,68,68,0.2) !important;   color: #991b1b !important; }
+
+/* ── Bottom controls ─────────────────────────────────── */
+.snj-voice-controls {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 16px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Base button */
+.snj-voice-btn {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s !important;
+  flex-shrink: 0 !important;
+}
+
+.snj-voice-btn:hover  { transform: scale(1.08) !important; }
+.snj-voice-btn:active { transform: scale(0.94) !important; }
+
+/* Ghost (mute / chat) */
+.snj-voice-btn--ghost {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+.snj-voice-btn--ghost:hover { background: #e2e8f0 !important; }
+
+/* Danger (muted state) */
+.snj-voice-btn--danger {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+  border: 1.5px solid #fca5a5 !important;
+  box-shadow: 0 2px 8px rgba(239,68,68,0.12) !important;
+}
+
+/* End call — large */
+.snj-voice-btn--end {
+  width: 60px !important;
+  height: 60px !important;
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 20px rgba(239,68,68,0.40) !important;
+}
+.snj-voice-btn--end:hover { background: #dc2626 !important; }
+
+/* ── Fullscreen layout adjustments ─────────────────── */
+.synapseos-modal-fullscreen .synapseos-drawer {
+  max-width: 760px !important;
+  margin: 0 auto !important;
+  border-radius: 24px 24px 0 0 !important;
+}
+
+/* Desktop responsiveness */
+@media (max-width: 1200px) {
+  .synapseos-fullscreen-dossier {
+    width: 280px !important;
+    min-width: 280px !important;
+  }
+}
+
+@media (max-width: 992px) {
+  .synapseos-fullscreen-inbox {
+    width: 220px !important;
+    min-width: 220px !important;
+  }
+  .synapseos-fullscreen-dossier {
+    display: none !important;
+  }
+}
+
