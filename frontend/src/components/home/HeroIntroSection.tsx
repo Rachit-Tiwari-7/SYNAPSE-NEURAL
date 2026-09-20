@@ -407,52 +407,7 @@ export function HeroIntroSection() {
             </div>
           </div>
 
-          {/* Clear unblockable CTA pill right under the logo */}
-          <div 
-            style={{
-              position: 'absolute',
-              bottom: '15%',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 99999,
-              pointerEvents: 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px'
-            }}
-          >
-            <a
-              href="/orchestrator-agent"
-              data-no-swup="true"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (typeof window !== 'undefined') window.location.href = '/orchestrator-agent';
-              }}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '14px 32px',
-                background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-                color: '#ffffff',
-                borderRadius: '30px',
-                fontSize: '15px',
-                fontWeight: 800,
-                textDecoration: 'none',
-                boxShadow: '0 8px 30px rgba(5, 150, 105, 0.45)',
-                cursor: 'pointer',
-                letterSpacing: '-0.01em',
-                transition: 'transform 0.15s ease'
-              }}
-            >
-              <span>ENTER RURAL AI HEALTHCARE</span>
-              <span style={{ fontSize: '18px' }}>→</span>
-            </a>
-            <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>
-              Click anywhere or press Enter to launch
-            </span>
-          </div>
+
         </div>
       </div>
     </div>

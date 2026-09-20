@@ -59,41 +59,6 @@ export default function LegacyThemeShell({ children }: { children: React.ReactNo
 
       <div id="mouse" className="d-md-nonexx" suppressHydrationWarning><div><span className="f-izmir t-parrafo"></span></div></div>
 
-      {/* Direct Bypass Button: Launch Rural AI Healthcare */}
-      <div 
-        style={{
-          position: 'fixed',
-          top: '18px',
-          right: '24px',
-          zIndex: 9999999,
-          pointerEvents: 'auto'
-        }}
-      >
-        <a
-          href="/orchestrator-agent"
-          data-no-swup="true"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '10px 22px',
-            borderRadius: '25px',
-            background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-            color: '#ffffff',
-            fontSize: '13.5px',
-            fontWeight: 800,
-            textDecoration: 'none',
-            boxShadow: '0 4px 20px rgba(5, 150, 105, 0.45)',
-            border: '1.5px solid rgba(255, 255, 255, 0.4)',
-            cursor: 'pointer',
-            letterSpacing: '-0.01em',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-          }}
-        >
-          <span>🏥 Enter Rural AI Healthcare</span>
-          <span style={{ fontSize: '15px' }}>→</span>
-        </a>
-      </div>
 
       {/* Global Luxury Header */}
       <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `<header>
