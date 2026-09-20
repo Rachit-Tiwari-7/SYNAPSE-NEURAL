@@ -27,7 +27,7 @@ export default function OrchestratorAgentPage() {
 
   // Active ABHA Profile State with localStorage persistence
   const [isAbhaLinked, setIsAbhaLinked] = useState<boolean>(true);
-  const [selectedProfileId, setSelectedProfileId] = useState<string>('mausam_kar_verified_abha');
+  const [selectedProfileId, setSelectedProfileId] = useState<string>('rachit_tiwari_verified_abha');
   const [customProfile, setCustomProfile] = useState<MockHealthProfile | null>(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(false);
 
@@ -91,36 +91,19 @@ export default function OrchestratorAgentPage() {
     MOCK_HEALTH_PROFILES.find(p => p.profileId === selectedProfileId) || 
     MOCK_HEALTH_PROFILES[0];
 
-  // Dynamic Patient Info
-  const isMangal = activeProfile.profileId === 'mangal_singh_verified_abha';
-  const isRachit = activeProfile.profileId === 'rachit_tiwari_verified_abha';
-  const isMausam = activeProfile.profileId === 'mausam_kar_verified_abha';
-  const isJiya = activeProfile.profileId === 'jiya_jaiswal_verified_abha';
-  const isSurabhi = activeProfile.profileId === 'surabhi_verified_abha';
+  // Dynamic Patient Info (Rachit Tiwari & Shaikh Mohammad Warsi)
   const isWarsi = activeProfile.profileId === 'shaikh_warsi_verified_abha';
 
   const patient: PatientInfo = isAbhaLinked ? {
     name: activeProfile.patient.name,
     abhaId: activeProfile.patient.abhaId,
-    dob: isJiya ? 'August 22, 2003' : isSurabhi ? 'March 15, 2002' : isWarsi ? 'December 10, 2001' : isMangal ? 'November 05, 2001' : isRachit ? 'June 18, 2003' : isMausam ? 'April 14, 2002' : 'March 28, 1997',
+    dob: isWarsi ? 'December 10, 2001' : 'June 18, 2003',
     gender: activeProfile.patient.gender,
-    bloodType: isJiya ? 'B+' : isSurabhi ? 'O+' : isWarsi ? 'AB+' : isMangal ? 'A+' : isRachit ? 'O+' : isMausam ? 'B+' : 'O+',
-    policyNumber: isJiya ? 'PM-JAY-2026-IND-6120' : isSurabhi ? 'PM-JAY-2026-IND-4891' : isWarsi ? 'PM-JAY-2026-IND-5290' : isMangal ? 'PM-JAY-2026-IND-7732' : isRachit ? 'PM-JAY-2026-IND-9924' : isMausam ? 'PM-JAY-2026-IND-8841' : 'XY-2025-3487',
-    planType: isJiya || isSurabhi || isWarsi || isMangal || isRachit || isMausam ? 'Ayushman Bharat PM-JAY (ABDM Verified)' : 'PrimeCare Plus (ABDM)',
-    residence: isJiya ? 'Noida / New Delhi, India' : isSurabhi ? 'Bengaluru / New Delhi, India' : isWarsi ? 'Mumbai / New Delhi, India' : isMangal ? 'Jaipur / New Delhi, India' : isRachit ? 'Lucknow / New Delhi, India' : isMausam ? 'New Delhi, India' : 'New Delhi / Mumbai',
-    avatarUrl: isJiya
-      ? '/images/jiya_jaiswal.jpg'
-      : isSurabhi
-      ? '/images/surabhi.jpg'
-      : isWarsi
-      ? '/images/shaikh_warsi.jpg'
-      : isMangal
-      ? '/images/mangal_singh.jpg'
-      : isRachit 
-      ? '/images/rachit_tiwari.jpg' 
-      : isMausam 
-      ? '/images/mausam_kar.jpg' 
-      : ''
+    bloodType: isWarsi ? 'AB+' : 'O+',
+    policyNumber: isWarsi ? 'PM-JAY-2026-IND-5290' : 'PM-JAY-2026-IND-9924',
+    planType: 'Ayushman Bharat PM-JAY (ABDM Verified)',
+    residence: isWarsi ? 'Mumbai, Maharashtra, India' : 'Lucknow, Uttar Pradesh, India',
+    avatarUrl: isWarsi ? '/images/shaikh_warsi.jpg' : '/images/rachit_tiwari.jpg'
   } : {
     name: '----',
     abhaId: '----',
@@ -130,7 +113,7 @@ export default function OrchestratorAgentPage() {
     policyNumber: '----',
     planType: 'Unlinked ABHA (Connect Citizen)',
     residence: '----',
-    avatarUrl: '/images/mausam_kar.jpg'
+    avatarUrl: '/images/rachit_tiwari.jpg'
   };
 
   // Dynamic Real-time Vitals state

@@ -1,35 +1,23 @@
-import { MockHealthProfile, VisualAnalyticsData } from './types';
-import { mausamKarProfile } from './mausamKar';
+import { MockHealthProfile } from './types';
 import { rachitTiwariProfile } from './rachitTiwari';
-import { mangalSinghProfile } from './mangalSingh';
-import { surabhiProfile } from './surabhi';
 import { shaikhWarsiProfile } from './shaikhWarsi';
-import { jiyaJaiswalProfile } from './jiyaJaiswal';
 
 export * from './types';
 export {
-  mausamKarProfile,
   rachitTiwariProfile,
-  mangalSinghProfile,
-  surabhiProfile,
-  shaikhWarsiProfile,
-  jiyaJaiswalProfile
+  shaikhWarsiProfile
 };
 
 /**
  * Verified ABHA Team Member Health Profiles
- * Filtered to exclusively maintain verified ABHA citizen records.
+ * Filtered to exclusively maintain Rachit Tiwari and Shaikh Mohammad Warsi.
  */
 export const MOCK_HEALTH_PROFILES: MockHealthProfile[] = [
-  mausamKarProfile,
   rachitTiwariProfile,
-  mangalSinghProfile,
-  surabhiProfile,
-  shaikhWarsiProfile,
-  jiyaJaiswalProfile
+  shaikhWarsiProfile
 ];
 
-export const DEFAULT_HEALTH_PROFILE: MockHealthProfile = mausamKarProfile;
+export const DEFAULT_HEALTH_PROFILE: MockHealthProfile = rachitTiwariProfile;
 
 export function getHealthProfileById(profileId: string): MockHealthProfile {
   return MOCK_HEALTH_PROFILES.find(p => p.profileId === profileId) || DEFAULT_HEALTH_PROFILE;

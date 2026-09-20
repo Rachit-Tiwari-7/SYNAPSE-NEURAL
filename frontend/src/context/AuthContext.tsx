@@ -149,7 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(null);
           setSessionId(null);
           setSessions([]);
-          if (pathname.includes('/orchestrator-agent') || pathname.includes('/vibrant') || pathname.includes('/projects/')) {
+          if (pathname.includes('/orchestrator-agent')) {
             router.push('/login?message=session_revoked');
           }
           return;

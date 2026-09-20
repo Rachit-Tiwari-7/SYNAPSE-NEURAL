@@ -64,25 +64,26 @@ export default function Header() {
               <span>⚡</span> {t('nav_orchestrator', 'Orchestrator OS')}
             </a>
             <a
-              href="/orchestrator-agent?tab=hospital"
-              onClick={(e) => handleProtectedAction(e, '/orchestrator-agent?tab=hospital')}
-              className="text-pink-600 font-bold hover:text-pink-800 transition-colors flex items-center gap-1 cursor-pointer"
+              href="/orchestrator-agent?tab=nutrition"
+              onClick={(e) => handleProtectedAction(e, '/orchestrator-agent?tab=nutrition')}
+              className="text-amber-700 font-bold hover:text-amber-900 transition-colors flex items-center gap-1 cursor-pointer"
             >
-              <span>🗺️</span> {t('nav_outbreak_map', 'Outbreak Map')}
+              <span>🥗</span> {t('nav_nutrition', 'Food & Nutrition AI')}
             </a>
-
-            <Link
-              href="/projects"
-              className="text-black/80 hover:text-black transition-colors"
+            <a
+              href="/orchestrator-agent?tab=whatsapp"
+              onClick={(e) => handleProtectedAction(e, '/orchestrator-agent?tab=whatsapp')}
+              className="text-emerald-600 font-bold hover:text-emerald-800 transition-colors flex items-center gap-1 cursor-pointer"
             >
-              {t('nav_projects', 'Projects')}
-            </Link>
-            <Link
-              href="/about-us"
-              className="text-black/80 hover:text-black transition-colors"
+              <span>💬</span> {t('nav_whatsapp', 'WhatsApp Copilot')}
+            </a>
+            <a
+              href="/orchestrator-agent?tab=rural"
+              onClick={(e) => handleProtectedAction(e, '/orchestrator-agent?tab=rural')}
+              className="text-blue-600 font-bold hover:text-blue-800 transition-colors flex items-center gap-1 cursor-pointer"
             >
-              {t('nav_about', 'About Us')}
-            </Link>
+              <span>📡</span> {t('nav_rural', 'Rural & 2G Hub')}
+            </a>
             <button
               onClick={() => setIsContactOpen(true)}
               className="text-black/80 hover:text-black transition-colors cursor-pointer"

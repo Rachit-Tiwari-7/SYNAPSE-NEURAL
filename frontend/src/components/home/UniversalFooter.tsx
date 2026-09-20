@@ -125,6 +125,7 @@ export function UniversalFooter() {
           </div>
 
           {/* Column 2: Menu */}
+          {/* Column 2: Menu */}
           <div>
             <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#111', margin: '0 0 1.25rem 0', letterSpacing: '-0.01em' }}>
               {t('footer_menu', 'Menu')}
@@ -135,10 +136,14 @@ export function UniversalFooter() {
                   {t('nav_home', 'Home')}
                 </a>
               </li>
-
               <li>
-                <a href="/about-us" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
-                  {t('nav_about_us', 'About Us')}
+                <a href="/orchestrator-agent" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
+                  {t('nav_orchestrator', 'Orchestrator Workspace')}
+                </a>
+              </li>
+              <li>
+                <a href="/orchestrator-agent?tab=nutrition" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
+                  {t('nav_nutrition', 'Food & Nutrition AI')}
                 </a>
               </li>
             </ul>
@@ -147,27 +152,22 @@ export function UniversalFooter() {
           {/* Column 3: Navigation */}
           <div>
             <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#111', margin: '0 0 1.25rem 0', letterSpacing: '-0.01em' }}>
-              {t('footer_nav', 'Navigation')}
+              {t('footer_nav', 'Channels')}
             </h3>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.875rem' }}>
               <li>
-                <a href="mailto:hello@synapseos.com" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
-                  {t('nav_contact', 'Contact')}
+                <a href="/orchestrator-agent?tab=whatsapp" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
+                  {t('nav_whatsapp', 'WhatsApp Copilot')}
                 </a>
               </li>
               <li>
-                <a href="/privacy-policy" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
-                  {t('footer_privacy', 'Privacy policy')}
+                <a href="/orchestrator-agent?tab=rural" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
+                  {t('nav_rural', 'Rural Health & 2G Hub')}
                 </a>
               </li>
               <li>
-                <a href="/legal-notice" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
-                  {t('footer_legal', 'Legal notice')}
-                </a>
-              </li>
-              <li>
-                <a href="/cookie-policy" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
-                  {t('footer_cookie', 'Cookie policy')}
+                <a href="/orchestrator-agent?tab=records" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
+                  {t('nav_records', 'ABDM & ABHA Records')}
                 </a>
               </li>
             </ul>
@@ -185,8 +185,8 @@ export function UniversalFooter() {
                 </a>
               </li>
               <li>
-                <a href="/orchestrator-agent?tab=scan" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
-                  {t('feat_2_title', 'Medical Scan AI')}
+                <a href="/orchestrator-agent?tab=nutrition" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
+                  {t('feat_nutrition', 'Clinical Nutrition & Diet AI')}
                 </a>
               </li>
               <li>
@@ -195,18 +195,13 @@ export function UniversalFooter() {
                 </a>
               </li>
               <li>
-                <a href="/vibrant" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
-                  {t('footer_3d_explorer', '3D Body Explorer')}
-                </a>
-              </li>
-              <li>
                 <a href="/orchestrator-agent?tab=records" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
                   {t('feat_5_title', 'Blockchain Records & ABHA')}
                 </a>
               </li>
               <li>
-                <a href="/orchestrator-agent?tab=hospital" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
-                  {t('feat_6_title', 'WHO Disease Surveillance')}
+                <a href="/orchestrator-agent?tab=rural" style={{ color: '#4a443d', textDecoration: 'none', fontWeight: 500 }}>
+                  {t('feat_rural', 'Health Literacy & 2G SMS')}
                 </a>
               </li>
             </ul>

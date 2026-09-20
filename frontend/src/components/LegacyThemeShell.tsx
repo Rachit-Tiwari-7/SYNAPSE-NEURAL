@@ -12,7 +12,6 @@ export default function LegacyThemeShell({ children }: { children: React.ReactNo
     pathname?.includes('/symptom-triage-agent') ||
     pathname?.includes('/medical-scan-agent') ||
     pathname?.includes('/records') ||
-    pathname?.includes('/vibrant') ||
     pathname?.includes('/interactive-body');
 
   // Standalone Auth & Session Management pages
@@ -24,10 +23,7 @@ export default function LegacyThemeShell({ children }: { children: React.ReactNo
     pathname?.includes('/forgot-password') ||
     pathname?.includes('/reset-password');
 
-  const isNoLoaderPage = 
-    pathname?.includes('/legal-notice') ||
-    pathname?.includes('/privacy-policy') ||
-    pathname?.includes('/cookie-policy');
+  const isNoLoaderPage = false;
 
   if (isAgentApp) {
     return (

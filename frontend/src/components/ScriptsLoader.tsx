@@ -34,7 +34,6 @@ export default function ScriptsLoader() {
       pathname?.includes('/symptom-triage-agent') ||
       pathname?.includes('/medical-scan-agent') ||
       pathname?.includes('/records') ||
-      pathname?.includes('/vibrant') ||
       pathname?.includes('/interactive-body') ||
       pathname?.includes('/login') ||
       pathname?.includes('/signup') ||

@@ -19,8 +19,8 @@ from reportlab.lib import colors
 
 
 def generate_health_summary_pdf(
-    patient_name: str = "Mausam Kar",
-    abha_id: str = "91-7294-8102-5309",
+    patient_name: str = "Rachit Tiwari",
+    abha_id: str = "91-8842-1920-7463",
     triage_summary: str = "SynapseOS Multi-Agent Consensus: Stable cardiopulmonary baseline, normal sinus rhythm, vital metrics within optimal physiological parameters.",
     vital_signs: dict = None,
     medications: list = None,
@@ -274,8 +274,8 @@ def generate_health_summary_pdf(
 
 
 def generate_nutrition_guide_pdf(
-    patient_name: str = "Mausam Kar",
-    abha_id: str = "91-7294-8102-5309",
+    patient_name: str = "Rachit Tiwari",
+    abha_id: str = "91-8842-1920-7463",
     condition: str = "High blood pressure",
     eat_items: list = None,
     limit_items: list = None,

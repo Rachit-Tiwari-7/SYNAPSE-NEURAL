@@ -61,9 +61,9 @@ def test_medicine_interaction_triggers_caution():
 async def test_nutrition_chatbot_conversation_with_abha_profile():
     """Requirement 6: Nutrition chatbot incorporates ABHA health profile details and returns responses."""
     abha_profile = {
-        "name": "Mausam Kar",
-        "abhaId": "91-5829-3910-4821",
-        "dob": "2002-05-14",
+        "name": "Rachit Tiwari",
+        "abhaId": "91-8842-1920-7463",
+        "dob": "2003-06-18",
         "gender": "Male",
         "vitals": {"systolicBp": 138, "diastolicBp": 88, "bloodGlucose": 154, "spo2": 98},
         "conditions": ["Type 2 Diabetes", "Essential Hypertension"],
@@ -76,6 +76,6 @@ async def test_nutrition_chatbot_conversation_with_abha_profile():
     )
     assert res["success"] is True
     assert res["is_emergency"] is False
-    assert "Mausam Kar" in res["response"] or "91-5829-3910-4821" in res["response"] or "ABHA" in res["response"] or "diabetes" in res["response"].lower()
-    assert res["abha_profile_used"]["name"] == "Mausam Kar"
+    assert "Rachit Tiwari" in res["response"] or "91-8842-1920-7463" in res["response"] or "ABHA" in res["response"] or "diabetes" in res["response"].lower()
+    assert res["abha_profile_used"]["name"] == "Rachit Tiwari"
 

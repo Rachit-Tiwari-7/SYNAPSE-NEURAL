@@ -239,21 +239,20 @@ export function ProjectsSection() {
         </div>
       </div>
 
-      {/* FEATURE 04: Interactive 3D Digital Body Twin */}
+      {/* FEATURE 04: Clinical Nutrition & Indian Macro Engine */}
       <div
-        className="mod-scroll__projectInt bg-grey expand_mouse"
-        data-text={t('feat_btn_explore_3d', 'Explore 3D')}
-        data-url="/vibrant"
+        className="mod-scroll__projectInt bg-beige c-black expand_mouse"
+        data-text={t('feat_btn_nutrition', 'Diet & Macros')}
+        data-url="/orchestrator-agent?tab=nutrition"
         data-no-swup="true"
-        style={{ backgroundColor: '#0b0f19' }}
       >
         <a
-          href="/vibrant"
+          href="/orchestrator-agent?tab=nutrition"
           data-no-swup="true"
           className="btn btn--circle follow__mouse--md f-izmir t-parrafo-l d-none d-md-flex"
-          style={{ backgroundColor: '#6366f1', color: '#fff' }}
+          style={{ backgroundColor: '#d97706', color: '#fff' }}
         >
-          {t('feat_btn_explore_3d', 'Explore 3D')}
+          {t('feat_btn_nutrition', 'Diet & Macros')}
         </a>
 
         <div className="mod-scroll__projectInt__image flipMedia flipMedia--rightLeft">
@@ -263,7 +262,7 @@ export function ProjectsSection() {
                 className="media__source w-100"
                 src="/images/medical/gallery_icu_barasat.jpg"
                 style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                alt="Hospital Recovery Telemetry Ward"
+                alt="Clinical Dietary Center"
               />
             </div>
           </div>
@@ -272,26 +271,26 @@ export function ProjectsSection() {
             <div className="media__wrap-source image">
               <img
                 className="media__source w-100"
-                src="/images/medical/closing_hospital_building.jpg"
+                src="/images/medical/records_abha_tablet.jpg"
                 style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                alt="National Clinical Care Facility"
+                alt="Nutrition Telemetry & Macro Analysis"
               />
             </div>
           </div>
         </div>
 
         <div className="mod-scroll__projectInt__content">
-          <div className="mod-scroll__projectInt__section mod-scroll__section t-parrafo-l f-edit" style={{ color: '#818cf8' }}>
-            {t('feat_4_badge', '(3D LIVE ENGINE)')}
+          <div className="mod-scroll__projectInt__section mod-scroll__section t-parrafo-l f-edit" style={{ color: '#b45309' }}>
+            {t('feat_4_badge', '(CLINICAL NUTRITION)')}
           </div>
-          <div className="mod-scroll__projectInt__number t-parrafo-l f-izmir" style={{ color: '#818cf8' }}>
+          <div className="mod-scroll__projectInt__number t-parrafo-l f-izmir" style={{ color: '#b45309' }}>
             04
           </div>
-          <div className="mod-scroll__projectInt__text t-parrafo-l f-edit" style={{ color: '#cbd5e1' }}>
-            {t('feat_4_sub', 'Real-Time Anatomical & Organ Intelligence with Live Vitals')}
+          <div className="mod-scroll__projectInt__text t-parrafo-l f-edit" style={{ color: '#451a03' }}>
+            {t('feat_4_sub', 'Dual-Mode Sick Care, Habit Audits & Affordable Indian Superfoods')}
           </div>
-          <div className="mod-scroll__projectInt__title t-titulo-xxl t-upper f-izmir" style={{ color: '#ffffff' }}>
-            {t('feat_4_title', 'Interactive 3D Body')}
+          <div className="mod-scroll__projectInt__title t-titulo-xxl t-upper f-izmir" style={{ color: '#1c1917' }}>
+            {t('feat_4_title', 'Food & Nutrition AI')}
           </div>
 
           <div className="mod-scroll__projectInt__image-small flipMedia flipMedia--leftRight">
@@ -299,8 +298,8 @@ export function ProjectsSection() {
               <div className="media__wrap-source image">
                 <img
                   className="media__source w-100"
-                  src="/images/medical/closing_hospital_building.jpg"
-                  alt="National Clinical Care Facility"
+                  src="/images/medical/records_abha_tablet.jpg"
+                  alt="Nutritional Intake Assessment"
                   style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                 />
               </div>
@@ -311,7 +310,7 @@ export function ProjectsSection() {
                 <img
                   className="media__source w-100"
                   src="/images/medical/gallery_icu_barasat.jpg"
-                  alt="Hospital Recovery Telemetry Ward"
+                  alt="Clinical Nutrition Dashboard"
                   style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                 />
               </div>

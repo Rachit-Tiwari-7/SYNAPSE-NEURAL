@@ -4,7 +4,7 @@ import React, { useState, useRef } from 'react';
 import { 
   MOCK_HEALTH_PROFILES, 
   MockHealthProfile, 
-  mausamKarProfile 
+  rachitTiwariProfile 
 } from '@/data/mockHealthProfiles';
 import { 
   WorkspaceHeader, 
@@ -86,7 +86,7 @@ export default function FullScreenWorkspace({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const allProfiles = [...customProfiles, ...MOCK_HEALTH_PROFILES];
-  const currentProfile = allProfiles.find(p => p.profileId === activeProfileId) || allProfiles[0] || mausamKarProfile;
+  const currentProfile = allProfiles.find(p => p.profileId === activeProfileId) || allProfiles[0] || rachitTiwariProfile;
 
   // Custom JSON Dossier File Upload Handler
   const handleJsonUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,7 +130,7 @@ export default function FullScreenWorkspace({
             bloodPressure: parsed.vitals?.bloodPressure || '118/76 mmHg',
             wristTempDeviation: parsed.vitals?.wristTempDeviation || '0.0°F'
           },
-          visualAnalytics: parsed.visualAnalytics || mausamKarProfile.visualAnalytics,
+          visualAnalytics: parsed.visualAnalytics || rachitTiwariProfile.visualAnalytics,
           ecgStatus: parsed.ecgStatus || 'Normal Sinus Rhythm (HR 72 BPM)',
           aiAnalysis: parsed.aiAnalysis || { type: 'optimal', title: 'Custom Dossier Active', description: 'Patient records uploaded and verified.' }
         };

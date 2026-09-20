@@ -299,26 +299,25 @@ export function HeroIntroSection() {
 
       <div className="wrapper">
         <ul id="menu-principal-1" className="mod-scroll__intro__menu f-izmir t-parrafo t-upper">
-          <li className="link menu-item menu-item-type-post_type menu-item-object-page menu-item-1411">
-            <a href="/about-us">{t('nav_about_us', 'About Us')}</a>
-          </li>
-
           <li className="link menu-item">
-            <a href="/vibrant" data-no-swup="true" style={{ color: '#6366f1', fontWeight: 600 }}>
-              {t('nav_3d_model', '3D Model')}
+            <a href="/orchestrator-agent" data-no-swup="true" style={{ color: '#059669', fontWeight: 600 }}>
+              {t('nav_orchestrator', 'Orchestrator OS')}
             </a>
           </li>
-          <li className="link menu-item menu-item-type-custom menu-item-object-custom menu-item-1088">
-            <a
-              href="/orchestrator-agent"
-              data-no-swup="true"
-              style={{ color: '#059669', fontWeight: 600 }}
-            >
-              {t('nav_orchestrator', 'Orchestrator')}
+          <li className="link menu-item">
+            <a href="/orchestrator-agent?tab=nutrition" data-no-swup="true" style={{ color: '#d97706', fontWeight: 600 }}>
+              {t('nav_nutrition', 'Diet & Macros')}
             </a>
           </li>
-          <li className="no-show-scroll link menu-item menu-item-type-custom menu-item-object-custom menu-item-1089">
-            <a href="#disponibilidad">{t('nav_availability', 'Availability')}</a>
+          <li className="link menu-item">
+            <a href="/orchestrator-agent?tab=whatsapp" data-no-swup="true" style={{ color: '#10b981', fontWeight: 600 }}>
+              {t('nav_whatsapp', 'WhatsApp Copilot')}
+            </a>
+          </li>
+          <li className="link menu-item">
+            <a href="/orchestrator-agent?tab=rural" data-no-swup="true" style={{ color: '#2563eb', fontWeight: 600 }}>
+              {t('nav_rural', 'Rural & 2G Hub')}
+            </a>
           </li>
         </ul>
         <div className="mod-scroll__intro__section mod-scroll__section t-parrafo-l f-edit">{t('nav_home', 'Home')}</div>

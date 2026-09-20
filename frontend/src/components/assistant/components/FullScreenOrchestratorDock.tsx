@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   MOCK_HEALTH_PROFILES, 
   MockHealthProfile, 
-  mausamKarProfile 
+  rachitTiwariProfile 
 } from '@/data/mockHealthProfiles';
 import { 
   Sparkles, 
@@ -34,8 +34,7 @@ export default function FullScreenOrchestratorDock({
 }: FullScreenOrchestratorDockProps) {
   const [activeModuleTab, setActiveModuleTab] = useState<'all' | 'swarm' | 'conditions' | 'analytics' | 'who' | 'scan' | 'abha' | 'rural'>('all');
   
-  const currentProfile = MOCK_HEALTH_PROFILES.find(p => p.profileId === activeProfileId) || mausamKarProfile;
-  const isMausam = currentProfile.profileId === 'mausam_kar_verified_abha';
+  const currentProfile = MOCK_HEALTH_PROFILES.find(p => p.profileId === activeProfileId) || rachitTiwariProfile;
 
   const AGENT_MODULES = [
     {

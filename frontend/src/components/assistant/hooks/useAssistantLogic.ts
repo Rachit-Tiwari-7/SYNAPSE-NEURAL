@@ -4,7 +4,7 @@ import { ActiveTab, ChatSession, Message, ModelChoice, Persona, SupportedLanguag
 import { 
   MOCK_HEALTH_PROFILES, 
   MockHealthProfile, 
-  mausamKarProfile 
+  rachitTiwariProfile 
 } from '@/data/mockHealthProfiles';
 import { getLocalizedDefaultSessions } from '../translations';
 
@@ -387,7 +387,7 @@ export function useAssistantLogic() {
   // Build System Instruction with Multilingual Directive & Active Patient Context
   const buildSystemInstruction = (isConciseVoice: boolean = false) => {
     const langInfo = LANGUAGE_SPEECH_MAP[selectedLanguage] || LANGUAGE_SPEECH_MAP.en;
-    const activePatient = MOCK_HEALTH_PROFILES.find(p => p.profileId === activeProfileId) || mausamKarProfile;
+    const activePatient = MOCK_HEALTH_PROFILES.find(p => p.profileId === activeProfileId) || rachitTiwariProfile;
 
     let base = `You are SynapseOS AI — a Next-Generation Multi-Agent Clinical Intelligence System.
 You have direct real-time visibility into the patient's verified ABDM/ABHA electronic records and orchestrator sub-agents (Swarm Intelligence, Digital Organ Twins, Visual Analytics, WHO Disease Surveillance, MONAI Imaging AI, Blockchain EHR, and Rural Health).
@@ -488,7 +488,7 @@ Always leverage this patient's live clinical context in your answers. Provide st
 
   // Build Fine-Tuned System Prompt for Vapi Real-Time Voice Assistant
   const buildVoiceSystemPrompt = () => {
-    const activePatient = MOCK_HEALTH_PROFILES.find(p => p.profileId === activeProfileId) || mausamKarProfile;
+    const activePatient = MOCK_HEALTH_PROFILES.find(p => p.profileId === activeProfileId) || rachitTiwariProfile;
     const langDirective = selectedLanguage === 'hi'
       ? 'Speak fluently and conversationally in Hindi (हिन्दी) or Hinglish as preferred by the patient. Keep responses natural and culturally empathetic.'
       : 'Speak fluently in natural, clear, and professional English.';
@@ -621,7 +621,7 @@ Reference the patient's vitals when relevant. If symptoms suggest an emergency (
         setCallActive(false);
       });
 
-      const activePatient = MOCK_HEALTH_PROFILES.find(p => p.profileId === activeProfileId) || mausamKarProfile;
+      const activePatient = MOCK_HEALTH_PROFILES.find(p => p.profileId === activeProfileId) || rachitTiwariProfile;
       const firstGreeting = selectedLanguage === 'hi'
         ? (assistantPersona === 'triage'
             ? 'नमस्ते! मैं संजीवनी ट्राइएज वॉइस असिस्टेंट हूँ। कृपया अपने लक्षणों के बारे में बताएं।'
@@ -663,7 +663,7 @@ Reference the patient's vitals when relevant. If symptoms suggest an emergency (
     const textToSend = (queryText || input).trim();
     if (!textToSend || loading) return;
 
-    const activePatient = MOCK_HEALTH_PROFILES.find(p => p.profileId === activeProfileId) || mausamKarProfile;
+    const activePatient = MOCK_HEALTH_PROFILES.find(p => p.profileId === activeProfileId) || rachitTiwariProfile;
 
     const userMsg: Message = {
       id: `user-${Date.now()}`,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActiveTab, Persona, SupportedLanguage } from '../types';
-import { MOCK_HEALTH_PROFILES, MockHealthProfile, mausamKarProfile } from '@/data/mockHealthProfiles';
+import { MOCK_HEALTH_PROFILES, MockHealthProfile, rachitTiwariProfile } from '@/data/mockHealthProfiles';
 import { getTranslation } from '../translations';
 
 interface AssistantHeaderProps {
@@ -22,7 +22,7 @@ export default function AssistantHeader({
   activeTab,
   waConnected,
   isFullscreen,
-  activeProfileId = 'mausam_kar_verified_abha',
+  activeProfileId = 'rachit_tiwari_verified_abha',
   selectedModel = 'gemini-2.0-flash',
   onTabChange,
   onToggleFullscreen,
@@ -30,7 +30,7 @@ export default function AssistantHeader({
   onClose,
   selectedLanguage = 'en'
 }: AssistantHeaderProps) {
-  const currentProfile = MOCK_HEALTH_PROFILES.find(p => p.profileId === activeProfileId) || mausamKarProfile;
+  const currentProfile = MOCK_HEALTH_PROFILES.find(p => p.profileId === activeProfileId) || rachitTiwariProfile;
   const t = getTranslation(selectedLanguage);
 
   return (

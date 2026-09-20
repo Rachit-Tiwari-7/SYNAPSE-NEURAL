@@ -493,28 +493,6 @@ export default function InteractiveBodyTwin({
           >
             <RotateCw size={15} />
           </button>
-          <a
-            href="/vibrant"
-            data-no-swup="true"
-            title="Launch 3D Organ Simulation Studio"
-            style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '50%',
-              background: '#fdf2f8',
-              border: '1px solid #fbcfe8',
-              color: '#db2777',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(219, 39, 119,0.15)',
-              textDecoration: 'none',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            <Maximize2 size={16} />
-          </a>
         </div>
       </div>
 

@@ -68,13 +68,13 @@ export default function NavigationMenu({
             01. {t('nav_home', 'Home')}
           </Link>
           <Link
-            href="/orchestrator-agent?tab=hospital"
+            href="/orchestrator-agent?tab=nutrition"
             onClick={onClose}
-            className="text-3xl md:text-5xl lg:text-6xl font-serif text-pink-400 hover:text-pink-300 transition-colors uppercase flex items-center gap-3"
+            className="text-3xl md:text-5xl lg:text-6xl font-serif text-amber-400 hover:text-amber-300 transition-colors uppercase flex items-center gap-3"
           >
-            <span>02. {t('nav_outbreak_map', 'Outbreak Map')}</span>
-            <span className="text-xs bg-pink-500 text-white font-sans px-3 py-1 rounded-full font-bold">
-              {t('nav_live_gis', 'Live GIS')}
+            <span>02. {t('nav_nutrition', 'Food & Nutrition AI')}</span>
+            <span className="text-xs bg-amber-500 text-white font-sans px-3 py-1 rounded-full font-bold">
+              {t('nav_live_diet', 'Diet Engine')}
             </span>
           </Link>
           <div className="flex flex-col space-y-2">
@@ -106,13 +106,6 @@ export default function NavigationMenu({
               ))}
             </div>
           </div>
-          <Link
-            href="/about-us"
-            onClick={onClose}
-            className="text-3xl md:text-5xl lg:text-6xl font-serif hover:text-white/70 transition-colors uppercase"
-          >
-            03. {t('nav_about', 'About Us')}
-          </Link>
           <button
             onClick={onOpenContact}
             className="text-left text-3xl md:text-5xl lg:text-6xl font-serif hover:text-white/70 transition-colors uppercase cursor-pointer"

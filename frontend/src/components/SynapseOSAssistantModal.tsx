@@ -118,10 +118,7 @@ export default function SynapseOSAssistantModal() {
     return () => window.removeEventListener('synapseos-open-assistant', handleOpen);
   }, [setIsOpen, toggleVoiceCall, isVoiceMode, callActive]);
 
-  // Hide assistant trigger on 3D Model / Vibrant page so it does not interfere
-  if (pathname === '/vibrant' || pathname?.startsWith('/vibrant')) {
-    return null;
-  }
+
 
   return (
     <>

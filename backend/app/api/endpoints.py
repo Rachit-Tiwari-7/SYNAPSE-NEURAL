@@ -354,7 +354,7 @@ async def diagnostic_risk_endpoint(req: DiagnosticRiskRequest):
 
 
 @router.get("/abdm/generate-id", tags=["Gov Schemes & ABDM"])
-async def abdm_id_endpoint(name: str = "Mausam Kar", year_of_birth: int = 2002, state_code: str = "DL"):
+async def abdm_id_endpoint(name: str = "Rachit Tiwari", year_of_birth: int = 2003, state_code: str = "UP"):
     """Generates mock Indian ABHA Health ID & PM-JAY eligibility profile."""
     return generate_abha_id(name=name, year_of_birth=year_of_birth, state_code=state_code)
 
@@ -643,9 +643,9 @@ async def i18n_languages_endpoint():
 
 @router.get("/abdm/generate-id", tags=["Ayushman Bharat ABDM"])
 async def generate_abdm_health_id(
-    name: str = "Mausam Kar",
-    year_of_birth: int = 2002,
-    state_code: str = "DL"
+    name: str = "Rachit Tiwari",
+    year_of_birth: int = 2003,
+    state_code: str = "UP"
 ):
     """
     Generates official 14-digit ABDM-compliant health number (ABHA ID),
@@ -689,8 +689,8 @@ async def generate_pdf_endpoint(req: PDFReportRequest):
 
 @router.get("/fhir/bundle", tags=["EHR Interoperability"])
 async def fhir_bundle_endpoint(
-    patient_id: str = "PAT-91-7294",
-    name: str = "Mausam Kar"
+    patient_id: str = "PAT-91-8842",
+    name: str = "Rachit Tiwari"
 ):
     """
     Generates official HL7 FHIR R4 JSON bundle for hospital EHR interoperability & ABHA locker.
