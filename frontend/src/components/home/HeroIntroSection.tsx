@@ -339,53 +339,7 @@ export function HeroIntroSection() {
             </p>
           </div>
 
-          {/* Prominent Direct Launch CTA */}
-          <div style={{ marginTop: '24px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', zIndex: 100, position: 'relative' }}>
-            <a
-              href="/orchestrator-agent"
-              data-no-swup="true"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '14px 30px',
-                background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-                color: '#ffffff',
-                borderRadius: '30px',
-                fontSize: '15px',
-                fontWeight: 800,
-                textDecoration: 'none',
-                boxShadow: '0 6px 25px rgba(5, 150, 105, 0.4)',
-                cursor: 'pointer',
-                letterSpacing: '-0.01em',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <span>ENTER RURAL HEALTHCARE</span>
-              <span style={{ fontSize: '18px' }}>→</span>
-            </a>
 
-            <a
-              href="/orchestrator-agent?tab=chat"
-              data-no-swup="true"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '14px 24px',
-                background: '#ffffff',
-                color: '#0f172a',
-                border: '1.5px solid #cbd5e1',
-                borderRadius: '30px',
-                fontSize: '14.5px',
-                fontWeight: 700,
-                textDecoration: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              <span>AI Health Chat</span>
-            </a>
-          </div>
         </div>
 
         {/* Center Intro Logo — Clickable to Enter App */}
