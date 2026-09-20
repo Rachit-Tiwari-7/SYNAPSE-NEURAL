@@ -6,7 +6,7 @@ import ContactModal from '../ui/ContactModal';
 import LanguageSelector from '../ui/LanguageSelector';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
-import { ShieldCheck, User, LogIn } from 'lucide-react';
+import { User, LogIn } from 'lucide-react';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -102,15 +102,12 @@ export default function Header() {
           <div className="flex items-center space-x-3">
             {isAuthenticated && user ? (
               <Link
-                href="/orchestrator-agent?tab=security"
+                href="/orchestrator-agent"
                 className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border border-black/20 bg-black/5 hover:bg-black/10 text-xs font-medium text-black transition-all"
-                title="Account Security & 2FA Sessions"
+                title="Account Workspace"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="max-w-[120px] truncate">{user.name.split(' ')[0]}</span>
-                {user.userPreferences?.enable2FA && (
-                  <ShieldCheck size={14} className="text-emerald-700" />
-                )}
               </Link>
             ) : (
               <Link

@@ -20,8 +20,6 @@ export default function LegacyThemeShell({ children }: { children: React.ReactNo
     pathname?.includes('/login') ||
     pathname?.includes('/signup') ||
     pathname?.includes('/verify-mfa') ||
-    pathname?.includes('/security') ||
-    pathname?.includes('/sessions') ||
     pathname?.includes('/confirm-account') ||
     pathname?.includes('/forgot-password') ||
     pathname?.includes('/reset-password');

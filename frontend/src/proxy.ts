@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const protectedPrefixes = [
-  '/security',
-  '/sessions',
-];
+const protectedPrefixes: string[] = [];
 
 // Routes that should never be blocked regardless of session state
 const publicRoutes = [

@@ -5,24 +5,22 @@ import {
   Download, 
   Sparkles, 
   Layers, 
-  Smartphone, 
   ChevronDown, 
   ChevronLeft, 
   ChevronRight, 
   Check, 
-  ShieldCheck, 
   MessageCircle, 
-  LogOut,
-  Building2,
-  Mic,
-  Bot
+  LogOut, 
+  Building2, 
+  Mic, 
+  Bot 
 } from 'lucide-react';
 import { PatientInfo } from './types';
 import LanguageSelector from '@/components/ui/LanguageSelector';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 
-export type OrchestratorTab = 'overview' | 'chat' | 'records' | 'rural' | 'security' | 'whatsapp';
+export type OrchestratorTab = 'overview' | 'chat' | 'records' | 'whatsapp';
 
 interface TopNavProps {
   activeTab: OrchestratorTab;
@@ -52,9 +50,7 @@ export default function OrchestratorTopNav({
     { id: 'overview', label: t('tab_overview', 'Home / Dashboard'), icon: Layers },
     { id: 'chat', label: t('tab_chat', 'AI Health Chat'), icon: Bot },
     { id: 'whatsapp', label: t('tab_whatsapp', 'WhatsApp AI Bot'), icon: MessageCircle },
-    { id: 'rural', label: t('tab_rural_health', 'Rural Health Hub'), icon: Smartphone },
-    { id: 'records', label: t('tab_records', 'ABHA ID & Records'), icon: Building2 },
-    { id: 'security', label: t('tab_security', 'Security & 2FA'), icon: ShieldCheck }
+    { id: 'records', label: t('tab_records', 'ABHA ID & Records'), icon: Building2 }
   ];
 
   const currentTab = tabs.find(t => t.id === activeTab);

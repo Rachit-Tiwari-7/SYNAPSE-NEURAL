@@ -9,8 +9,6 @@ import PatientVitalsPanel from '@/components/orchestrator/PatientVitalsPanel';
 import InteractiveBodyTwin from '@/components/orchestrator/InteractiveBodyTwin';
 import ClinicalConditionsPanel from '@/components/orchestrator/ClinicalConditionsPanel';
 import AbhaRecordsPanel from '@/components/orchestrator/BlockchainRecordsPanel';
-import RuralHealthPanel from '@/components/orchestrator/RuralHealthPanel';
-import SecuritySessionsPanel from '@/components/orchestrator/SecuritySessionsPanel';
 import ActionHubExportModal from '@/components/orchestrator/ActionHubExportModal';
 import WhatsAppChatbotPanel from '@/components/orchestrator/WhatsAppChatbotPanel';
 
@@ -18,7 +16,7 @@ import { PatientInfo, VitalsData, DetectedCondition } from '@/components/orchest
 import { MOCK_HEALTH_PROFILES, MockHealthProfile } from '@/data/mockHealthProfiles';
 
 export default function OrchestratorAgentPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'chat' | 'records' | 'rural' | 'security' | 'whatsapp'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'chat' | 'records' | 'whatsapp'>('overview');
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -51,7 +49,7 @@ export default function OrchestratorAgentPage() {
 
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab');
-      if (tab && ['overview', 'chat', 'records', 'rural', 'security', 'whatsapp'].includes(tab)) {
+      if (tab && ['overview', 'chat', 'records', 'whatsapp'].includes(tab)) {
         setActiveTab(tab as any);
       }
     }
@@ -468,12 +466,6 @@ export default function OrchestratorAgentPage() {
               </div>
             )}
 
-
-            {/* TAB: Rural & Semi-Urban AI Healthcare Hub (WhatsApp + 2G SMS + Health Literacy) */}
-            {activeTab === 'rural' && (
-              <RuralHealthPanel />
-            )}
-
             {/* TAB: Official WhatsApp Clinical Copilot & Interactive Sandbox */}
             {activeTab === 'whatsapp' && (
               <WhatsAppChatbotPanel patient={patient} />
@@ -487,11 +479,6 @@ export default function OrchestratorAgentPage() {
                 selectedProfileId={selectedProfileId}
                 onSelectProfile={handleSelectProfile}
               />
-            )}
-
-            {/* TAB: 2FA & Multi-Device Security Sessions */}
-            {activeTab === 'security' && (
-              <SecuritySessionsPanel />
             )}
           </div>
         </div>

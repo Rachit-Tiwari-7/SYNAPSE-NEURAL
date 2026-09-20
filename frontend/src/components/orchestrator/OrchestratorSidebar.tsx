@@ -10,8 +10,6 @@ import {
   FileText, 
   AlertOctagon, 
   Zap, 
-  ShieldCheck,
-  Smartphone,
   MessageCircle,
   LogOut,
   PanelLeftClose,
@@ -20,7 +18,7 @@ import {
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 
-export type OrchestratorTab = 'overview' | 'chat' | 'records' | 'rural' | 'security' | 'whatsapp';
+export type OrchestratorTab = 'overview' | 'chat' | 'records' | 'whatsapp';
 
 interface OrchestratorSidebarProps {
   onOpenSOS?: () => void;
@@ -62,14 +60,12 @@ export default function OrchestratorSidebar({
         { labelKey: 'tab_overview', fallback: 'Home / Dashboard', tab: 'overview', icon: Home, isTab: true },
         { labelKey: 'tab_chat', fallback: 'AI Health Chat', tab: 'chat', icon: Bot, isTab: true },
         { labelKey: 'tab_whatsapp', fallback: 'WhatsApp AI Bot', tab: 'whatsapp', icon: MessageCircle, isTab: true },
-        { labelKey: 'tab_rural_health', fallback: 'Rural Health Hub', tab: 'rural', icon: Smartphone, isTab: true },
         { labelKey: 'tab_records', fallback: 'ABHA ID & Records', tab: 'records', icon: FileText, isTab: true }
       ]
     },
     {
       title: 'Tools & Care',
       items: [
-        { labelKey: 'tab_security', fallback: 'Security & 2FA', tab: 'security', icon: ShieldCheck, isTab: true },
         { labelKey: 'tab_voice', fallback: 'Voice Consultation', action: 'voice', icon: Mic, isTab: false }
       ]
     }
