@@ -8,7 +8,6 @@ import OrchestratorTopNav from '@/components/orchestrator/OrchestratorTopNav';
 import PatientVitalsPanel from '@/components/orchestrator/PatientVitalsPanel';
 import InteractiveBodyTwin from '@/components/orchestrator/InteractiveBodyTwin';
 import ClinicalConditionsPanel from '@/components/orchestrator/ClinicalConditionsPanel';
-import SwarmIntelligencePanel from '@/components/orchestrator/SwarmIntelligencePanel';
 import AbhaRecordsPanel from '@/components/orchestrator/BlockchainRecordsPanel';
 import RuralHealthPanel from '@/components/orchestrator/RuralHealthPanel';
 import SecuritySessionsPanel from '@/components/orchestrator/SecuritySessionsPanel';
@@ -20,7 +19,7 @@ import { PatientInfo, VitalsData, DetectedCondition } from '@/components/orchest
 import { MOCK_HEALTH_PROFILES, MockHealthProfile } from '@/data/mockHealthProfiles';
 
 export default function OrchestratorAgentPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'chat' | 'swarm' | 'records' | 'rural' | 'security' | 'whatsapp'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'chat' | 'records' | 'rural' | 'security' | 'whatsapp'>('overview');
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -53,7 +52,7 @@ export default function OrchestratorAgentPage() {
 
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab');
-      if (tab && ['overview', 'chat', 'swarm', 'records', 'rural', 'security', 'whatsapp'].includes(tab)) {
+      if (tab && ['overview', 'chat', 'records', 'rural', 'security', 'whatsapp'].includes(tab)) {
         setActiveTab(tab as any);
       }
     }
@@ -441,7 +440,7 @@ export default function OrchestratorAgentPage() {
                   conditions={conditions}
                   selectedCondition={selectedCondition}
                   onSelectCondition={setSelectedCondition}
-                  onNavigateToSwarmTab={() => setActiveTab('swarm')}
+                  onNavigateToSwarmTab={() => setActiveTab('chat')}
                 />
 
                 {/* Right Column: Active ABHA Health Records & Verified Clinical Conditions */}
@@ -454,7 +453,7 @@ export default function OrchestratorAgentPage() {
                   selectedCondition={selectedCondition}
                   onSelectCondition={setSelectedCondition}
                   onOpenExportModal={() => setIsExportModalOpen(true)}
-                  onNavigateToSwarmTab={() => setActiveTab('swarm')}
+                  onNavigateToSwarmTab={() => setActiveTab('chat')}
                   onNavigateToChatTab={() => setActiveTab('chat')}
                 />
               </div>
@@ -482,14 +481,6 @@ export default function OrchestratorAgentPage() {
                 activeProfile={activeProfile}
                 selectedProfileId={selectedProfileId}
                 onSelectProfile={handleSelectProfile}
-              />
-            )}
-
-            {/* TAB: Multi-Agent Swarm Intelligence & Clinical Triage */}
-            {activeTab === 'swarm' && (
-              <SwarmIntelligencePanel
-                patient={patient}
-                onOpenExportModal={() => setIsExportModalOpen(true)}
               />
             )}
 

@@ -20,7 +20,7 @@ import {
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 
-export type OrchestratorTab = 'overview' | 'chat' | 'swarm' | 'records' | 'rural' | 'security' | 'whatsapp';
+export type OrchestratorTab = 'overview' | 'chat' | 'records' | 'rural' | 'security' | 'whatsapp';
 
 interface OrchestratorSidebarProps {
   onOpenSOS?: () => void;
@@ -67,9 +67,8 @@ export default function OrchestratorSidebar({
       ]
     },
     {
-      title: 'Support & Swarm',
+      title: 'Tools & Care',
       items: [
-        { labelKey: 'tab_swarm', fallback: 'Clinical Triage Swarm', tab: 'swarm', icon: Zap, isTab: true },
         { labelKey: 'tab_security', fallback: 'Security & 2FA', tab: 'security', icon: ShieldCheck, isTab: true },
         { labelKey: 'tab_voice', fallback: 'Voice Consultation', action: 'voice', icon: Mic, isTab: false }
       ]
@@ -381,6 +380,125 @@ export default function OrchestratorSidebar({
         paddingTop: '12px',
         borderTop: '1px solid #f1f5f9'
       }}>
+        {/* WhatsApp Quick Consultation QR Card */}
+        <div style={{ width: '100%', padding: isExpanded ? '0' : '0 4px', marginBottom: '4px' }}>
+          {isExpanded ? (
+            <div style={{
+              width: '100%',
+              background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+              border: '1.5px solid #86efac',
+              borderRadius: '14px',
+              padding: '10px 10px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              boxShadow: '0 2px 8px rgba(34, 197, 94, 0.12)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+                <MessageCircle size={15} color="#16a34a" />
+                <span style={{ fontSize: '12px', fontWeight: 800, color: '#166534' }}>
+                  Chat on WhatsApp
+                </span>
+              </div>
+
+              <a
+                href="https://wa.me/15552028141?text=Hi"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Scan QR or Click to Chat on WhatsApp"
+                style={{
+                  background: '#ffffff',
+                  padding: '6px',
+                  borderRadius: '10px',
+                  border: '1px solid #bbf7d0',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+                  textDecoration: 'none'
+                }}
+              >
+                <img
+                  src="/whatsapp-qr.svg"
+                  alt="Chat on WhatsApp"
+                  width={76}
+                  height={76}
+                  style={{ display: 'block', borderRadius: '4px' }}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/whatsapp-qr.png';
+                  }}
+                />
+              </a>
+
+              <div style={{ fontSize: '10px', color: '#15803d', fontWeight: 700, marginTop: '6px' }}>
+                Scan QR to start triage
+              </div>
+
+              <a
+                href="https://wa.me/15552028141?text=Hi"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  marginTop: '6px',
+                  width: '100%',
+                  padding: '5px 8px',
+                  borderRadius: '7px',
+                  background: '#16a34a',
+                  color: '#ffffff',
+                  fontSize: '10.5px',
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '5px',
+                  boxShadow: '0 1px 4px rgba(22, 163, 74, 0.25)'
+                }}
+              >
+                <MessageCircle size={12} />
+                <span>Open WhatsApp</span>
+              </a>
+            </div>
+          ) : (
+            <a
+              href="https://wa.me/15552028141?text=Hi"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Chat on WhatsApp"
+              aria-label="Chat on WhatsApp"
+              style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '10px',
+                background: '#f0fdf4',
+                border: '1.5px solid #86efac',
+                color: '#16a34a',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '2px',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(34, 197, 94, 0.15)',
+                textDecoration: 'none',
+                margin: '0 auto'
+              }}
+            >
+              <img
+                src="/whatsapp-qr.svg"
+                alt="Chat on WhatsApp"
+                width={22}
+                height={22}
+                style={{ display: 'block', borderRadius: '2px' }}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/whatsapp-qr.png';
+                }}
+              />
+              <span style={{ fontSize: '7px', fontWeight: 900, color: '#166534', lineHeight: 1 }}>WA</span>
+            </a>
+          )}
+        </div>
         {/* Emergency SOS Button */}
         {onOpenSOS && (
           <div 
