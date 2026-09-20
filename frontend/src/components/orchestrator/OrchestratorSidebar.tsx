@@ -69,10 +69,8 @@ export default function OrchestratorSidebar({
       ]
     },
     {
-      title: 'Support & Swarm',
+      title: 'AI Consultation',
       items: [
-        { labelKey: 'tab_swarm', fallback: 'Clinical Triage Swarm', tab: 'swarm', icon: Zap, isTab: true },
-        { labelKey: 'tab_security', fallback: 'Security & 2FA', tab: 'security', icon: ShieldCheck, isTab: true },
         { labelKey: 'tab_voice', fallback: 'Voice Consultation', action: 'voice', icon: Mic, isTab: false }
       ]
     }

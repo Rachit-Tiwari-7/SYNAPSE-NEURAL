@@ -55,9 +55,7 @@ export default function OrchestratorTopNav({
     { id: 'chat', label: t('tab_chat', 'AI Health Chat'), icon: Bot },
     { id: 'whatsapp', label: t('tab_whatsapp', 'WhatsApp AI Bot'), icon: MessageCircle },
     { id: 'rural', label: t('tab_rural_health', 'Rural Health Hub'), icon: Smartphone },
-    { id: 'records', label: t('tab_records', 'ABHA ID & Records'), icon: Building2 },
-    { id: 'swarm', label: t('tab_swarm', 'Clinical Triage Swarm'), icon: Sparkles },
-    { id: 'security', label: t('tab_security', 'Security & 2FA'), icon: ShieldCheck }
+    { id: 'records', label: t('tab_records', 'ABHA ID & Records'), icon: Building2 }
   ];
 
   const currentTab = tabs.find(t => t.id === activeTab);
