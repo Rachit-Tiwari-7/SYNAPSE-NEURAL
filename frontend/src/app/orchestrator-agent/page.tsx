@@ -8,15 +8,20 @@ import OrchestratorTopNav from '@/components/orchestrator/OrchestratorTopNav';
 import PatientVitalsPanel from '@/components/orchestrator/PatientVitalsPanel';
 import InteractiveBodyTwin from '@/components/orchestrator/InteractiveBodyTwin';
 import ClinicalConditionsPanel from '@/components/orchestrator/ClinicalConditionsPanel';
+import SwarmIntelligencePanel from '@/components/orchestrator/SwarmIntelligencePanel';
 import AbhaRecordsPanel from '@/components/orchestrator/BlockchainRecordsPanel';
+import RuralHealthPanel from '@/components/orchestrator/RuralHealthPanel';
+import SecuritySessionsPanel from '@/components/orchestrator/SecuritySessionsPanel';
 import ActionHubExportModal from '@/components/orchestrator/ActionHubExportModal';
 import WhatsAppChatbotPanel from '@/components/orchestrator/WhatsAppChatbotPanel';
+import AiHealthChatPanel from '@/components/orchestrator/AiHealthChatPanel';
+import NutritionPanel from '@/components/orchestrator/NutritionPanel';
 
 import { PatientInfo, VitalsData, DetectedCondition } from '@/components/orchestrator/types';
 import { MOCK_HEALTH_PROFILES, MockHealthProfile } from '@/data/mockHealthProfiles';
 
 export default function OrchestratorAgentPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'chat' | 'records' | 'whatsapp'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'chat' | 'swarm' | 'records' | 'rural' | 'nutrition' | 'security' | 'whatsapp'>('overview');
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -49,21 +54,11 @@ export default function OrchestratorAgentPage() {
 
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab');
-      if (tab && ['overview', 'chat', 'records', 'whatsapp'].includes(tab)) {
+      if (tab && ['overview', 'chat', 'swarm', 'records', 'rural', 'nutrition', 'security', 'whatsapp'].includes(tab)) {
         setActiveTab(tab as any);
       }
     }
   }, []);
-
-  // When chat tab is opened, launch the Fullscreen Clinical Copilot cockpit
-  useEffect(() => {
-    if (activeTab === 'chat') {
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'chat', fullscreen: true } }));
-      }
-      setActiveTab('overview');
-    }
-  }, [activeTab]);
 
   const handleToggleSidebar = () => {
     setIsSidebarExpanded(prev => {
@@ -447,23 +442,32 @@ export default function OrchestratorAgentPage() {
                   conditions={conditions}
                   selectedCondition={selectedCondition}
                   onSelectCondition={setSelectedCondition}
-                  onNavigateToSwarmTab={() => setActiveTab('chat')}
+                  onNavigateToSwarmTab={() => setActiveTab('swarm')}
                 />
 
-                {/* Right Column: Active ABHA Health Records & Verified Clinical Conditions */}
+                {/* Right Column: Conditions, Diagnostic X-Rays & Telemetry */}
                 <ClinicalConditionsPanel
-                  patient={patient}
-                  activeProfile={activeProfile}
-                  vitals={vitals}
-                  isAbhaLinked={isAbhaLinked}
                   conditions={conditions}
                   selectedCondition={selectedCondition}
                   onSelectCondition={setSelectedCondition}
                   onOpenExportModal={() => setIsExportModalOpen(true)}
-                  onNavigateToSwarmTab={() => setActiveTab('chat')}
-                  onNavigateToChatTab={() => setActiveTab('chat')}
                 />
               </div>
+            )}
+
+            {/* TAB: Rural AI Health Chat Panel (BioBERT Swarm & Indian Clinical Guidance) */}
+            {activeTab === 'chat' && (
+              <AiHealthChatPanel patient={patient} />
+            )}
+
+            {/* TAB: Rural & Semi-Urban AI Healthcare Hub (WhatsApp + 2G SMS + Health Literacy) */}
+            {activeTab === 'rural' && (
+              <RuralHealthPanel />
+            )}
+
+            {/* TAB: Clinical Nutrition & Food Guide */}
+            {activeTab === 'nutrition' && (
+              <NutritionPanel patient={patient} />
             )}
 
             {/* TAB: Official WhatsApp Clinical Copilot & Interactive Sandbox */}
@@ -479,6 +483,19 @@ export default function OrchestratorAgentPage() {
                 selectedProfileId={selectedProfileId}
                 onSelectProfile={handleSelectProfile}
               />
+            )}
+
+            {/* TAB: Multi-Agent Swarm Intelligence & Clinical Triage */}
+            {activeTab === 'swarm' && (
+              <SwarmIntelligencePanel
+                patient={patient}
+                onOpenExportModal={() => setIsExportModalOpen(true)}
+              />
+            )}
+
+            {/* TAB: 2FA & Multi-Device Security Sessions */}
+            {activeTab === 'security' && (
+              <SecuritySessionsPanel />
             )}
           </div>
         </div>

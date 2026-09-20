@@ -5,22 +5,25 @@ import {
   Download, 
   Sparkles, 
   Layers, 
+  Smartphone, 
   ChevronDown, 
   ChevronLeft, 
   ChevronRight, 
   Check, 
+  ShieldCheck, 
   MessageCircle, 
-  LogOut, 
-  Building2, 
-  Mic, 
-  Bot 
+  LogOut,
+  Building2,
+  Mic,
+  Bot,
+  Utensils
 } from 'lucide-react';
 import { PatientInfo } from './types';
 import LanguageSelector from '@/components/ui/LanguageSelector';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 
-export type OrchestratorTab = 'overview' | 'chat' | 'records' | 'whatsapp';
+export type OrchestratorTab = 'overview' | 'chat' | 'swarm' | 'records' | 'rural' | 'nutrition' | 'security' | 'whatsapp';
 
 interface TopNavProps {
   activeTab: OrchestratorTab;
@@ -48,9 +51,13 @@ export default function OrchestratorTopNav({
 
   const tabs: { id: OrchestratorTab; label: string; icon: React.ComponentType<{ size?: number | string; color?: string }> }[] = [
     { id: 'overview', label: t('tab_overview', 'Home / Dashboard'), icon: Layers },
+    { id: 'nutrition', label: t('tab_nutrition', 'Foods & Nutrition'), icon: Utensils },
     { id: 'chat', label: t('tab_chat', 'AI Health Chat'), icon: Bot },
     { id: 'whatsapp', label: t('tab_whatsapp', 'WhatsApp AI Bot'), icon: MessageCircle },
-    { id: 'records', label: t('tab_records', 'ABHA ID & Records'), icon: Building2 }
+    { id: 'rural', label: t('tab_rural_health', 'Rural Health Hub'), icon: Smartphone },
+    { id: 'records', label: t('tab_records', 'ABHA ID & Records'), icon: Building2 },
+    { id: 'swarm', label: t('tab_swarm', 'Clinical Triage Swarm'), icon: Sparkles },
+    { id: 'security', label: t('tab_security', 'Security & 2FA'), icon: ShieldCheck }
   ];
 
   const currentTab = tabs.find(t => t.id === activeTab);
@@ -88,14 +95,12 @@ export default function OrchestratorTopNav({
   };
 
   const handleTriggerChat = () => {
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'chat', fullscreen: true } }));
-    }
+    onTabChange('chat');
   };
 
   const handleTriggerVoice = () => {
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'voice', fullscreen: true } }));
+      window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'voice' } }));
     }
   };
 
@@ -224,13 +229,7 @@ export default function OrchestratorTopNav({
             return (
               <button
                 key={tab.id}
-                onClick={() => {
-                  if (tab.id === 'chat') {
-                    handleTriggerChat();
-                  } else {
-                    onTabChange(tab.id);
-                  }
-                }}
+                onClick={() => onTabChange(tab.id)}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
