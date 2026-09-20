@@ -221,3 +221,81 @@ async def call_llm_json(
         logger.warning(f"Error parsing Gemini response as JSON: {e}")
 
     return fallback_dict
+
+
+async def call_openrouter_chat(
+    messages: List[Dict[str, str]],
+    model: Optional[str] = None,
+    temperature: float = 0.3,
+    max_tokens: int = 600,
+    timeout: float = 12.0
+) -> Optional[str]:
+    """
+    OpenRouter API Client with primary & fallback models for Synapse-OS.
+    """
+    if not settings.OPENROUTER_API_KEY:
+        return None
+
+    candidate_models = [
+        model or settings.OPENROUTER_MODEL or "meta-llama/llama-3.3-70b-instruct:free",
+        "google/gemini-2.0-flash-001",
+        "minimax/minimax-m3:free",
+        "deepseek/deepseek-r1:free",
+        "openrouter/free"
+    ]
+
+    headers = {
+        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": settings.OPENROUTER_REFERER or "https://synapseos.health",
+        "X-Title": settings.OPENROUTER_APP_TITLE or "Synapse-OS Nutrition AI"
+    }
+
+    for cand_model in candidate_models:
+        payload = {
+            "model": cand_model,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens
+        }
+        try:
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                res = await client.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload)
+                if res.status_code == 200:
+                    data = res.json()
+                    choices = data.get("choices", [])
+                    if choices and "message" in choices[0]:
+                        text_out = choices[0]["message"].get("content", "").strip()
+                        if text_out:
+                            return text_out
+                else:
+                    logger.warning(f"OpenRouter [{cand_model}] returned status {res.status_code}: {res.text[:120]}")
+        except Exception as e:
+            logger.warning(f"OpenRouter [{cand_model}] request failed: {e}")
+
+    return None
+
+
+async def call_nutrition_llm_with_fallbacks(
+    messages: List[Dict[str, str]],
+    fallback_text: str = ""
+) -> str:
+    """
+    Multi-tiered Fallback Chain for Nutrition Assistant:
+    1. OpenRouter API (Llama 3.3 / DeepSeek / MiniMax)
+    2. Google Gemini API (Gemini 2.0 Flash)
+    3. Deterministic ICMR-NIN Curated Rules Fallback
+    """
+    # 1. Try OpenRouter API
+    res_openrouter = await call_openrouter_chat(messages)
+    if res_openrouter and len(res_openrouter.strip()) > 20:
+        return res_openrouter
+
+    # 2. Try Gemini API
+    res_gemini = await call_gemini(messages, temperature=0.3, max_tokens=600)
+    if res_gemini and len(res_gemini.strip()) > 20:
+        return res_gemini
+
+    # 3. Deterministic Fallback
+    return fallback_text
+

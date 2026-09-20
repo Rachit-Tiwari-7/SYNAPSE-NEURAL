@@ -18,6 +18,7 @@ from backend.app.agents.mental_health_agent import mental_health_node
 from backend.app.agents.vaccination_agent import vaccination_agent_node
 from backend.app.agents.preventive_health_agent import preventive_health_agent_node
 from backend.app.agents.outbreak_agent import outbreak_agent_node
+from backend.app.agents.nutrition_agent import nutrition_agent_node
 from backend.app.ml.digital_twin import compute_baseline_organ_scores, DigitalTwinInput
 from backend.app.services.llm_service import call_llm
 
@@ -26,7 +27,9 @@ def detect_intent(text: str) -> str:
     """Classifies user query intent."""
     text_lower = (text or "").lower()
     
-    if any(k in text_lower for k in ["vaccin", "uip", "u-win", "immuniz", "polio", "bcg", "pentavalent", "booster dose", "child dose"]):
+    if any(k in text_lower for k in ["food", "diet", "nutrition", "can i eat", "eat", "khana", "kya khaye", "banana", "dal", "curd", "roti"]):
+        return "NUTRITION"
+    elif any(k in text_lower for k in ["vaccin", "uip", "u-win", "immuniz", "polio", "bcg", "pentavalent", "booster dose", "child dose"]):
         return "VACCINATION_SCHEDULE"
     elif any(k in text_lower for k in ["outbreak", "epidemic", "dengue case", "malaria surge", "cholera", "nipah", "surveillance", "hotspot"]):
         return "OUTBREAK_ALERT"
@@ -111,7 +114,9 @@ async def orchestrate_health_request(
         state.detected_intent = intent
 
     # 3. Dynamic Parallel Multi-Agent Execution based on Intent (Ultra-Fast Concurrent asyncio.gather)
-    if intent == "VACCINATION_SCHEDULE":
+    if intent == "NUTRITION":
+        await asyncio.gather(nutrition_agent_node(state), verification_agent_node(state), return_exceptions=True)
+    elif intent == "VACCINATION_SCHEDULE":
         await asyncio.gather(vaccination_agent_node(state), verification_agent_node(state), return_exceptions=True)
     elif intent == "PREVENTIVE_HEALTH":
         await asyncio.gather(preventive_health_agent_node(state), verification_agent_node(state), return_exceptions=True)

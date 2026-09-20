@@ -38,6 +38,7 @@ class SynapseOSState(BaseModel):
     preventive_data: Optional[Dict[str, Any]] = None
     outbreak_data: Optional[Dict[str, Any]] = None
     mental_health_data: Optional[Dict[str, Any]] = None
+    nutrition_data: Optional[Dict[str, Any]] = None
     
     # Execution trace for UI visualization
     trace: List[AgentTraceStep] = Field(default_factory=list)
