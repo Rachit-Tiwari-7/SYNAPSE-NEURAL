@@ -151,19 +151,92 @@ async def call_gemini_vision(
     return None
 
 
+async def call_openrouter_chat(
+    messages: List[Dict[str, str]],
+    model: Optional[str] = None,
+    temperature: float = 0.3,
+    max_tokens: int = 800,
+    timeout: float = 20.0
+) -> Optional[str]:
+    """
+    OpenRouter API Client with primary & fallback models for Synapse-OS.
+    Prioritizes openai/gpt-oss-120b and free tiers (nvidia/nemotron-3-super-120b-a12b:free, etc.).
+    """
+    if not settings.OPENROUTER_API_KEY:
+        return None
+
+    candidate_models_raw = [
+        model,
+        settings.OPENROUTER_MODEL,
+        settings.OPENROUTER_PRIMARY_MODEL,
+        "openai/gpt-oss-120b",
+        "nvidia/nemotron-3-super-120b-a12b:free",
+        "dots-studio/dots-3-note-preview:free",
+        "inclusionai/ling-3.0-flash-sante:free",
+        "inclusionai/ling-3.0-flash-vl:free",
+        "openrouter/free"
+    ]
+    seen = set()
+    candidate_models = [m for m in candidate_models_raw if m and not (m in seen or seen.add(m))]
+
+    headers = {
+        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": settings.OPENROUTER_REFERER or "https://synapseos.health",
+        "X-Title": settings.OPENROUTER_APP_TITLE or "SynapseOS Medical AI"
+    }
+
+    for cand_model in candidate_models:
+        payload = {
+            "model": cand_model,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens
+        }
+        try:
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                res = await client.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload)
+                if res.status_code == 200:
+                    data = res.json()
+                    choices = data.get("choices", [])
+                    if choices and "message" in choices[0]:
+                        msg_obj = choices[0]["message"]
+                        text_out = (msg_obj.get("content") or msg_obj.get("reasoning") or "").strip()
+                        if text_out:
+                            return text_out
+                else:
+                    logger.warning(f"OpenRouter [{cand_model}] returned status {res.status_code}: {res.text[:120]}")
+        except Exception as e:
+            logger.warning(f"OpenRouter [{cand_model}] request failed: {e}")
+
+    return None
+
+
 async def call_llm(
     messages: List[Dict[str, str]],
     model: Optional[str] = None,
     temperature: float = 0.2,
-    max_tokens: int = 400,
+    max_tokens: int = 800,
     json_mode: bool = False,
-    timeout: float = 8.0
+    timeout: float = 18.0
 ) -> Optional[str]:
     """
-    Google Gemini Multimodal AI Client.
-    Exclusively powered by Google Gemini 2.0 Flash and Gemini 1.5 Pro.
-    Falls back gracefully to deterministic clinical safeguards if offline.
+    Unified LLM Client supporting OpenRouter (oss 120b / free models) and Google Gemini.
+    Falls back gracefully across providers.
     """
+    # 1. Primary: OpenRouter API (openai/gpt-oss-120b, nvidia/nemotron-3-super-120b-a12b:free, etc.)
+    if settings.OPENROUTER_API_KEY:
+        or_result = await call_openrouter_chat(
+            messages=messages,
+            model=model if model and (":" in model or "oss" in model or "nvidia" in model or "openrouter" in model) else None,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            timeout=timeout
+        )
+        if or_result and len(or_result.strip()) > 5:
+            return or_result
+
+    # 2. Secondary: Google Gemini API (if Gemini key available)
     if settings.GEMINI_API_KEY:
         gemini_result = await call_gemini(
             messages=messages,
@@ -186,7 +259,7 @@ async def call_llm_json(
     temperature: float = 0.1
 ) -> Dict[str, Any]:
     """
-    Executes a Google Gemini LLM request and guarantees a structured JSON dictionary output.
+    Executes an LLM request and guarantees a structured JSON dictionary output.
     Gracefully handles empty responses, markdown wrapping, code blocks, and failovers.
     """
     raw = await call_llm(messages=messages, model=model, temperature=temperature, json_mode=True)
@@ -211,69 +284,19 @@ async def call_llm_json(
             if isinstance(parsed, dict):
                 return parsed
         except Exception:
-            match = re.search(r"(\{[\s\S]*\})", clean_text)
-            if match:
-                parsed = json.loads(match.group(1))
+            # Extract JSON substring from possible preamble/postamble
+            start_idx = clean_text.find("{")
+            end_idx = clean_text.rfind("}")
+            if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+                json_str = clean_text[start_idx:end_idx+1]
+                parsed = json.loads(json_str)
                 if isinstance(parsed, dict):
                     return parsed
             raise
     except Exception as e:
-        logger.warning(f"Error parsing Gemini response as JSON: {e}")
+        logger.warning(f"Error parsing LLM response as JSON: {e}")
 
     return fallback_dict
-
-
-async def call_openrouter_chat(
-    messages: List[Dict[str, str]],
-    model: Optional[str] = None,
-    temperature: float = 0.3,
-    max_tokens: int = 600,
-    timeout: float = 12.0
-) -> Optional[str]:
-    """
-    OpenRouter API Client with primary & fallback models for Synapse-OS.
-    """
-    if not settings.OPENROUTER_API_KEY:
-        return None
-
-    candidate_models = [
-        model or settings.OPENROUTER_MODEL or "meta-llama/llama-3.3-70b-instruct:free",
-        "google/gemini-2.0-flash-001",
-        "minimax/minimax-m3:free",
-        "deepseek/deepseek-r1:free",
-        "openrouter/free"
-    ]
-
-    headers = {
-        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": settings.OPENROUTER_REFERER or "https://synapseos.health",
-        "X-Title": settings.OPENROUTER_APP_TITLE or "Synapse-OS Nutrition AI"
-    }
-
-    for cand_model in candidate_models:
-        payload = {
-            "model": cand_model,
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens
-        }
-        try:
-            async with httpx.AsyncClient(timeout=timeout) as client:
-                res = await client.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload)
-                if res.status_code == 200:
-                    data = res.json()
-                    choices = data.get("choices", [])
-                    if choices and "message" in choices[0]:
-                        text_out = choices[0]["message"].get("content", "").strip()
-                        if text_out:
-                            return text_out
-                else:
-                    logger.warning(f"OpenRouter [{cand_model}] returned status {res.status_code}: {res.text[:120]}")
-        except Exception as e:
-            logger.warning(f"OpenRouter [{cand_model}] request failed: {e}")
-
-    return None
 
 
 async def call_nutrition_llm_with_fallbacks(
@@ -282,12 +305,12 @@ async def call_nutrition_llm_with_fallbacks(
 ) -> str:
     """
     Multi-tiered Fallback Chain for Nutrition Assistant:
-    1. OpenRouter API (Llama 3.3 / DeepSeek / MiniMax)
+    1. OpenRouter API (openai/gpt-oss-120b, nvidia/nemotron-3-super-120b-a12b:free, etc.)
     2. Google Gemini API (Gemini 2.0 Flash)
     3. Deterministic ICMR-NIN Curated Rules Fallback
     """
     # 1. Try OpenRouter API
-    res_openrouter = await call_openrouter_chat(messages)
+    res_openrouter = await call_openrouter_chat(messages, timeout=20.0, max_tokens=1000)
     if res_openrouter and len(res_openrouter.strip()) > 20:
         return res_openrouter
 

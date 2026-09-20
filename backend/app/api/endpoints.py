@@ -359,45 +359,7 @@ async def abdm_id_endpoint(name: str = "Mausam Kar", year_of_birth: int = 2002, 
     return generate_abha_id(name=name, year_of_birth=year_of_birth, state_code=state_code)
 
 
-@router.get("/abdm/schemes", tags=["Gov Schemes & ABDM"])
-async def abdm_schemes_endpoint():
-    """Returns Indian Government health schemes (PM-JAY, Jan Aushadhi, Tele-MANAS, Ni-kshay)."""
-    return check_ayushman_bharat_schemes()
 
-
-@router.post("/reports/generate-pdf", tags=["Health Records"])
-async def generate_pdf_endpoint(req: PDFReportRequest):
-    """Generates downloadable clinical PDF health report with verifiable blockchain QR code."""
-    pdf_bytes = generate_health_summary_pdf(
-        patient_name=req.patient_name,
-        abha_id=req.abha_id,
-        triage_summary=req.triage_summary,
-        vital_signs=req.vital_signs,
-        medications=req.medications
-    )
-    return Response(
-        content=pdf_bytes,
-        media_type="application/pdf",
-        headers={"Content-Disposition": f"attachment; filename=SynapseOS_Health_Summary_{req.patient_name.replace(' ', '_')}.pdf"}
-    )
-
-
-@router.post("/sos/dispatch", tags=["Emergency SOS"])
-async def emergency_sos_endpoint(req: EmergencySOSRequest):
-    """Dispatches instant 1-click Emergency SOS alert packet via WhatsApp."""
-    dispatch_res = await trigger_emergency_sos_whatsapp(
-        emergency_contact=req.emergency_contact,
-        patient_name=req.patient_name,
-        location_coords=req.location_coords,
-        blood_group=req.blood_group,
-        critical_symptoms=req.critical_symptoms
-    )
-    return {
-        "status": "SOS_DISPATCHED" if dispatch_res.get("emergency_alert_dispatched") else "SOS_QUEUED",
-        "emergency_services_reference": ["112 (National Emergency)", "108 (Ambulance)"],
-        "dispatch_details": dispatch_res,
-        "location": req.location_coords
-    }
 
 
 @router.get("/whatsapp/webhook", tags=["Omnichannel"])
@@ -747,13 +709,19 @@ async def sos_dispatch_endpoint(req: EmergencySOSRequest):
     1-Click Emergency SOS Dispatch transmitting GPS coordinates to 112 / 108 emergency units
     and automated WhatsApp/SMS notifications to emergency contacts.
     """
-    return await trigger_emergency_sos_whatsapp(
+    dispatch_res = await trigger_emergency_sos_whatsapp(
         patient_name=req.patient_name,
         location_coords=req.location_coords,
         emergency_contact=req.emergency_contact,
         blood_group=req.blood_group,
         critical_symptoms=req.critical_symptoms
     )
+    return {
+        "status": "SOS_DISPATCHED" if dispatch_res.get("emergency_alert_dispatched") else "SOS_QUEUED",
+        "emergency_services_reference": ["112 (National Emergency)", "108 (Ambulance)"],
+        "dispatch_details": dispatch_res,
+        "location": req.location_coords
+    }
 
 
 
@@ -864,21 +832,23 @@ class NutritionChatRequest(BaseModel):
     condition: Optional[str] = Field(default="diabetes", example="hypertension")
     history: Optional[List[Dict[str, str]]] = Field(default=[])
     abha_profile: Optional[Dict[str, Any]] = Field(default=None)
+    lifestyle_data: Optional[Dict[str, Any]] = Field(default=None)
 
 
 @router.post("/nutrition/chat", tags=["Clinical Nutrition"])
 async def nutrition_chat_endpoint(req: NutritionChatRequest):
     """
-    Interactive Clinical Nutrition Chatbot endpoint.
+    Interactive Clinical & Lifestyle Nutrition Chatbot endpoint.
     Connects to OpenRouter API (with Gemini 2.0 & ICMR-NIN fallbacks),
-    fetches patient ABHA ID health profile details (vitals, conditions, medications),
+    fetches patient ABHA ID health profile details (vitals, conditions, medications) or lifestyle data,
     and screens for emergency red flag symptoms.
     """
     return await handle_nutrition_chatbot_conversation(
         user_message=req.message,
         history=req.history,
         abha_profile=req.abha_profile,
-        condition=req.condition or "diabetes"
+        condition=req.condition or "diabetes",
+        lifestyle_data=req.lifestyle_data
     )
 
 

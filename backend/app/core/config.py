@@ -9,29 +9,29 @@ class Settings(BaseModel):
     VERSION: str = "1.0.0"
     API_PREFIX: str = "/api"
     
-    # LLM API Keys & Model Configurations (Google Gemini 2.0 Flash Hero Layer)
+    # LLM API Keys & Model Configurations (OpenRouter & Gemini Multi-Agent Layer)
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
-    DEFAULT_LLM_PROVIDER: str = os.getenv("DEFAULT_LLM_PROVIDER", "gemini")
+    DEFAULT_LLM_PROVIDER: str = os.getenv("DEFAULT_LLM_PROVIDER", "openrouter")
 
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
     GROQ_MODEL: str = os.getenv("GROQ_MODEL", "gemini-2.0-flash")
     
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
-    OPENROUTER_MODEL: str = os.getenv("OPENROUTER_MODEL", "gemini-2.0-flash")
+    OPENROUTER_MODEL: str = os.getenv("OPENROUTER_MODEL", "openai/gpt-oss-120b")
     
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
 
     # Production Medical Prescription OCR (OpenRouter Free Vision Strategy)
-    OPENROUTER_PRIMARY_MODEL: str = os.getenv("OPENROUTER_PRIMARY_MODEL", "minimax/minimax-m3:free")
-    OPENROUTER_SECONDARY_MODEL: str = os.getenv("OPENROUTER_SECONDARY_MODEL", "dots-studio/dots-3-note-preview:free")
-    OPENROUTER_TERTIARY_MODEL: str = os.getenv("OPENROUTER_TERTIARY_MODEL", "openrouter/free")
+    OPENROUTER_PRIMARY_MODEL: str = os.getenv("OPENROUTER_PRIMARY_MODEL", "openai/gpt-oss-120b")
+    OPENROUTER_SECONDARY_MODEL: str = os.getenv("OPENROUTER_SECONDARY_MODEL", "nvidia/nemotron-3-super-120b-a12b:free")
+    OPENROUTER_TERTIARY_MODEL: str = os.getenv("OPENROUTER_TERTIARY_MODEL", "inclusionai/ling-3.0-flash-vl:free")
     OPENROUTER_TIMEOUT_MS: int = int(os.getenv("OPENROUTER_TIMEOUT_MS", "45000"))
     MAX_PRESCRIPTION_IMAGE_MB: int = int(os.getenv("MAX_PRESCRIPTION_IMAGE_MB", "10"))
     MAX_IMAGE_DIMENSION: int = int(os.getenv("MAX_IMAGE_DIMENSION", "2048"))
     OCR_SECOND_PASS_ENABLED: bool = os.getenv("OCR_SECOND_PASS_ENABLED", "false").lower() in ("true", "1", "yes")
     OPENROUTER_REFERER: str = os.getenv("OPENROUTER_REFERER", "https://synapseos.health")
-    OPENROUTER_APP_TITLE: str = os.getenv("OPENROUTER_APP_TITLE", "SynapseOS Medical OCR")
+    OPENROUTER_APP_TITLE: str = os.getenv("OPENROUTER_APP_TITLE", "SynapseOS Medical AI")
 
     # Meta Official WhatsApp Cloud API (Graph API) Settings
     WHATSAPP_CLOUD_API_TOKEN: str = os.getenv("WHATSAPP_CLOUD_API_TOKEN", "")

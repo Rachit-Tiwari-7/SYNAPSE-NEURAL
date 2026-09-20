@@ -326,7 +326,8 @@ RED_FLAGS_PER_CONDITION: Dict[str, str] = {
     "hypertension": "Get help if: Severe sudden headache, chest pressure, blurred vision, or shortness of breath? Call 108 immediately.",
     "anaemia": "Get help if: Dizziness upon standing, extreme paleness, fainting, or chest palpitations? Consult a physician.",
     "diarrhoea": "Get help if: Sunken eyes, extreme lethargy, inability to keep fluids down, or blood in stool? Rush to PHC.",
-    "fever": "Get help if: Temperature > 103°F, stiff neck, severe shortness of breath, or confusion? Seek immediate care."
+    "fever": "Get help if: Temperature > 103°F, stiff neck, severe shortness of breath, or confusion? Seek immediate care.",
+    "general": "Get help if: Severe sudden dizziness, chest pain, or unexplainable sudden weight loss."
 }
 
 CONDITION_LABELS: Dict[str, Dict[str, str]] = {
@@ -334,7 +335,8 @@ CONDITION_LABELS: Dict[str, Dict[str, str]] = {
     "hypertension": {"en": "High blood pressure", "hi": "उच्च रक्तचाप (बीपी)", "type": "long_term", "subtitle": "Long-term low-sodium guide for heart & BP control."},
     "anaemia": {"en": "Anaemia", "hi": "एनीमिया (खून की कमी)", "type": "long_term", "subtitle": "Iron and folate rich guide to boost hemoglobin."},
     "diarrhoea": {"en": "Diarrhoea", "hi": "दस्त / उल्टी", "type": "short_term", "subtitle": "Recover this week: Hydrating & gut-soothing foods."},
-    "fever": {"en": "Fever", "hi": "बुखार", "type": "short_term", "subtitle": "Recover this week: Light, cooling, energy-restoring foods."}
+    "fever": {"en": "Fever", "hi": "बुखार", "type": "short_term", "subtitle": "Recover this week: Light, cooling, energy-restoring foods."},
+    "general": {"en": "General Lifestyle & Macro Balance", "hi": "सामान्य जीवनशैली व पोषण संतुलन", "type": "wellness", "subtitle": "Personalized macro audit, habit evaluation & cheap Indian superfoods."}
 }
 
 
@@ -430,6 +432,72 @@ def get_nutrition_guide_for_condition(
     }
 
 
+FOOD_ALIASES: Dict[str, str] = {
+    "samosa": "fried_maida_snacks",
+    "biscuit": "fried_maida_snacks",
+    "biscuits": "fried_maida_snacks",
+    "pakora": "fried_maida_snacks",
+    "pakoda": "fried_maida_snacks",
+    "kachori": "fried_maida_snacks",
+    "pickle": "pickles_achar",
+    "pickles": "pickles_achar",
+    "achar": "pickles_achar",
+    "aachar": "pickles_achar",
+    "banana": "ripe_banana",
+    "kela": "ripe_banana",
+    "roti": "ragi_jowar_roti",
+    "chapati": "ragi_jowar_roti",
+    "ragi": "ragi_jowar_roti",
+    "jowar": "ragi_jowar_roti",
+    "rice": "white_rice",
+    "chawal": "white_rice",
+    "potato": "potato",
+    "aloo": "potato",
+    "alu": "potato",
+    "curd": "plain_curd",
+    "dahi": "plain_curd",
+    "yogurt": "plain_curd",
+    "egg": "eggs",
+    "eggs": "eggs",
+    "anda": "eggs",
+    "ande": "eggs",
+    "fish": "grilled_fish",
+    "machli": "grilled_fish",
+    "poha": "poha",
+    "flattened rice": "poha",
+    "sugary drink": "sugary_drinks",
+    "cold drink": "sugary_drinks",
+    "coke": "sugary_drinks",
+    "pepsi": "sugary_drinks",
+    "juice": "sugary_drinks",
+    "mithai": "mithai_jalebi",
+    "jalebi": "mithai_jalebi",
+    "sweet": "mithai_jalebi",
+    "sweets": "mithai_jalebi",
+    "lauki": "lauki_bottle_gourd",
+    "bottle gourd": "lauki_bottle_gourd",
+    "ghiya": "lauki_bottle_gourd",
+    "spinach": "spinach_palak",
+    "palak": "spinach_palak",
+    "methi": "methi_leaves",
+    "fenugreek": "methi_leaves",
+    "oats": "oats",
+    "oatmeal": "oats",
+    "papad": "papad_namkeen",
+    "namkeen": "papad_namkeen",
+    "bhujia": "papad_namkeen",
+    "chips": "papad_namkeen",
+    "gur": "jaggery_gur",
+    "jaggery": "jaggery_gur",
+    "anar": "pomegranate_anar",
+    "pomegranate": "pomegranate_anar",
+    "moong": "moong_dal",
+    "dal": "moong_dal",
+    "sattu": "moong_dal",
+    "chana": "moong_dal",
+}
+
+
 def check_specific_food_safety(
     query: str,
     condition: str = "diabetes",
@@ -451,20 +519,35 @@ def check_specific_food_safety(
             "reason": "🚨 Emergency Red Flag Symptom Detected. Stop food search and seek immediate medical assistance."
         }
 
-    q_lower = query.lower().strip()
+    q_clean = re.sub(r'[^\w\s]', ' ', query.lower()).strip()
+    q_words = set(q_clean.split())
     cond_key = condition.lower().strip() if condition else "diabetes"
     if cond_key not in CONDITION_LABELS:
         cond_key = "diabetes"
 
-    # Match curated food database
-    matched_food = None
-    for item in CURATED_FOODS_DATABASE:
-        en = item["names"]["en"].lower()
-        hi = item["names"]["hi"].lower()
-        fid = item["food_id"].replace("_", " ")
-        if fid in q_lower or any(word in q_lower for word in en.split() if len(word) > 3) or hi in q_lower:
-            matched_food = item
+    # Match via aliases first
+    matched_food_id = None
+    for alias, fid in FOOD_ALIASES.items():
+        if alias in q_clean or alias in q_words:
+            matched_food_id = fid
             break
+
+    matched_food = None
+    if matched_food_id:
+        for item in CURATED_FOODS_DATABASE:
+            if item["food_id"] == matched_food_id:
+                matched_food = item
+                break
+
+    # If not found via alias, search database names directly
+    if not matched_food:
+        for item in CURATED_FOODS_DATABASE:
+            en_clean = re.sub(r'[^\w\s]', ' ', item["names"]["en"].lower()).split()
+            hi_clean = re.sub(r'[^\w\s]', ' ', item["names"]["hi"].lower())
+            fid = item["food_id"].replace("_", " ")
+            if fid in q_clean or any(word in q_words for word in en_clean if len(word) > 2) or hi_clean in q_clean:
+                matched_food = item
+                break
 
     if matched_food:
         rule = matched_food["rules"].get(cond_key, {"verdict": "limit", "reason": "Consume in moderation"})
@@ -537,12 +620,13 @@ async def handle_nutrition_chatbot_conversation(
     user_message: str,
     history: Optional[List[Dict[str, str]]] = None,
     abha_profile: Optional[Dict[str, Any]] = None,
-    condition: str = "diabetes"
+    condition: str = "diabetes",
+    lifestyle_data: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
-    Handles interactive chat queries for Clinical Nutrition AI.
-    Incorporates ABHA profile details (vitals, conditions, medications, age/gender, ABHA ID)
-    into systemic prompts, checks emergency safety, and calls OpenRouter / Gemini / ICMR-NIN fallback chain.
+    Handles interactive chat queries for Clinical & Lifestyle Nutrition AI.
+    Incorporates ABHA profile details or lifestyle data (workout, smoking, alcohol, meals, deficiencies),
+    checks emergency safety, and calls OpenRouter / Gemini / ICMR-NIN fallback chain.
     """
     # 1. Emergency Safety Intercept
     safety_eval = evaluate_safety(user_message)
@@ -557,11 +641,11 @@ async def handle_nutrition_chatbot_conversation(
 
     cond_key = condition.lower().strip() if condition else "diabetes"
     if cond_key not in CONDITION_LABELS:
-        cond_key = "diabetes"
+        cond_key = "general" if "general" in cond_key or "diet" in cond_key else "diabetes"
 
     # Extract ABHA details cleanly
     prof = abha_profile or {}
-    patient_name = prof.get("name") or "Patient"
+    patient_name = prof.get("name") or "Friend"
     abha_id = prof.get("abhaId") or prof.get("abha_id") or "91-5829-3910-4821"
     age = prof.get("age") or prof.get("dob") or "Adult"
     gender = prof.get("gender") or ""
@@ -578,25 +662,73 @@ async def handle_nutrition_chatbot_conversation(
     raw_meds = prof.get("medicines") or prof.get("medications") or []
     meds_list = [raw_meds] if isinstance(raw_meds, str) else list(raw_meds)
 
-    # Build system prompt grounding in ICMR-NIN & ABHA Profile
-    system_prompt = (
-        "You are the SynapseOS Clinical AI Nutritionist & Dietitian, specializing in Indian clinical nutrition (ICMR-NIN & IFCT 2024 guidelines).\n"
-        "You provide empathetic, precise, scientifically grounded, and practical dietary advice for Indian households.\n\n"
-        "ACTIVE PATIENT ABHA PROFILE CONTEXT:\n"
-        f"• Patient Name: {patient_name} (ABHA ID: {abha_id})\n"
-        f"• Age/DOB/Gender: {age} {gender}\n"
-        f"• Active Vitals: BP: {bp_str}, Blood Glucose: {glucose_str}, SpO2: {spo2}\n"
-        f"• Diagnosed Conditions: {', '.join(conditions_list)}\n"
-        f"• Active Medications: {', '.join(meds_list) if meds_list else 'None reported'}\n"
-        f"• Primary Condition Focus: {CONDITION_LABELS[cond_key]['en']}\n\n"
-        "RULES FOR RESPONSE:\n"
-        "1. Address the user directly by name, referencing their specific ABHA health metrics when relevant (e.g. blood sugar, blood pressure, active medicines).\n"
-        "2. Provide clear, structured Indian meal recommendations (e.g. Moong dal khichdi, Ragi roti, Lauki soup, Methi, Curd, Poha, Palak).\n"
-        "3. Explicitly state foods to EAT, LIMIT, and AVOID for their condition.\n"
-        "4. Highlight any drug-food interactions (e.g., Warfarin + green leafies, Telmisartan + high potassium foods like ripe bananas/potatoes, Metformin + timing with meals).\n"
-        "5. Keep the tone encouraging, easy to understand, formatted with clean bullet points and bold headers.\n"
-        "6. Always add a short clinical safety reminder at the end."
-    )
+    # Lifestyle form extraction (if General Diet mode)
+    ls = lifestyle_data or {}
+    workout = ls.get("workout", "Moderate")
+    smoking = ls.get("smoking", "No")
+    alcohol = ls.get("alcohol", "No")
+    diet_pref = ls.get("dietPreference", "Vegetarian")
+    goal = ls.get("goal", "General Health & Balanced Macros")
+    breakfast = ls.get("breakfast", "")
+    lunch = ls.get("lunch", "")
+    dinner = ls.get("dinner", "")
+    extras = ls.get("extras", "")
+    detected_gaps = ls.get("deficiencies", [])
+
+    is_general_mode = cond_key == "general" or bool(lifestyle_data)
+
+    if is_general_mode:
+        system_prompt = (
+            "You are the SynapseOS Clinical AI Nutritionist & Dietitian, specializing in Indian general wellness, macro audits, and budget-friendly superfoods (ICMR-NIN 2024 guidelines).\n"
+            "You provide practical, highly actionable, affordable dietary solutions tailored to Indian lifestyles, fitness routines, and daily eating patterns.\n\n"
+            "USER PROFILE & LIFESTYLE AUDIT CONTEXT:\n"
+            f"• Name / Demographics: {patient_name} ({age}, {gender})\n"
+            f"• Diet Preference: {diet_pref} | Primary Goal: {goal}\n"
+            f"• Physical Activity / Workout: {workout}\n"
+            f"• Habits: Smoking: {smoking} | Alcohol: {alcohol}\n"
+            f"• Typical Daily Meals: \n"
+            f"  - Breakfast: {breakfast or 'Not specified'}\n"
+            f"  - Lunch: {lunch or 'Not specified'}\n"
+            f"  - Dinner: {dinner or 'Not specified'}\n"
+            f"  - Snacks / Extras: {extras or 'Not specified'}\n"
+            f"• Detected Deficiencies / Macro Gaps: {', '.join(detected_gaps) if detected_gaps else 'Protein deficit, Fiber deficiency, Refined carb overload'}\n\n"
+            "RULES FOR RESPONSE:\n"
+            "1. Give straightforward, warm, and highly practical Indian food recommendations that fit their budget and lifestyle.\n"
+            "2. Focus on cheap, accessible Indian whole foods to fix their macro/micro deficiencies without requiring expensive supplements or whey powder:\n"
+            "   - Sattu drink (सत्तू) for high protein & cooling sustained energy (~₹10-15/glass)\n"
+            "   - Sprouted Moong / Kala Chana (अंकुरित दालें) for raw enzymes, fiber & protein (~₹8)\n"
+            "   - Roasted Chana (भुना चना) to replace fried biscuits/namkeen with tea (~₹10)\n"
+            "   - Fresh Homemade Curd / Dahi (दही) for gut flora, calcium & B12 (~₹10)\n"
+            "   - Boiled Eggs (अंडे) for complete protein & choline (~₹7/egg)\n"
+            "   - Soy Chunks (सोया वड़ी) for ultra-affordable lean protein (~₹6/50g serving)\n"
+            "   - Green Leafy Veg / Palak / Saag (पालक/मेथी) for iron & folate (~₹15/bunch)\n"
+            "   - Roasted Peanuts (मूंगफली) for healthy fats & protein (~₹8)\n"
+            "   - Amla / Lemon Water (आंवला/नींबू) for Vitamin C recovery (vital for smokers/immunity) (~₹5)\n"
+            "   - Millets: Ragi, Jowar, Bajra for calcium, slow GI & dietary fiber\n"
+            "3. If they smoke or drink alcohol, explicitly explain how specific cheap foods (like Amla, Lemon water, Curd, Coconut water, Leafy greens) help replenish depleted Vitamin C, B-complex vitamins, and liver antioxidants.\n"
+            "4. Structure response with bold headers, concise bullet points, and an easy meal swap or daily schedule.\n"
+            "5. Keep the advice encouraging, non-judgmental, and practical for daily Indian routine."
+        )
+    else:
+        # Build system prompt grounding in ICMR-NIN & ABHA Profile
+        system_prompt = (
+            "You are the SynapseOS Clinical AI Nutritionist & Dietitian, specializing in Indian clinical nutrition (ICMR-NIN & IFCT 2024 guidelines).\n"
+            "You provide empathetic, precise, scientifically grounded, and practical dietary advice for Indian households.\n\n"
+            "ACTIVE PATIENT ABHA PROFILE CONTEXT:\n"
+            f"• Patient Name: {patient_name} (ABHA ID: {abha_id})\n"
+            f"• Age/DOB/Gender: {age} {gender}\n"
+            f"• Active Vitals: BP: {bp_str}, Blood Glucose: {glucose_str}, SpO2: {spo2}\n"
+            f"• Diagnosed Conditions: {', '.join(conditions_list)}\n"
+            f"• Active Medications: {', '.join(meds_list) if meds_list else 'None reported'}\n"
+            f"• Primary Condition Focus: {CONDITION_LABELS[cond_key]['en']}\n\n"
+            "RULES FOR RESPONSE:\n"
+            "1. Address the user directly by name, referencing their specific ABHA health metrics when relevant (e.g. blood sugar, blood pressure, active medicines).\n"
+            "2. Provide clear, structured Indian meal recommendations (e.g. Moong dal khichdi, Ragi roti, Lauki soup, Methi, Curd, Poha, Palak).\n"
+            "3. Explicitly state foods to EAT, LIMIT, and AVOID for their condition.\n"
+            "4. Highlight any drug-food interactions (e.g., Warfarin + green leafies, Telmisartan + high potassium foods like ripe bananas/potatoes, Metformin + timing with meals).\n"
+            "5. Keep the tone encouraging, easy to understand, formatted with clean bullet points and bold headers.\n"
+            "6. Always add a short clinical safety reminder at the end."
+        )
 
     messages = [{"role": "system", "content": system_prompt}]
 
@@ -611,18 +743,30 @@ async def handle_nutrition_chatbot_conversation(
     messages.append({"role": "user", "content": user_message})
 
     # Prepare deterministic ICMR-NIN fallback response in case LLM API is completely offline
-    guide_fallback = get_nutrition_guide_for_condition(cond_key, medicines=meds_list)
-    top_eats = [item["names"]["en"] for item in guide_fallback["top_3_today"]]
-    top_avoids = [item["names"]["en"] for item in guide_fallback["categories"]["avoid"]["items"][:3]]
+    if is_general_mode:
+        deterministic_fallback = (
+            f"Hello {patient_name}! Based on your lifestyle audit ({workout} activity, {diet_pref} diet, Goal: {goal}), "
+            f"here is your affordable Indian macro & nutrient balance strategy:\n\n"
+            f"🟢 **Cheap Superfoods to Fix Deficiencies:**\n"
+            f"• **Sattu Drink / Roasted Chana (भुना चना):** +15g to 20g cheap protein for ~₹10-15.\n"
+            f"• **Sprouted Moong & Chana (अंकुरित दालें):** Live enzymes, fiber & protein for ~₹8/bowl.\n"
+            f"• **Fresh Curd / Dahi (दही):** Probiotics, B12 & calcium for gut restoration.\n"
+            f"• **Amla / Fresh Lemon Water:** Restores depleted Vitamin C from oxidative stress.\n\n"
+            f"💡 **Practical Habit Swap:** Replace fried namkeen or bakery biscuits with roasted chana or peanuts, and add 1 glass of sattu or curd lassi to hit your daily protein goal easily."
+        )
+    else:
+        guide_fallback = get_nutrition_guide_for_condition(cond_key, medicines=meds_list)
+        top_eats = [item["names"]["en"] for item in guide_fallback["top_3_today"]]
+        top_avoids = [item["names"]["en"] for item in guide_fallback["categories"]["avoid"]["items"][:3]]
 
-    deterministic_fallback = (
-        f"Hello {patient_name}! Based on your ABHA health profile (ABHA ID: {abha_id}, Condition: {CONDITION_LABELS[cond_key]['en']}, BP: {bp_str}, Glucose: {glucose_str}), "
-        f"here is your curated ICMR-NIN diet guidance:\n\n"
-        f"🟢 **Recommended Foods to Eat:** {', '.join(top_eats) if top_eats else 'Moong dal, Lauki, Plain curd'}\n"
-        f"🔴 **Foods to Avoid:** {', '.join(top_avoids) if top_avoids else 'Sugary drinks, Fried maida snacks, Pickles'}\n\n"
-        f"💡 **Key Clinical Advice:** For {CONDITION_LABELS[cond_key]['en']}, focus on low-glycemic, low-sodium meals rich in dietary fibre. "
-        f"Always check with your attending physician before making major dietary adjustments."
-    )
+        deterministic_fallback = (
+            f"Hello {patient_name}! Based on your ABHA health profile (ABHA ID: {abha_id}, Condition: {CONDITION_LABELS[cond_key]['en']}, BP: {bp_str}, Glucose: {glucose_str}), "
+            f"here is your curated ICMR-NIN diet guidance:\n\n"
+            f"🟢 **Recommended Foods to Eat:** {', '.join(top_eats) if top_eats else 'Moong dal, Lauki, Plain curd'}\n"
+            f"🔴 **Foods to Avoid:** {', '.join(top_avoids) if top_avoids else 'Sugary drinks, Fried maida snacks, Pickles'}\n\n"
+            f"💡 **Key Clinical Advice:** For {CONDITION_LABELS[cond_key]['en']}, focus on low-glycemic, low-sodium meals rich in dietary fibre. "
+            f"Always check with your attending physician before making major dietary adjustments."
+        )
 
     llm_response = await call_nutrition_llm_with_fallbacks(messages, fallback_text=deterministic_fallback)
 
@@ -640,6 +784,7 @@ async def handle_nutrition_chatbot_conversation(
             "conditions": conditions_list,
             "medicines": meds_list
         },
+        "lifestyle_data_used": ls if is_general_mode else None,
         "provider": "OpenRouter AI (Fallback: Gemini 2.0 / ICMR-NIN)"
     }
 

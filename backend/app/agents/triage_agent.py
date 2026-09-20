@@ -179,11 +179,25 @@ async def analyze_symptoms(text: str, lang: Optional[str] = None) -> Dict[str, A
 
     llm_result = await call_llm_json(messages=messages, fallback_dict=fallback, temperature=0.1)
 
-    # ── Step 3: Safety override — LLM must never downgrade a red-flag case ───
+    # ── Step 3: Safety override & badge normalization ───
     if detected_red and llm_result.get("triage_level") != "EMERGENCY_CARE":
         llm_result["triage_level"]    = "EMERGENCY_CARE"
         llm_result["urgency_badge"]   = "🔴 आपातकालीन देखभाल (तत्काल)" if effective_lang == "hi" else "🔴 Emergency Care (Immediate)"
         llm_result["recommended_action"] = default_action
+
+    t_lvl = llm_result.get("triage_level", default_level)
+    if t_lvl not in ("EMERGENCY_CARE", "DOCTOR_CONSULT", "HOME_CARE"):
+        t_lvl = default_level
+        llm_result["triage_level"] = t_lvl
+
+    badge = llm_result.get("urgency_badge", "")
+    if effective_lang == "en":
+        if t_lvl == "EMERGENCY_CARE" and not any(k in badge.lower() for k in ("emergency", "immediate", "urgent")):
+            llm_result["urgency_badge"] = "🔴 Emergency Care (Immediate)"
+        elif t_lvl == "DOCTOR_CONSULT" and not any(k in badge.lower() for k in ("doctor", "consult", "physician", "clinic")):
+            llm_result["urgency_badge"] = "🟡 Doctor Consultation (Next 24 Hours)"
+        elif t_lvl == "HOME_CARE" and not any(k in badge.lower() for k in ("home", "care", "monitor")):
+            llm_result["urgency_badge"] = "🟢 Home Care & Monitoring"
 
     # Ensure detected_symptoms and is_pediatric are always present for downstream agents
     if "detected_symptoms" not in llm_result:
