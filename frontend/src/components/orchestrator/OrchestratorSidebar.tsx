@@ -78,7 +78,11 @@ export default function OrchestratorSidebar({
   const handleItemClick = (item: NavItem) => {
     if (item.action === 'voice') {
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'voice' } }));
+        window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'voice', fullscreen: true } }));
+      }
+    } else if (item.tab === 'chat') {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'chat', fullscreen: true } }));
       }
     } else if (item.tab) {
       onTabChange?.(item.tab);

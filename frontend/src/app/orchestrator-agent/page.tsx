@@ -13,7 +13,6 @@ import RuralHealthPanel from '@/components/orchestrator/RuralHealthPanel';
 import SecuritySessionsPanel from '@/components/orchestrator/SecuritySessionsPanel';
 import ActionHubExportModal from '@/components/orchestrator/ActionHubExportModal';
 import WhatsAppChatbotPanel from '@/components/orchestrator/WhatsAppChatbotPanel';
-import AiHealthChatPanel from '@/components/orchestrator/AiHealthChatPanel';
 
 import { PatientInfo, VitalsData, DetectedCondition } from '@/components/orchestrator/types';
 import { MOCK_HEALTH_PROFILES, MockHealthProfile } from '@/data/mockHealthProfiles';
@@ -57,6 +56,16 @@ export default function OrchestratorAgentPage() {
       }
     }
   }, []);
+
+  // When chat tab is opened, launch the Fullscreen Clinical Copilot cockpit
+  useEffect(() => {
+    if (activeTab === 'chat') {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'chat', fullscreen: true } }));
+      }
+      setActiveTab('overview');
+    }
+  }, [activeTab]);
 
   const handleToggleSidebar = () => {
     setIsSidebarExpanded(prev => {
@@ -459,10 +468,6 @@ export default function OrchestratorAgentPage() {
               </div>
             )}
 
-            {/* TAB: Rural AI Health Chat Panel (BioBERT Swarm & Indian Clinical Guidance) */}
-            {activeTab === 'chat' && (
-              <AiHealthChatPanel patient={patient} />
-            )}
 
             {/* TAB: Rural & Semi-Urban AI Healthcare Hub (WhatsApp + 2G SMS + Health Literacy) */}
             {activeTab === 'rural' && (

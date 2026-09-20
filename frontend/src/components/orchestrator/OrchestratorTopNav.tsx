@@ -92,12 +92,14 @@ export default function OrchestratorTopNav({
   };
 
   const handleTriggerChat = () => {
-    onTabChange('chat');
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'chat', fullscreen: true } }));
+    }
   };
 
   const handleTriggerVoice = () => {
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'voice' } }));
+      window.dispatchEvent(new CustomEvent('synapseos-open-assistant', { detail: { mode: 'voice', fullscreen: true } }));
     }
   };
 
@@ -226,7 +228,13 @@ export default function OrchestratorTopNav({
             return (
               <button
                 key={tab.id}
-                onClick={() => onTabChange(tab.id)}
+                onClick={() => {
+                  if (tab.id === 'chat') {
+                    handleTriggerChat();
+                  } else {
+                    onTabChange(tab.id);
+                  }
+                }}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',

@@ -90,30 +90,28 @@ export default function SynapseOSAssistantModal() {
     handleSend
   } = useAssistantLogic();
 
-  const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const [isFullscreen, setIsFullscreen] = React.useState(true);
 
-  // Exit fullscreen on Escape key
+  // Exit assistant or fullscreen on Escape key
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isFullscreen) {
-        setIsFullscreen(false);
+      if (e.key === 'Escape') {
+        setIsOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreen]);
+  }, [setIsOpen]);
 
   // Support external triggers for AI Health Chat and Voice Agent
   React.useEffect(() => {
     const handleOpen = (e: any) => {
       setIsOpen(true);
+      setIsFullscreen(true);
       if (e.detail?.mode === 'voice') {
         if (!isVoiceMode && !callActive) {
           toggleVoiceCall();
         }
-      }
-      if (e.detail?.fullscreen) {
-        setIsFullscreen(true);
       }
     };
     window.addEventListener('synapseos-open-assistant', handleOpen);
