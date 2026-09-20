@@ -182,7 +182,7 @@ export default function FullScreenOrchestratorDock({
             <div>
               <div style={{ fontSize: '14px', fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <span>{currentProfile.patient.name}</span>
-                {isMausam && (
+                {currentProfile.isAdmin && (
                   <span style={{
                     fontSize: '8.5px',
                     fontWeight: 900,

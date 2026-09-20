@@ -28,15 +28,15 @@ export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
   
   // Active Profile ID tracking
   const [currentProfileId, setCurrentProfileId] = useState<string>(
-    props?.selectedProfileId || props?.activeProfile?.profileId || 'mausam_kar_verified_abha'
+    props?.selectedProfileId || props?.activeProfile?.profileId || 'rachit_tiwari_verified_abha'
   );
 
   // Active ABHA form / card state
-  const [name, setName] = useState<string>(props?.patient?.name || props?.activeProfile?.patient?.name || 'Mausam Kar');
+  const [name, setName] = useState<string>(props?.patient?.name || props?.activeProfile?.patient?.name || 'Rachit Tiwari');
   const [yearOfBirth, setYearOfBirth] = useState<string>(
-    props?.patient?.dob ? parseYearOfBirth(props.patient.dob) : '2002'
+    props?.patient?.dob ? parseYearOfBirth(props.patient.dob) : '2003'
   );
-  const [dob, setDob] = useState<string>(props?.patient?.dob || 'April 14, 2002');
+  const [dob, setDob] = useState<string>(props?.patient?.dob || 'June 18, 2003');
   const [abhaData, setAbhaData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
@@ -83,16 +83,16 @@ export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
     const matchedCitizen = regList.find((c: any) => c.id === profileId || c.name?.toLowerCase() === profileId.toLowerCase());
     const matchedMock = MOCK_HEALTH_PROFILES.find((p) => p.profileId === profileId) || MOCK_HEALTH_PROFILES[0];
 
-    const citizenName = matchedCitizen?.name || matchedMock.patient.name || props?.patient?.name || 'Mausam Kar';
-    const citizenDob = matchedCitizen?.dob || matchedMock.patient.dob || props?.patient?.dob || 'April 14, 2002';
+    const citizenName = matchedCitizen?.name || matchedMock.patient.name || props?.patient?.name || 'Rachit Tiwari';
+    const citizenDob = matchedCitizen?.dob || matchedMock.patient.dob || props?.patient?.dob || 'June 18, 2003';
     const citizenYob = matchedCitizen?.yearOfBirth ? String(matchedCitizen.yearOfBirth) : parseYearOfBirth(citizenDob, matchedMock.patient.age);
-    const citizenAbha = matchedCitizen?.abhaNumber || matchedMock.patient.abhaId || '91-7294-8102-5309';
+    const citizenAbha = matchedCitizen?.abhaNumber || matchedMock.patient.abhaId || '91-8842-1920-7463';
     const citizenAddress = matchedCitizen?.abhaAddress || `${citizenName.toLowerCase().replace(/\s+/g, '')}@abdm`;
     const citizenGender = matchedCitizen?.gender || matchedMock.patient.gender || props?.patient?.gender || 'Male';
-    const citizenBlood = matchedCitizen?.bloodType || matchedMock.patient.bloodType || props?.patient?.bloodType || 'B+';
-    const citizenPolicy = matchedCitizen?.policyNumber || matchedMock.patient.policyNumber || props?.patient?.policyNumber || 'PM-JAY-2026-IND-8841';
-    const citizenHip = matchedCitizen?.linkedHip || matchedMock.patient.linkedHip || 'All India Institute of Medical Sciences (AIIMS) - Central Node';
-    const citizenState = matchedCitizen?.stateCode || matchedMock.patient.stateCode || 'DL';
+    const citizenBlood = matchedCitizen?.bloodType || matchedMock.patient.bloodType || props?.patient?.bloodType || 'O+';
+    const citizenPolicy = matchedCitizen?.policyNumber || matchedMock.patient.policyNumber || props?.patient?.policyNumber || 'PM-JAY-2026-IND-9924';
+    const citizenHip = matchedCitizen?.linkedHip || matchedMock.patient.linkedHip || "King George's Medical University (KGMU) & AIIMS Node";
+    const citizenState = matchedCitizen?.stateCode || matchedMock.patient.stateCode || 'UP';
 
     setName(citizenName);
     setDob(citizenDob);
@@ -140,12 +140,12 @@ export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
       .then((data) => {
         if (data.citizens && Array.isArray(data.citizens)) {
           setRegistry(data.citizens);
-          const initialId = props?.selectedProfileId || props?.activeProfile?.profileId || 'mausam_kar_verified_abha';
+          const initialId = props?.selectedProfileId || props?.activeProfile?.profileId || 'rachit_tiwari_verified_abha';
           applyProfileData(initialId, data.citizens);
         }
       })
       .catch(() => {
-        const initialId = props?.selectedProfileId || props?.activeProfile?.profileId || 'mausam_kar_verified_abha';
+        const initialId = props?.selectedProfileId || props?.activeProfile?.profileId || 'rachit_tiwari_verified_abha';
         applyProfileData(initialId);
       });
   }, []);
@@ -223,17 +223,17 @@ export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
       const cleanName = name.toLowerCase().replace(/\s+/g, '');
       setAbhaData({
         status: 'ACTIVE',
-        abha_number: abhaData?.abha_number || '91-7294-8102-5309',
+        abha_number: abhaData?.abha_number || '91-8842-1920-7463',
         abha_address: `${cleanName}${yearOfBirth.slice(-2)}@abdm`,
         name: name,
         year_of_birth: yearOfBirth,
         dob: dob,
         gender: abhaData?.gender || 'Male',
         blood_type: abhaData?.blood_type || 'O+',
-        policy_number: abhaData?.policy_number || 'PM-JAY-2026-IND-8841',
+        policy_number: abhaData?.policy_number || 'PM-JAY-2026-IND-9924',
         pm_jay_eligible: true,
         pm_jay_benefit: '₹5,00,000 / Year Free Hospitalization Coverage (PM-JAY)',
-        linked_hip: 'All India Institute of Medical Sciences (AIIMS) - Central Node'
+        linked_hip: "King George's Medical University (KGMU) & AIIMS Node"
       });
     } finally {
       setLoading(false);
@@ -248,7 +248,7 @@ export function useBlockchainRecords(props?: UseBlockchainRecordsProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           patient_name: name,
-          abha_id: abhaData?.abha_number || '91-7294-8102-5309',
+          abha_id: abhaData?.abha_number || '91-8842-1920-7463',
           triage_summary: `Sanjeevni-OS Clinical Triage for ${name}: Vitals stable, verified ABDM record.`
         })
       });

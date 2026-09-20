@@ -77,8 +77,8 @@ export default function ActionHubExportModal({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          patient_name: patient.name || 'Mausam Kar',
-          abha_id: patient.abhaId || '91-7294-8102-5309',
+          patient_name: patient.name || 'Rachit Tiwari',
+          abha_id: patient.abhaId || '91-8842-1920-7463',
           triage_summary: `SynapseOS Multi-Agent Clinical Review for ${patient.name || 'Citizen'}: Stable cardiopulmonary baseline, regular sinus rhythm, vital metrics within optimal physiological benchmarks.`,
           vital_signs: {
             'Blood Pressure': '118/76 mmHg',
@@ -122,13 +122,13 @@ Generated: ${new Date().toUTCString()}
 
 1. PATIENT DEMOGRAPHIC & ABDM REGISTRATION
 ------------------------------------------------------------------------
-Citizen Name:     ${patient.name || 'Mausam Kar'}
-ABHA Number:      ${patient.abhaId || '91-7294-8102-5309'}
-Date of Birth:    ${patient.dob || 'April 14, 2002'}
-Gender / Blood:   ${patient.gender || 'Male'} • Blood Group: ${patient.bloodType || 'B+'}
+Citizen Name:     ${patient.name || 'Rachit Tiwari'}
+ABHA Number:      ${patient.abhaId || '91-8842-1920-7463'}
+Date of Birth:    ${patient.dob || 'June 18, 2003'}
+Gender / Blood:   ${patient.gender || 'Male'} • Blood Group: ${patient.bloodType || 'O+'}
 Coverage Scheme:  Ayushman Bharat PM-JAY (₹5,00,000 / Year Floating Cover)
-Policy Number:    ${patient.policyNumber || 'PM-JAY-2026-IND-8841'}
-Linked HIP Node:  All India Institute of Medical Sciences (AIIMS Central Node)
+Policy Number:    ${patient.policyNumber || 'PM-JAY-2026-IND-9924'}
+Linked HIP Node:  King George's Medical University (KGMU) & AIIMS Central Node
 
 2. MULTI-AGENT CLINICAL TRIAGE & AI COUNCIL CONSENSUS
 ------------------------------------------------------------------------
@@ -155,7 +155,7 @@ Primary Physician: Dr. Rajesh K. Varma, MD (AIIMS Pulmonology & Critical Care)
 ------------------------------------------------------------------------
 Registry ID:      ABDM-REC-${Date.now().toString(16).toUpperCase()}
 Digital Seal:     GOVT-OF-INDIA-ABDM-SECURE-HEALTH-RECORDS-GATEWAY
-Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8102-5309'}
+Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-8842-1920-7463'}
 ========================================================================`;
       
       const blob = new Blob([textReport], { type: 'text/plain;charset=utf-8' });
@@ -178,8 +178,8 @@ Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8
   const handleExportFHIR = async () => {
     setExportingFhir(true);
     try {
-      const pName = patient.name || 'Mausam Kar';
-      const pId = patient.abhaId || 'PAT-91-7294';
+      const pName = patient.name || 'Rachit Tiwari';
+      const pId = patient.abhaId || '91-8842-1920-7463';
       const res = await fetch(`${API_BASE}/api/fhir/bundle?patient_id=${encodeURIComponent(pId)}&name=${encodeURIComponent(pName)}`);
       
       let data: any;
@@ -251,8 +251,8 @@ Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8
   const handleTriggerSOS = async () => {
     setIsSosLoading(true);
     try {
-      const pName = patient.name || 'Mausam Kar';
-      const blood = patient.bloodType || 'B+';
+      const pName = patient.name || 'Rachit Tiwari';
+      const blood = patient.bloodType || 'O+';
       const res = await fetch(`${API_BASE}/api/sos/dispatch`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -281,8 +281,8 @@ Verification URL: https://abdm.gov.in/verify?abha=${patient.abhaId || '91-7294-8
       setSosStatus({
         active: true,
         ticketId: `SOS-OFFLINE-${Math.floor(10000 + Math.random() * 90000)}`,
-        patientName: patient.name || 'Mausam Kar',
-        bloodGroup: patient.bloodType || 'B+',
+        patientName: patient.name || 'Rachit Tiwari',
+        bloodGroup: patient.bloodType || 'O+',
         ambulance: 'CATS Emergency Ambulance #108 Queued',
         emergencyLine: 'National Emergency Response #112 Alerted',
         gps: '28.6139° N, 77.2090° E',

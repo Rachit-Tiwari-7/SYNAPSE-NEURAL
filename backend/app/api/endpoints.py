@@ -103,8 +103,8 @@ class ScanAnalysisRequest(BaseModel):
 
 
 class PDFReportRequest(BaseModel):
-    patient_name: str = Field(default="Siddharth Sharma")
-    abha_id: str = Field(default="91-5829-3910-4821")
+    patient_name: str = Field(default="Rachit Tiwari")
+    abha_id: str = Field(default="91-8842-1920-7463")
     triage_summary: str = Field(default="Routine seasonal checkup; vitals normal.")
     vital_signs: Optional[Dict[str, str]] = None
     medications: Optional[List[Dict[str, str]]] = None
@@ -112,7 +112,7 @@ class PDFReportRequest(BaseModel):
 
 class EmergencySOSRequest(BaseModel):
     emergency_contact: str = Field(default="+919876543210")
-    patient_name: str = Field(default="Siddharth Sharma")
+    patient_name: str = Field(default="Rachit Tiwari")
     location_coords: str = Field(default="28.6139,77.2090")
     blood_group: str = Field(default="O+")
     critical_symptoms: str = Field(default="Severe chest pain and dizziness")

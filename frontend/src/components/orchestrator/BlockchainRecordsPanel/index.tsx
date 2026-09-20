@@ -263,7 +263,7 @@ export default function AbhaRecordsPanel({
                 {t('passport_payload_title', 'Included Clinical Payload')}:
               </h4>
               <ul style={{ color: '#334155', fontSize: '14px', lineHeight: '2', margin: 0, paddingLeft: '20px' }}>
-                <li>{t('passport_included_1', '✓ Full patient demographic header & ABHA ID registration')} (<b>{state.abhaData?.abha_number || '91-7294-8102-5309'}</b>)</li>
+                <li>{t('passport_included_1', '✓ Full patient demographic header & ABHA ID registration')} (<b>{state.abhaData?.abha_number || '91-8842-1920-7463'}</b>)</li>
                 <li>{t('passport_included_2', '✓ Date of Birth & PM-JAY Scheme Coverage Active')} (<b>{state.dob || state.yearOfBirth}</b>)</li>
                 <li>{t('passport_included_3', '✓ Clinical triage urgency level & AI Council consensus')}</li>
                 <li>{t('passport_included_4', '✓ Physiological vital benchmarks (Blood Pressure, Heart Rate, SpO2, Fasting Glucose)')}</li>

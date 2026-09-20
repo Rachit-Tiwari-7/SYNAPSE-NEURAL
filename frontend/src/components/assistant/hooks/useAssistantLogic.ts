@@ -78,7 +78,7 @@ export function useAssistantLogic() {
   const [backendUrl, setBackendUrl] = useState(API_BASE);
 
   // Active Patient Profile for Orchestrator Telemetry
-  const [activeProfileId, setActiveProfileId] = useState<string>('mausam_kar_verified_abha');
+  const [activeProfileId, setActiveProfileId] = useState<string>('rachit_tiwari_verified_abha');
 
   const [vapi, setVapi] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);

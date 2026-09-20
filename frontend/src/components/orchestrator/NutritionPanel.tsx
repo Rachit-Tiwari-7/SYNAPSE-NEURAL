@@ -32,7 +32,8 @@ import {
   Minimize2,
   CheckCircle
 } from 'lucide-react';
-import { PatientInfo } from './types';
+import { PatientInfo, VitalsData } from './types';
+import { MockHealthProfile } from '@/data/mockHealthProfiles';
 import { useLanguage } from '@/context/LanguageContext';
 
 export type NutritionCondition = 'diabetes' | 'hypertension' | 'anaemia' | 'diarrhoea' | 'fever';
@@ -65,12 +66,19 @@ interface ChatMessage {
   provider?: string;
 }
 
-interface NutritionPanelProps {
+export interface NutritionPanelProps {
   patient?: PatientInfo;
+  activeProfile?: MockHealthProfile;
+  vitals?: VitalsData;
   initialCondition?: NutritionCondition;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+const getApiBase = () => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('synapseos_backend_url') || process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+  }
+  return process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+};
 
 const CONDITIONS_MAP: { id: NutritionCondition; label: string; hi: string; type: 'long_term' | 'short_term'; subtitle: string; redFlag: string }[] = [
   { 
@@ -314,7 +322,12 @@ const CHEAP_INDIAN_SUPERFOODS: CheapSuperfood[] = [
   }
 ];
 
-export default function NutritionPanel({ patient, initialCondition = 'diabetes' }: NutritionPanelProps) {
+export default function NutritionPanel({ 
+  patient, 
+  activeProfile, 
+  vitals, 
+  initialCondition = 'diabetes' 
+}: NutritionPanelProps) {
   const { t } = useLanguage();
   
   // Top Level Mode State
@@ -357,15 +370,21 @@ export default function NutritionPanel({ patient, initialCondition = 'diabetes' 
     return CONDITIONS_MAP.find(c => c.id === selectedCondition) || CONDITIONS_MAP[0];
   }, [selectedCondition]);
 
-  // Dynamic Patient Info from Prop
-  const patientName = patient?.name && patient.name !== '----' ? patient.name : 'Mausam Kar';
-  const abhaId = patient?.abhaId && patient.abhaId !== '----' ? patient.abhaId : '91-5829-3910-4821';
-  const age = patient?.dob ? `DOB: ${patient.dob}` : '24 Years';
-  const gender = patient?.gender || 'Male';
-  const bpString = patient?.vitals ? `${patient.vitals.systolicBp || 138}/${patient.vitals.diastolicBp || 88} mmHg` : '138/88 mmHg';
-  const glucoseString = '154 mg/dL';
-  const activeConditions = ['Type 2 Diabetes', 'Essential Hypertension', 'Mild Anaemia'];
-  const activeMeds = ['Metformin 500mg', 'Telmisartan 40mg', 'Autrin IFA'];
+  // Dynamic Patient Info from Prop & Active Profile
+  const patientName = patient?.name && patient.name !== '----' ? patient.name : (activeProfile?.patient?.name || 'Rachit Tiwari');
+  const abhaId = patient?.abhaId && patient.abhaId !== '----' ? patient.abhaId : (activeProfile?.patient?.abhaId || '91-8842-1920-7463');
+  const age = activeProfile?.patient?.age ? `${activeProfile.patient.age} Years` : (patient?.dob ? `DOB: ${patient.dob}` : '23 Years');
+  const gender = patient?.gender || activeProfile?.patient?.gender || 'Male';
+  const bpString = vitals && vitals.systolicBp ? `${vitals.systolicBp}/${vitals.diastolicBp} mmHg` : (activeProfile?.vitals?.bloodPressure || '116/74 mmHg');
+  const glucoseString = vitals?.glucoseLevel ? `${vitals.glucoseLevel} mg/dL` : (activeProfile?.vitals?.bloodGlucose ? `${activeProfile.vitals.bloodGlucose} mg/dL` : '90 mg/dL');
+  const activeConditions = activeProfile?.conditions && activeProfile.conditions.length > 0 
+    ? activeProfile.conditions.map(c => c.title) 
+    : ['Pulmonary Aerobic Function', 'Patellar Biomechanics'];
+  const activeMeds = (activeProfile?.visualAnalytics?.carePlan as any)?.medicationStatus 
+    ? [(activeProfile?.visualAnalytics?.carePlan as any)?.medicationStatus] 
+    : (activeProfile?.visualAnalytics?.carePlan as any)?.medication?.title 
+    ? [(activeProfile?.visualAnalytics?.carePlan as any)?.medication?.title] 
+    : ['Electrolytes & Vitamin D3 Complete'];
 
   // Helper to construct welcome message
   const getWelcomeMessage = useCallback((mode: NutritionMode): ChatMessage => {
@@ -376,9 +395,9 @@ export default function NutritionPanel({ patient, initialCondition = 'diabetes' 
         role: 'assistant',
         content: `Namaste **${patientName}**! I am your **SynapseOS Clinical AI Nutritionist**, synced with your **ABHA ID (${abhaId})**.\n\n` +
           `• **Active Vitals:** Blood Pressure: \`${bpString}\` | Fasting Glucose: \`${glucoseString}\`\n` +
-          `• **Diagnosed Profile:** ${activeConditions.join(', ')}\n` +
-          `• **Active Medicines:** ${activeMeds.join(', ')}\n\n` +
-          `Ask me any question regarding your meals, foods to avoid with ${activeCondObj.label}, or drug-food safety!`,
+          `• **ABDM Profile:** ${activeConditions.join(', ')}\n` +
+          `• **Care Plan / Prescriptions:** ${activeMeds.join(', ')}\n\n` +
+          `Ask me any question regarding your daily meals, foods to consume/avoid for ${activeCondObj.label}, or drug-food safety interactions!`,
         timestamp: timeStr,
         provider: 'OpenRouter AI • Clinical Mode'
       };
@@ -399,17 +418,27 @@ export default function NutritionPanel({ patient, initialCondition = 'diabetes' 
     }
   }, [patientName, abhaId, bpString, glucoseString, activeConditions, activeMeds, activeCondObj.label, fitnessGoal, workoutLevel, dietPreference, smokingStatus, alcoholStatus]);
 
-  // Initialize initial greeting in chat ONLY ON MOUNT
+  // Keep initial greeting in chat synced with current profile if user has not typed yet
   useEffect(() => {
-    setChatMessages([getWelcomeMessage('clinical')]);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!hasUserSentMessageRef.current) {
+      setChatMessages([getWelcomeMessage(activeMode)]);
+    }
+  }, [patientName, abhaId, bpString, activeMode, getWelcomeMessage]);
+
+  const handleModeChange = (mode: NutritionMode) => {
+    setActiveMode(mode);
+    if (!hasUserSentMessageRef.current) {
+      setChatMessages([getWelcomeMessage(mode)]);
+    }
+  };
 
   // Fetch dynamic food guide whenever condition changes
   useEffect(() => {
     let isMounted = true;
     const fetchGuide = async () => {
       try {
-        const resp = await fetch(`${API_BASE}/api/nutrition/guide`, {
+        const apiBase = getApiBase();
+        const resp = await fetch(`${apiBase}/api/nutrition/guide`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -555,8 +584,9 @@ export default function NutritionPanel({ patient, initialCondition = 'diabetes' 
 
     const formattedHistory = chatMessages.slice(-6).map(m => ({ role: m.role, content: m.content }));
 
+    const apiBase = getApiBase();
     try {
-      const res = await fetch(`${API_BASE}/api/nutrition/chat`, {
+      const res = await fetch(`${apiBase}/api/nutrition/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -632,8 +662,9 @@ export default function NutritionPanel({ patient, initialCondition = 'diabetes' 
   const handleSearchCheck = async () => {
     if (!searchQuery.trim()) return;
     setIsSearching(true);
+    const apiBase = getApiBase();
     try {
-      const resp = await fetch(`${API_BASE}/api/nutrition/check?food=${encodeURIComponent(searchQuery)}&condition=${selectedCondition}`);
+      const resp = await fetch(`${apiBase}/api/nutrition/check?food=${encodeURIComponent(searchQuery)}&condition=${selectedCondition}`);
       if (resp.ok) {
         const data = await resp.json();
         setSearchResult(data);
@@ -673,8 +704,9 @@ export default function NutritionPanel({ patient, initialCondition = 'diabetes' 
 
   const handleExportPDF = async () => {
     setPdfToast('Generating verifiable PDF report...');
+    const apiBase = getApiBase();
     try {
-      const resp = await fetch(`${API_BASE}/api/reports/generate-pdf`, {
+      const resp = await fetch(`${apiBase}/api/reports/generate-pdf`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -843,7 +875,7 @@ export default function NutritionPanel({ patient, initialCondition = 'diabetes' 
         }}>
           {/* Mode 1 Button */}
           <button
-            onClick={() => setActiveMode('clinical')}
+            onClick={() => handleModeChange('clinical')}
             style={{
               padding: '14px 20px',
               borderRadius: '12px',
@@ -887,7 +919,7 @@ export default function NutritionPanel({ patient, initialCondition = 'diabetes' 
 
           {/* Mode 2 Button */}
           <button
-            onClick={() => setActiveMode('general')}
+            onClick={() => handleModeChange('general')}
             style={{
               padding: '14px 20px',
               borderRadius: '12px',

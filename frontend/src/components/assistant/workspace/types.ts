@@ -75,5 +75,5 @@ export function getPatientPhotoUrl(profileId: string): string {
   if (profileId.includes('surabhi') || profileId.includes('surbhi')) return '/images/surabhi.jpg';
   if (profileId.includes('shaikh')) return '/images/shaikh_warsi.jpg';
   if (profileId.includes('jiya')) return '/images/jiya_jaiswal.jpg';
-  return '/images/mausam_kar.jpg';
+  return '/images/rachit_tiwari.jpg';
 }

@@ -117,7 +117,7 @@ export default function AbhaGenerator({ state }: { state: any }) {
             type="text"
             value={state.name}
             onChange={(e) => state.setName(e.target.value)}
-            placeholder="e.g. Mausam Kar"
+            placeholder="e.g. Rachit Tiwari"
             style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', background: '#ffffff', border: '1px solid #cbd5e1', color: '#0f172a', fontSize: '14px', boxSizing: 'border-box', outline: 'none', fontWeight: 600 }}
           />
         </div>
@@ -131,7 +131,7 @@ export default function AbhaGenerator({ state }: { state: any }) {
             type="text"
             value={state.yearOfBirth}
             onChange={(e) => state.setYearOfBirth(e.target.value)}
-            placeholder="e.g. 2002"
+            placeholder="e.g. 2003"
             style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', background: '#ffffff', border: '1px solid #cbd5e1', color: '#0f172a', fontSize: '14px', boxSizing: 'border-box', outline: 'none', fontWeight: 600 }}
           />
         </div>

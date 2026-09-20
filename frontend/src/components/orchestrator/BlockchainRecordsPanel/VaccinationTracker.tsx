@@ -110,7 +110,7 @@ const PREGNANCY_VACCINES: VaccineItem[] = [
   { name: 'Td Booster', fullName: 'Td Booster Dose', protectsAgainst: 'For mothers with 2 Td doses within last 3 years', route: 'Intramuscular (Upper Arm)', status: 'upcoming', dueDate: 'Single Dose in Current Pregnancy' }
 ];
 
-export default function VaccinationTracker({ patientName = 'Aarav Sharma', abhaId = '91-7294-8102-5309' }: { patientName?: string; abhaId?: string }) {
+export default function VaccinationTracker({ patientName = 'Rachit Tiwari', abhaId = '91-8842-1920-7463' }: { patientName?: string; abhaId?: string }) {
   const { t, translateText } = useLanguage();
   const [category, setCategory] = useState<'child' | 'pregnant'>('child');
   const [selectedMilestoneId, setSelectedMilestoneId] = useState<string>('6_weeks');

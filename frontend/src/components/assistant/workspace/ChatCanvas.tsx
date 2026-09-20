@@ -93,13 +93,13 @@ export default function ChatCanvas({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const patientName = currentProfile?.patient?.name || 'Mausam Kar';
-  const patientAbha = currentProfile?.patient?.abhaId || '91-7294-8102-5309';
-  const heartRate = currentProfile?.vitals?.currentHeartRate || 74;
-  const spo2 = currentProfile?.vitals?.spo2 || 98.5;
-  const bloodPressure = currentProfile?.vitals?.bloodPressure || '118/76';
-  const deviceName = currentProfile?.device?.name || 'Apple Watch Ultra 2';
-  const deviceBattery = currentProfile?.device?.battery || 92;
+  const patientName = currentProfile?.patient?.name || 'Rachit Tiwari';
+  const patientAbha = currentProfile?.patient?.abhaId || '91-8842-1920-7463';
+  const heartRate = currentProfile?.vitals?.currentHeartRate || 70;
+  const spo2 = currentProfile?.vitals?.spo2 || 99.0;
+  const bloodPressure = currentProfile?.vitals?.bloodPressure || '116/74';
+  const deviceName = currentProfile?.device?.name || 'Google Pixel Watch 3 & Health Connect';
+  const deviceBattery = currentProfile?.device?.battery || 94;
 
   // Dynamic Persona Details & Curated Prompts
   const getPersonaConfig = () => {

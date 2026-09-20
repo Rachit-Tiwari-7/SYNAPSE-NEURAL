@@ -645,17 +645,17 @@ async def handle_nutrition_chatbot_conversation(
 
     # Extract ABHA details cleanly
     prof = abha_profile or {}
-    patient_name = prof.get("name") or "Friend"
-    abha_id = prof.get("abhaId") or prof.get("abha_id") or "91-5829-3910-4821"
-    age = prof.get("age") or prof.get("dob") or "Adult"
-    gender = prof.get("gender") or ""
+    patient_name = prof.get("name") or "Rachit Tiwari"
+    abha_id = prof.get("abhaId") or prof.get("abha_id") or "91-8842-1920-7463"
+    age = prof.get("age") or prof.get("dob") or "23"
+    gender = prof.get("gender") or "Male"
     vitals = prof.get("vitals") or {}
     bp_sys = vitals.get("systolicBp") or vitals.get("bp_sys") or vitals.get("systolic")
     bp_dia = vitals.get("diastolicBp") or vitals.get("bp_dia") or vitals.get("diastolic")
-    bp_str = f"{bp_sys}/{bp_dia} mmHg" if bp_sys and bp_dia else "138/88 mmHg"
+    bp_str = f"{bp_sys}/{bp_dia} mmHg" if bp_sys and bp_dia else "116/74 mmHg"
     glucose = vitals.get("bloodGlucose") or vitals.get("fasting_glucose") or vitals.get("glucose")
-    glucose_str = f"{glucose} mg/dL" if glucose else "154 mg/dL"
-    spo2 = vitals.get("spo2") or "98%"
+    glucose_str = f"{glucose} mg/dL" if glucose else "90 mg/dL"
+    spo2 = vitals.get("spo2") or "99%"
 
     raw_conds = prof.get("conditions") or [CONDITION_LABELS[cond_key]["en"]]
     conditions_list = [raw_conds] if isinstance(raw_conds, str) else list(raw_conds)

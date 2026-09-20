@@ -46,7 +46,7 @@ export default function PatientVitalsPanel({
   vitals,
   isAbhaLinked = true,
   onToggleAbhaLink,
-  selectedProfileId = 'mausam_kar_verified_abha',
+  selectedProfileId = 'rachit_tiwari_verified_abha',
   onSelectProfile,
   onUploadCustomProfile,
   onBookDoctor

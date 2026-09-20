@@ -60,10 +60,8 @@ export default function WorkspaceHeader({
   const patientDropdownRef = useRef<HTMLDivElement>(null);
   const langDropdownRef = useRef<HTMLDivElement>(null);
 
-  const t = getTranslation(selectedLanguage);
-  const patientName = currentProfile?.patient?.name || 'Patient';
-  const patientAbha = currentProfile?.patient?.abhaId || 'ABDM-VERIFIED';
-  const isMausam = currentProfile?.profileId === 'mausam_kar_verified_abha';
+  const patientName = currentProfile?.patient?.name || 'Rachit Tiwari';
+  const patientAbha = currentProfile?.patient?.abhaId || '91-8842-1920-7463';
 
   const currentLangObj = SUPPORTED_LANGUAGES.find(l => l.code === selectedLanguage) || SUPPORTED_LANGUAGES[0];
 

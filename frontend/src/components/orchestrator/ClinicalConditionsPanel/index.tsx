@@ -58,16 +58,16 @@ export default function ClinicalConditionsPanel({
   const [activeTab, setActiveTab] = useState<'conditions' | 'records' | 'care'>('conditions');
 
   // Fallbacks if activeProfile or patient not directly passed
-  const citizenName = patient?.name || activeProfile?.patient.name || 'Mausam Kar';
-  const abhaId = patient?.abhaId || activeProfile?.patient.abhaId || '91-7294-8102-5309';
-  const abhaAddress = activeProfile?.patient.abhaAddress || `${citizenName.toLowerCase().replace(/\s+/g, '')}@abdm`;
-  const policyNumber = patient?.policyNumber || activeProfile?.patient.policyNumber || 'PM-JAY-2026-IND-8841';
-  const linkedHip = activeProfile?.patient.linkedHip || 'All India Institute of Medical Sciences (AIIMS) Node';
-  const stateCode = activeProfile?.patient.stateCode || 'DL';
-  const bloodType = patient?.bloodType || activeProfile?.patient.bloodType || 'B+';
-  const age = activeProfile?.patient.age || 24;
-  const gender = patient?.gender || activeProfile?.patient.gender || 'Male';
-  const dob = patient?.dob || activeProfile?.patient.dob || 'April 14, 2002';
+  const citizenName = patient?.name || activeProfile?.patient?.name || 'Rachit Tiwari';
+  const abhaId = patient?.abhaId || activeProfile?.patient?.abhaId || '91-8842-1920-7463';
+  const abhaAddress = activeProfile?.patient?.abhaAddress || `${citizenName.toLowerCase().replace(/\s+/g, '')}@abdm`;
+  const policyNumber = patient?.policyNumber || activeProfile?.patient?.policyNumber || 'PM-JAY-2026-IND-9924';
+  const linkedHip = activeProfile?.patient?.linkedHip || "King George's Medical University (KGMU) & AIIMS Node";
+  const stateCode = activeProfile?.patient?.stateCode || (activeProfile?.profileId === 'shaikh_warsi_verified_abha' ? 'MH' : 'UP');
+  const bloodType = patient?.bloodType || activeProfile?.patient?.bloodType || 'O+';
+  const age = activeProfile?.patient?.age || 23;
+  const gender = patient?.gender || activeProfile?.patient?.gender || 'Male';
+  const dob = patient?.dob || activeProfile?.patient?.dob || 'June 18, 2003';
 
   const handleCopy = (text: string, fieldName: string) => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -78,40 +78,33 @@ export default function ClinicalConditionsPanel({
   };
 
   const nextAppointment = activeProfile?.visualAnalytics?.nextAppointment || {
-    doctor: 'Dr. Rajesh K. Varma',
-    specialty: 'Pulmonology & Critical Care',
-    date: 'Friday, 16 Jan, 04:00 PM',
-    mode: 'Teleconsultation',
-    color: '#0284c7'
+    doctor: 'Dr. Amitava Roy',
+    specialty: 'Sports Medicine & Rehab',
+    date: 'Wednesday, 21 Jan, 03:30 PM',
+    mode: 'In-Clinic',
+    color: '#7c3aed'
   };
 
   const carePlan = activeProfile?.visualAnalytics?.carePlan || {
     medicationPercent: 100,
-    medicationStatus: 'Multivitamin & Omega-3 Complete',
-    hydrationPercent: 82,
-    hydrationStatus: '2.4L / 3.0L Target Reached'
+    medicationStatus: 'Electrolytes & Vitamin D3 Complete (1 tab daily)',
+    hydrationPercent: 90,
+    hydrationStatus: '2.7L / 3.0L Target Reached'
   };
 
   const recordsList = activeProfile?.patient?.blockchainRecords || [
     {
-      id: 'REC-ABDM-0921',
-      title: 'Chest Radiograph & Alveolar Diffusion Report',
-      facility: 'AIIMS Pulmonology Department',
-      timestamp: '2026-08-18 11:45 UTC',
+      id: 'REC-0x9924-RT',
+      title: 'Athletic VO2 Max & High-Endurance Pulmonary Spirometry',
+      facility: 'Sports Medicine & Pulmonology Centre',
+      timestamp: '2026-08-19 14:15 UTC',
       verified: true
     },
     {
-      id: 'REC-ABDM-0418',
-      title: 'Diagnostic Blood Chemistry & Metabolic Panel',
-      facility: 'AIIMS Central Clinical Pathology Lab',
-      timestamp: '2026-08-20 09:30 UTC',
-      verified: true
-    },
-    {
-      id: 'REC-UWIN-8821',
-      title: 'U-WIN Universal Immunization Record',
-      facility: 'Government Community Health Centre (CHC)',
-      timestamp: '2026-07-14 14:15 UTC',
+      id: 'REC-0x9925-RT',
+      title: 'Lower Kinetic Chain & Patellar Joint Cartilage Diagnostic',
+      facility: 'KGMU Sports Orthopedics Unit',
+      timestamp: '2026-08-21 16:40 UTC',
       verified: true
     }
   ];

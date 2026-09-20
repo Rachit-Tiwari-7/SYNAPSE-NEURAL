@@ -208,7 +208,7 @@ export default function OrchestratorAgentPage() {
           name: pName,
           age: uploaded.age || uploaded.patient?.age || 28,
           gender: uploaded.gender || uploaded.patient?.gender || 'Male',
-          abhaId: uploaded.abhaId || uploaded.patient?.abhaId || '91-7294-8102-5309'
+          abhaId: uploaded.abhaId || uploaded.patient?.abhaId || '91-8842-1920-7463'
         },
         device: {
           name: 'Wearable JSON Stream',
@@ -430,10 +430,16 @@ export default function OrchestratorAgentPage() {
 
                 {/* Right Column: Conditions, Diagnostic X-Rays & Telemetry */}
                 <ClinicalConditionsPanel
+                  patient={patient}
+                  activeProfile={activeProfile}
+                  vitals={vitals}
+                  isAbhaLinked={isAbhaLinked}
                   conditions={conditions}
                   selectedCondition={selectedCondition}
                   onSelectCondition={setSelectedCondition}
                   onOpenExportModal={() => setIsExportModalOpen(true)}
+                  onNavigateToSwarmTab={() => setActiveTab('swarm')}
+                  onNavigateToChatTab={() => setActiveTab('chat')}
                 />
               </div>
             )}
@@ -450,7 +456,11 @@ export default function OrchestratorAgentPage() {
 
             {/* TAB: Clinical Nutrition & Food Guide */}
             {activeTab === 'nutrition' && (
-              <NutritionPanel patient={patient} />
+              <NutritionPanel
+                patient={patient}
+                activeProfile={activeProfile}
+                vitals={vitals}
+              />
             )}
 
             {/* TAB: Official WhatsApp Clinical Copilot & Interactive Sandbox */}

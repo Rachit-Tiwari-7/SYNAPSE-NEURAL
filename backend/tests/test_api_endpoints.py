@@ -141,8 +141,8 @@ def test_abdm_endpoints():
 def test_reports_generate_pdf_endpoint():
     """Tests clinical PDF health summary report generation."""
     payload = {
-        "patient_name": "Siddharth Sharma",
-        "abha_id": "91-5829-3910-4821",
+        "patient_name": "Rachit Tiwari",
+        "abha_id": "91-8842-1920-7463",
         "triage_summary": "Routine checkup; mild elevated BP.",
         "vital_signs": {"Blood Pressure": "130/85 mmHg", "Blood Glucose": "98 mg/dL"},
         "medications": [{"name": "Amlodipine 5mg", "dosage": "1 OD", "duration": "30 Days"}]
@@ -157,7 +157,7 @@ def test_emergency_sos_dispatch_endpoint():
     """Tests the 1-click Emergency SOS dispatch endpoint."""
     payload = {
         "emergency_contact": "+919876543210",
-        "patient_name": "Siddharth Sharma",
+        "patient_name": "Rachit Tiwari",
         "location_coords": "28.6139,77.2090",
         "blood_group": "O+",
         "critical_symptoms": "Severe acute chest tightness"
