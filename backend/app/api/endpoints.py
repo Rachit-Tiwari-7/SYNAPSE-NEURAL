@@ -53,6 +53,11 @@ from backend.app.agents.preventive_health_agent import (
     generate_community_health_quiz,
     evaluate_quiz_answers
 )
+from backend.app.agents.nutrition_agent import (
+    get_nutrition_guide_for_condition,
+    check_specific_food_safety,
+    handle_nutrition_chatbot_conversation
+)
 from backend.app.agents.outbreak_agent import (
     get_district_outbreak_risk,
     broadcast_outbreak_advisory,
@@ -803,6 +808,77 @@ async def generate_uwin_certificate_endpoint(req: UWinRecordRequest):
         dob=req.dob,
         guardian_name=req.guardian_name,
         state=req.state
+    )
+
+
+# ==========================================
+# Clinical Nutrition & Dietary Guidance
+# ==========================================
+
+class NutritionGuideRequest(BaseModel):
+    condition: str = Field(default="hypertension", example="hypertension | diabetes | anaemia | diarrhoea | fever")
+    vegetarian_only: bool = Field(default=False)
+    allergies: Optional[List[str]] = Field(default=[])
+    medicines: Optional[List[str]] = Field(default=[])
+    language: Optional[str] = Field(default="en")
+
+
+@router.post("/nutrition/guide", tags=["Clinical Nutrition"])
+async def nutrition_guide_endpoint(req: NutritionGuideRequest):
+    """
+    Returns curated clinical dietary guidance (Eat / Limit / Avoid), top recommended cards,
+    and red-flag warning strips based on ICMR-NIN & IFCT guidelines.
+    """
+    return get_nutrition_guide_for_condition(
+        condition=req.condition,
+        vegetarian_only=req.vegetarian_only,
+        allergies=req.allergies,
+        medicines=req.medicines
+    )
+
+
+@router.get("/nutrition/check", tags=["Clinical Nutrition"])
+async def nutrition_check_endpoint(
+    food: str = Query(..., example="banana"),
+    condition: str = Query("hypertension", example="hypertension"),
+    medicines: Optional[str] = Query(None, example="warfarin,telmisartan"),
+    allergies: Optional[str] = Query(None, example="dairy")
+):
+    """
+    Checks specific food safety for a condition (e.g., 'Can I eat banana with diabetes?').
+    Screens for red-flag emergency symptoms typed into the food query.
+    """
+    med_list = [m.strip() for m in medicines.split(",")] if medicines else []
+    alg_list = [a.strip() for a in allergies.split(",")] if allergies else []
+
+    return check_specific_food_safety(
+        query=food,
+        condition=condition,
+        medicines=med_list,
+        allergies=alg_list
+    )
+
+
+class NutritionChatRequest(BaseModel):
+    message: str = Field(..., example="What can I eat for dinner with high blood pressure and diabetes?")
+    condition: Optional[str] = Field(default="diabetes", example="hypertension")
+    history: Optional[List[Dict[str, str]]] = Field(default=[])
+    abha_profile: Optional[Dict[str, Any]] = Field(default=None)
+
+
+@router.post("/nutrition/chat", tags=["Clinical Nutrition"])
+async def nutrition_chat_endpoint(req: NutritionChatRequest):
+    """
+    Interactive Clinical Nutrition Chatbot endpoint.
+    Connects to OpenRouter API (with Gemini 2.0 & ICMR-NIN fallbacks),
+    fetches patient ABHA ID health profile details (vitals, conditions, medications),
+    and screens for emergency red flag symptoms.
+    """
+    return await handle_nutrition_chatbot_conversation(
+        user_message=req.message,
+        history=req.history,
+        abha_profile=req.abha_profile,
+        condition=req.condition or "diabetes"
     )
 
 

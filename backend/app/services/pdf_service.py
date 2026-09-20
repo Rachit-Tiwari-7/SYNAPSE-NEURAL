@@ -7,7 +7,10 @@ Compliant with ABDM (Ayushman Bharat Digital Mission) FHIR R4 standard.
 import io
 import json
 import hashlib
-import qrcode
+try:
+    import qrcode
+except ImportError:
+    qrcode = None
 from datetime import datetime
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image as RLImage, HRFlowable
@@ -226,17 +229,19 @@ def generate_health_summary_pdf(
     sha256_digest = hashlib.sha256(raw_payload.encode('utf-8')).hexdigest()
 
     # 6. Section 4: Tamper-Evident QR Code Stamp & Blockchain Verification
-    qr = qrcode.QRCode(box_size=3, border=1)
-    verification_url = f"https://abdm.gov.in/verify?hash={sha256_digest}&abha={abha_id}&ipfs={ipfs_hash}"
-    qr.add_data(verification_url)
-    qr.make(fit=True)
-    img_qr = qr.make_image(fill_color="black", back_color="white")
-    
-    qr_buffer = io.BytesIO()
-    img_qr.save(qr_buffer, format="PNG")
-    qr_buffer.seek(0)
-
-    qr_image = RLImage(qr_buffer, width=72, height=72)
+    if qrcode:
+        qr = qrcode.QRCode(box_size=3, border=1)
+        verification_url = f"https://abdm.gov.in/verify?hash={sha256_digest}&abha={abha_id}&ipfs={ipfs_hash}"
+        qr.add_data(verification_url)
+        qr.make(fit=True)
+        img_qr = qr.make_image(fill_color="black", back_color="white")
+        
+        qr_buffer = io.BytesIO()
+        img_qr.save(qr_buffer, format="PNG")
+        qr_buffer.seek(0)
+        qr_image = RLImage(qr_buffer, width=72, height=72)
+    else:
+        qr_image = Paragraph("<font color='#059669'><b>[ABDM QR STAMP]</b></font>", body_style)
     
     qr_table_data = [
         [
@@ -266,3 +271,68 @@ def generate_health_summary_pdf(
     doc.build(elements)
     buffer.seek(0)
     return buffer.getvalue()
+
+
+def generate_nutrition_guide_pdf(
+    patient_name: str = "Mausam Kar",
+    abha_id: str = "91-7294-8102-5309",
+    condition: str = "High blood pressure",
+    eat_items: list = None,
+    limit_items: list = None,
+    avoid_items: list = None,
+    red_flags: str = "Call 108 if severe headache or chest pain"
+) -> bytes:
+    """Generates downloadable PDF Clinical Nutrition Guide."""
+    if eat_items is None:
+        eat_items = ["Moong dal", "Methi leaves", "Ragi roti", "Plain curd"]
+    if limit_items is None:
+        limit_items = ["White rice", "Ripe banana", "Potato"]
+    if avoid_items is None:
+        avoid_items = ["Pickles (Achar)", "Papad & Namkeen", "Sugary drinks"]
+
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=36, leftMargin=36, topMargin=32, bottomMargin=32)
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle('NutrTitle', parent=styles['Heading1'], fontSize=16, leading=20, textColor=colors.HexColor('#0F172A'), fontName='Helvetica-Bold')
+    sub_style = ParagraphStyle('NutrSub', parent=styles['Normal'], fontSize=9, leading=12, textColor=colors.HexColor('#475569'))
+    body_style = ParagraphStyle('NutrBody', parent=styles['Normal'], fontSize=9, leading=13, textColor=colors.HexColor('#334155'))
+    section_heading = ParagraphStyle('NutrSec', parent=styles['Heading2'], fontSize=11, leading=14, textColor=colors.HexColor('#059669'), fontName='Helvetica-Bold', spaceBefore=8, spaceAfter=4)
+
+    elements = []
+
+    elements.append(Paragraph(f"<b>SYNAPSE-OS CLINICAL NUTRITION GUIDE — {condition.upper()}</b>", title_style))
+    elements.append(Paragraph(f"Patient: <b>{patient_name}</b> (ABHA: {abha_id}) • ICMR-NIN Dietary Framework", sub_style))
+    elements.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor('#059669'), spaceBefore=4, spaceAfter=8))
+
+    elements.append(Paragraph("<b>✅ RECOMMENDED FOODS (EAT)</b>", section_heading))
+    for it in eat_items:
+        elements.append(Paragraph(f"• <b>{it}</b> — Beneficial for clinical management", body_style))
+    elements.append(Spacer(1, 6))
+
+    elements.append(Paragraph("<b>⚠️ PORTION CONTROL (LIMIT)</b>", section_heading))
+    for it in limit_items:
+        elements.append(Paragraph(f"• <b>{it}</b> — Small portions or less often", body_style))
+    elements.append(Spacer(1, 6))
+
+    elements.append(Paragraph("<b>❌ BEST AVOIDED (AVOID)</b>", section_heading))
+    for it in avoid_items:
+        elements.append(Paragraph(f"• <b>{it}</b> — High risk of aggravating condition", body_style))
+    elements.append(Spacer(1, 8))
+
+    # Red flag strip
+    t_flag = Table([[Paragraph(f"<b>🚨 Red-Flag Symptoms:</b> {red_flags}", body_style)]], colWidths=[540])
+    t_flag.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#FEF2F2')),
+        ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#FECACA')),
+        ('PADDING', (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(t_flag)
+    elements.append(Spacer(1, 10))
+
+    elements.append(Paragraph("<i>⚠️ Educational guidance based on ICMR-NIN Dietary Guidelines for Indians. Consult a registered dietitian for individual prescriptions.</i>", sub_style))
+
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer.getvalue()
+

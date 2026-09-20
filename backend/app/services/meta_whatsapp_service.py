@@ -32,6 +32,10 @@ from backend.app.agents.preventive_health_agent import (
     generate_community_health_quiz,
     evaluate_quiz_answers
 )
+from backend.app.agents.nutrition_agent import (
+    get_nutrition_guide_for_condition,
+    check_specific_food_safety
+)
 from backend.app.agents.outbreak_agent import get_district_outbreak_risk
 from backend.app.services.abdm_service import generate_abha_id, check_ayushman_bharat_schemes
 from backend.app.services.i18n_service import translate_clinical_message, get_supported_languages
@@ -1134,6 +1138,54 @@ async def process_whatsapp_inbound_webhook(payload: Dict[str, Any]) -> Dict[str,
             )
             await send_whatsapp_message(to_phone=sender_phone, text=quiz_summary)
             return {"status": "processed", "type": "quiz_completed", "score": eval_res.get("score")}
+
+    # 9b. Nutrition / Food Guide Trigger ("food ...")
+    if text_lower.startswith("food ") or text_lower == "food":
+        food_query = message_text[5:].strip() if text_lower.startswith("food ") else "hypertension"
+        if not food_query:
+            food_query = "hypertension"
+
+        # Check if single food check or condition guide
+        if any(c in food_query.lower() for c in ["bp", "hypertension", "diabetes", "anemia", "diarrhea", "fever"]):
+            guide_res = get_nutrition_guide_for_condition(condition=food_query)
+            c_label = guide_res.get("condition_info", {}).get("en", "Health Guide").upper()
+            eats = ", ".join([i["names"]["hi"] + " (" + i["names"]["en"] + ")" for i in guide_res["categories"]["eat"]["items"][:4]])
+            limits = ", ".join([i["names"]["hi"] + " (" + i["names"]["en"] + ")" for i in guide_res["categories"]["limit"]["items"][:3]])
+            avoids = ", ".join([i["names"]["hi"] + " (" + i["names"]["en"] + ")" for i in guide_res["categories"]["avoid"]["items"][:3]])
+            red_flag = guide_res.get("red_flag_strip", "Get medical help if severe symptoms occur.")
+
+            reply_text = (
+                f"🥗 SYNAPSE FOOD GUIDE — {c_label}\n"
+                f"━━━━━━━━━━━━━━━━━━━━\n"
+                f"✅ Eat: {eats}\n"
+                f"⚠️ Limit: {limits}\n"
+                f"❌ Avoid: {avoids}\n"
+                f"🚨 Call 108 if: {red_flag}\n"
+                f"👉 Reply \"food banana\" to check any food\n"
+                f"🌿 Powered by Synapse-OS Multi-Agent Swarm"
+            )
+        else:
+            chk = check_specific_food_safety(query=food_query)
+            verdict_icon = "✅" if chk.get("verdict") == "eat" else "⚠️" if chk.get("verdict") == "limit" else "❌"
+            food_disp = chk.get("names", {}).get("en", food_query)
+            reply_text = (
+                f"🥗 SYNAPSE FOOD CHECK — {food_disp.upper()}\n"
+                f"━━━━━━━━━━━━━━━━━━━━\n"
+                f"{verdict_icon} Verdict: {chk.get('verdict', 'limit').upper()}\n"
+                f"💡 Reason: {chk.get('reason')}\n"
+                f"📊 Confidence: {chk.get('confidence', 'Curated Guidelines')}\n"
+                f"━━━━━━━━━━━━━━━━━━━━\n"
+                f"🌿 Powered by Synapse-OS Multi-Agent Swarm"
+            )
+
+        dispatch_res = await send_whatsapp_message(to_phone=sender_phone, text=reply_text)
+        return {
+            "status": "processed",
+            "type": "nutrition_guide_whatsapp",
+            "sender": sender_phone,
+            "dispatch": dispatch_res,
+            "reply_dispatched": dispatch_res
+        }
 
     # 10. Command Option 2: Drug Safety & RxNav
     if text_lower.startswith("2 ") or text_lower == "2":
