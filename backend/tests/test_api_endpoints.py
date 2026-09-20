@@ -171,13 +171,15 @@ def test_emergency_sos_dispatch_endpoint():
 
 def test_whatsapp_endpoints():
     """Tests the Meta WhatsApp Cloud API verification, inbound webhook, and simulation endpoints."""
+    from backend.app.core.config import settings
     # 1. Meta Webhook GET Handshake Verification
+    verify_token = settings.WHATSAPP_WEBHOOK_VERIFY_TOKEN or "synapse_secret_token_123"
     resp_verify = client.get(
         "/api/whatsapp/webhook",
         params={
             "hub.mode": "subscribe",
             "hub.challenge": "1158201444",
-            "hub.verify_token": "synapse_secret_token_123"
+            "hub.verify_token": verify_token
         }
     )
     assert resp_verify.status_code == 200

@@ -265,7 +265,45 @@ async def _fallback_to_groq_or_openrouter(
     json_mode: bool,
     timeout: float
 ) -> Optional[str]:
-    """Graceful fallback to Groq or OpenRouter if configured and Gemini is unavailable."""
+    """Graceful fallback to OpenRouter or Groq if configured and Gemini is unavailable."""
+    # 1. Try OpenRouter if key is present
+    if settings.OPENROUTER_API_KEY:
+        try:
+            headers = {
+                "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://synapseos.health",
+                "X-Title": "SynapseOS WhatsApp AI"
+            }
+            candidate_models = [
+                "openai/gpt-oss-120b",
+                "meta-llama/llama-3.3-70b-instruct",
+                "nvidia/nemotron-3-super-120b-a12b:free",
+                "openrouter/free"
+            ]
+            for model_id in candidate_models:
+                payload = {
+                    "model": model_id,
+                    "messages": messages,
+                    "temperature": temperature or 0.2,
+                    "max_tokens": max_tokens or 1500
+                }
+                if json_mode:
+                    payload["response_format"] = {"type": "json_object"}
+
+                async with httpx.AsyncClient(timeout=timeout) as client:
+                    res = await client.post("https://openrouter.ai/api/v1/chat/completions", json=payload, headers=headers)
+                    if res.status_code == 200:
+                        data = res.json()
+                        choices = data.get("choices", [])
+                        if choices and "message" in choices[0]:
+                            content = choices[0]["message"].get("content") or choices[0]["message"].get("reasoning")
+                            if content:
+                                return content
+        except Exception as e:
+            logger.warning(f"[Fallback OpenRouter] Failed: {e}")
+
+    # 2. Try Groq if key is present
     if settings.GROQ_API_KEY:
         try:
             headers = {

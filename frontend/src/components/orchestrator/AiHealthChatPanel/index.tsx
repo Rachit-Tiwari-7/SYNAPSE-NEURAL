@@ -366,11 +366,13 @@ export default function AiHealthChatPanel({ patient }: AiHealthChatPanelProps) {
     // Step 2: Groq / OpenRouter Fallback if backend wasn't available
     if (!replyText && (GROQ_KEY || OPENROUTER_KEY)) {
       try {
-        const apiKey = GROQ_KEY || OPENROUTER_KEY;
-        const endpoint = GROQ_KEY 
-          ? 'https://api.groq.com/openai/v1/chat/completions' 
-          : 'https://openrouter.ai/api/v1/chat/completions';
-        const model = GROQ_KEY ? 'llama-3.3-70b-versatile' : 'google/gemini-2.0-flash-exp:free';
+        const apiKey = OPENROUTER_KEY || GROQ_KEY;
+        const endpoint = OPENROUTER_KEY
+          ? 'https://openrouter.ai/api/v1/chat/completions'
+          : 'https://api.groq.com/openai/v1/chat/completions';
+        const model = OPENROUTER_KEY
+          ? 'meta-llama/llama-3.3-70b-instruct'
+          : 'llama-3.3-70b-versatile';
 
         const systemPrompt = `You are Sanjeevni Rural AI Health Copilot for India's Next-Generation Health Operating System (SynapseOS).
 Patient Context: ${patientName} (ABHA: ${patientAbha}, Blood: ${patient?.bloodType || 'O+'}).
@@ -380,12 +382,18 @@ Guidelines:
 3. If red flags or emergencies exist, state: "In emergencies, do not self-medicate. Call 108 or proceed to the nearest emergency facility immediately."
 4. State council consensus percentage (e.g., 99.2%) and prioritized bullet points.`;
 
+        const headers: Record<string, string> = {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        };
+        if (OPENROUTER_KEY) {
+          headers['HTTP-Referer'] = typeof window !== 'undefined' ? window.location.origin : 'https://synapseos.health';
+          headers['X-Title'] = 'SynapseOS AI Health Copilot';
+        }
+
         const aiRes = await fetch(endpoint, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json'
-          },
+          headers: headers,
           body: JSON.stringify({
             model: model,
             messages: [
@@ -399,7 +407,7 @@ Guidelines:
 
         if (aiRes.ok) {
           const data = await aiRes.json();
-          replyText = data.choices?.[0]?.message?.content || '';
+          replyText = data.choices?.[0]?.message?.content || data.choices?.[0]?.message?.reasoning || '';
           trace = [
             { agent_name: 'Neural Clinical Engine', action: 'High-Speed Medical Synthesis', duration_ms: 72 },
             { agent_name: 'ICMR Pharmacovigilance', action: 'Dosage & Contraindication Check Passed', duration_ms: 19 }
